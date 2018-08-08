@@ -6,7 +6,13 @@ import os
 
 inpaths = sorted(glob('../combine/*BCON.combine.nc'))
 vark = 'O3PPB'
-inf = pnc.sci_var.stack_files([pnc.pncopen(path, format='ioapi').subsetVariables([vark]) for path in inpaths], 'TSTEP')
+inf = pnc.sci_var.stack_files(
+    [
+        pnc.pncopen(path, format='ioapi').subsetVariables([vark])
+        for path in inpaths
+    ],
+    'TSTEP'
+)
 
 times = inf.getTimes()
 pslices = dict()
@@ -16,18 +22,26 @@ nslice = pslices['N'] = slice(eslice.stop, eslice.stop + inf.NCOLS + 1)
 wslice = pslices['W'] = slice(nslice.stop, nslice.stop + inf.NROWS + 1)
 
 axorder = dict()
-axorder['W'] = 0 
+axorder['W'] = 0
 axorder['N'] = 1
 axorder['E'] = 2
 axorder['S'] = 3
 
-onorm = plt.matplotlib.colors.BoundaryNorm([25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 200, 300], 256)
+onorm = plt.matplotlib.colors.BoundaryNorm(
+    [25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 200, 300],
+    256
+)
 onorm = plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1)
 eta = inf.VGLVLS * (101325 - inf.VGTOP) / 100 + inf.VGTOP / 100
 for mo in [1, 7]:
     tidx = np.array([ti for ti, t in enumerate(times) if t.month == mo])
     tf = inf.sliceDimensions(TSTEP=tidx).applyAlongDimensions(TSTEP='mean')
-    fig, axarr = plt.subplots(1, 4, figsize=(16, 4), sharey=True, gridspec_kw=dict(bottom=0.15))
+    fig, axarr = plt.subplots(
+        1, 4,
+        figsize=(16, 4),
+        sharey=True,
+        gridspec_kw=dict(bottom=0.15)
+    )
     for pk, pslice in pslices.items():
         ax = axarr[axorder[pk]]
         plotf = tf.sliceDimensions(PERIM=pslice)
@@ -54,6 +68,10 @@ for mo in [1, 7]:
     ax.set_xlim(*ax.get_xlim()[::-1])
     cax = fig.add_axes([.925, .1, .025, .8])
     fig.colorbar(p, cax=cax)
-    fig.savefig('curtains/monthly/BCON_CCTM_CONC_v521_intel17.0_HEMIS_cb6_2016{0:02d}_O3.png'.format(mo))
+    figpath = (
+        'curtains/monthly/' +
+        'BCON_CCTM_CONC_v521_intel17.0_HEMIS_cb6_2016{0:02d}_O3.png'.format(mo)
+    )
+    fig.savefig(figpath)
 
 os.system('date > curtains/updated')

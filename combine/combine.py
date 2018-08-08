@@ -1,8 +1,7 @@
 import os
-from glob import glob
 
-import numpy as np
 import PseudoNetCDF as pnc
+
 
 def combine(inpath, outpath, exprpath, clobber=False):
     """
@@ -11,14 +10,14 @@ def combine(inpath, outpath, exprpath, clobber=False):
     inpath : path to netcdf input file
     outpath : path to output file
     exprpath : path to text file with expressions
-    
+
     Returns
     -------
     None
     """
     if os.path.exists(outpath) and not clobber:
         print('Using cached:', outpath)
-        return 
+        return
     spcexpr = open(exprpath, 'r').read()
     infile = pnc.pncopen(inpath, format='ioapi')
     if len(infile.dimensions['TSTEP']) > 1:

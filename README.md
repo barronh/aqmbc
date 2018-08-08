@@ -8,11 +8,12 @@ boundary conditions for an Air Quality Model from one or many data sources.
 
 Directory Listing
 ./
- |-README
- |-CONC/
- |-BCON/
- |-combine/
- |-figs/
+ |- README
+ |- GRIDDESC
+ |- CONC/
+ |- BCON/
+ |- combine/
+ |- figs/
 
 Each folder has its own README, Makefile, and submit.sh. The README describes
 in detail the process for that folder. The Makefile has rules for making
