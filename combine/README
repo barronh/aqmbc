@@ -1,0 +1,4 @@
+echo PMIJ
+ncdump -h ../BCON/CCTM_CONC_v521_intel17.0_HEMIS_cb6_20151223.BCON.nc | grep micrograms | cut -d: -f1 | sed -e "s/\t//g" -e "/K$/d" -e "/ACORS/d" -e "/ASOIL/d" -e "/dASEACAT/d" -e "/AH2O/d" -e "/AH3O/d" | sort | awk '{print}' ORS=' + '; echo
+echo PMC
+ncdump -h ../BCON/CCTM_CONC_v521_intel17.0_HEMIS_cb6_20151223.BCON.nc | grep micrograms | cut -d: -f1 | sed -n -e "s/\t//g" -e "/K$/p" -e "/ACORS/p" -e "/ASOIL/p" -e "/dASEACAT/p" -e "/AH2O/d" -e "/AH3O/d" | sort | awk '{print}' ORS=' + '; echo

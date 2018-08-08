@@ -1,0 +1,2 @@
+GRIDDESC:
+	cp /work/ROMO/2016platform/CMAQv52/2016fc_cb6r3_16j/36US3/job/GRIDDESC .
