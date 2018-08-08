@@ -118,6 +118,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-O', '--clobber', default=False, action='store_true')
     parser.add_argument('--icon', default=False, action='store_true')
+    parser.add_argument(
+        '--expr', dest='exprpath', default=None, help='Expressions for model'
+    )
     parser.add_argument('inpath')
     parser.add_argument('outpath')
     args = parser.parse_args()
@@ -140,4 +143,5 @@ if __name__ == '__main__':
         tslice = None
 
     bc(args.inpath, args.outpath, metaf,
-       tslice=tslice, vmethod='conserve', exprpath=None, clobber=args.clobber)
+       tslice=tslice, vmethod='conserve',
+       exprpath=args.exprpath, clobber=args.clobber)
