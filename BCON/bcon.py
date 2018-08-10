@@ -192,7 +192,8 @@ def bc(
     props = metaf.getncatts()
     for outdk, indk in dimkeys.items():
         if outdk not in outf.dimensions:
-            outf.renameDimension(indk, outdk, inplace=True)
+            if indk in outf.dimensions:
+                outf.renameDimension(indk, outdk, inplace=True)
 
     del props['NVARS']
     del props['VAR-LIST']
@@ -302,6 +303,6 @@ if __name__ == '__main__':
         tslice = None
 
     bc(args.inpath, args.outpath, metaf,
-       tslice=tslice, vmethod='linear',
+       tslice=tslice, vmethod='conserve',
        exprpath=args.exprpath, clobber=args.clobber,
-       dimkeys=dimkeys, format_kw=dict(format='bpch', nogroup=True))
+       dimkeys=None, format_kw=dict(format='ioapi'))
