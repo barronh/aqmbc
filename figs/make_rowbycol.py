@@ -27,6 +27,7 @@ def makerowbycol(plotfile, vark, lslice, norm, outpath):
     )
     ax.set_ylabel('row')
     ax.set_xlabel('col')
+    print(outpath)
     plt.savefig(outpath)
 
 
@@ -40,7 +41,7 @@ pmakerc = partial(
 
 tmpl = 'rowbycol/IC_L{0:02d}_{1}.png'.format
 for lay in [0, 20, 26]:
-    pmakerc(vark='PMIJ', lslice=lay, norm=lnorm, outpath=tmpl(0, 'PMIJ'))
-    pmakerc(vark='O3PPB', lslice=lay, norm=onorm, outpath=tmpl(0, 'O3'))
+    pmakerc(vark='PMIJ', lslice=lay, norm=lnorm, outpath=tmpl(lay, 'PMIJ'))
+    pmakerc(vark='O3PPB', lslice=lay, norm=onorm, outpath=tmpl(lay, 'O3'))
 
 os.system('date > rowbycol/updated')
