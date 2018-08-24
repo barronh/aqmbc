@@ -262,7 +262,14 @@ def bc(
 
     # Save to outpath
     print('save', flush=True)
-    outf.save(outpath, format='NETCDF3_CLASSIC', verbose=0, outmode='ws')
+
+    gigs = np.prod([len(outf.dimensions[dk]) for dk in outdims]) * outf.NVARS * 4 / 1024**3
+    if gigs > 2:
+        outformat='NETCDF3_64BIT_OFFSET'
+    else:
+        outformat='NETCDF3_CLASSIC'
+
+    outf.save(outpath, format=outformat, verbose=0, outmode='w')
 
     print('done', flush=True)
 
