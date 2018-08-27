@@ -8,8 +8,8 @@ endif
 all: link
 
 link:
-	ln -fs $(SPINPAT) CONC/
-	ln -fs $(PRODPAT) CONC/
+	ln -fs $(SPINPAT) ./
+	ln -fs $(PRODPAT) ./
 
 clean:
 	rm CCTM_*
