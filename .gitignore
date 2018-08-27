@@ -110,6 +110,6 @@ combine/*
 *.png
 updated
 nohup.out
-
+logs/*
 # input files
 CONC/*
