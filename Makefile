@@ -13,7 +13,7 @@ bcon: link
 	$(MAKE) -C BCON all
 
 combine: bcon
-	$(MAKE)-C combine all
+	$(MAKE) -C combine all
 
 fig: combine
 	$(MAKE) -C figs
