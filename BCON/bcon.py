@@ -278,6 +278,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-O', '--clobber', default=False, action='store_true')
+    parser.add_argument('--grid', default=None, help='Grid name from GRIDDESC')
     parser.add_argument('--icon', default=False, action='store_true')
     parser.add_argument(
         '--expr', dest='exprpath', default=None, help='Expressions for model'
@@ -301,7 +302,7 @@ if __name__ == '__main__':
         '../GRIDDESC', format='griddesc',
         VGLVLS=_vglvls, VGTOP=_vgtop,
         FTYPE=(1 if args.icon else 2),
-        # GDNAM='36US3',
+        GDNAM=args.grid
     )
     if args.icon:
         tslice = metaf.createVariable('time', 'i', ('TSTEP',))
