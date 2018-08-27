@@ -2,12 +2,12 @@
 
 #SBATCH -t 24:00:00
 #SBATCH --nodes 1
-#SBATCH --ntasks 1
+#SBATCH --ntasks 8
 #SBATCH -J BCON
-#SBATCH -p singlepe
+#SBATCH -p oar
 #SBATCH --gid=romo
 #SBATCH -o logs/slog.o%j
 #SBATCH -e logs/slog.e%j
 
-make -j1
+make -j8
 
