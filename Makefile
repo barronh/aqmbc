@@ -5,7 +5,7 @@ GRID=12US1
 
 export GRID
 export SPINPAT
-export CONCPAT
+export PRODPAT
 
 all: link bcon combine fig
 
