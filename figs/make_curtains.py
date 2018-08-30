@@ -35,6 +35,8 @@ onorm = plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1)
 eta = inf.VGLVLS * (101325 - inf.VGTOP) / 100 + inf.VGTOP / 100
 for mo in [1, 7]:
     tidx = np.array([ti for ti, t in enumerate(times) if t.month == mo])
+    if tidx.size == 0:
+        continue
     tf = inf.sliceDimensions(TSTEP=tidx).applyAlongDimensions(TSTEP='mean')
     fig, axarr = plt.subplots(
         1, 4,
