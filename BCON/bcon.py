@@ -207,7 +207,9 @@ def bc(
     outkeys = [
         vk
         for vk, vo in outf.variables.items()
-        if len(vo.dimensions) == ndim
+        if (
+            vo.dimensions == outdims
+        )
     ]
 
     for ok in outkeys:
