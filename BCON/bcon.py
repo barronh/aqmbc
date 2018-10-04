@@ -114,7 +114,7 @@ def translate(infile, exprpaths):
     outf : file output
     """
     # Translate species and/or units
-    if exprpaths is None:
+    if len(exprpaths) == 0:
         outf = infile
     else:
         print('translate', flush=True)
