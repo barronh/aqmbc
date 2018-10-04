@@ -9,5 +9,5 @@
 #SBATCH -o logs/slog.o%j
 #SBATCH -e logs/slog.e%j
 
-make -j8
+./run.sh
 

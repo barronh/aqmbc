@@ -1,16 +1,31 @@
-BCTARGETS=$(addsuffix .BCON.nc,$(notdir $(sort $(wildcard ../CONC/CCTM_*))))
-ICTARGETS=$(subst BCON,ICON,$(firstword $(BCTARGETS)))
+# GRID is required in the environment
 ifeq ($(GRID),)
-GRID=36US3
+$(error GRID is not set)
 endif
+
+# FILE Pattern defaults to all files in CONC
+ifeq ($(FILEPAT),)
+FILEPAT=*
+endif
+
+# Definitions defaults to nothing
+ifneq ($(DEFN),)
+EXPR=$(addprefix --expr=,$(DEFN))
+endif
+
+# BCTARGETS are all files
+BCTARGETS=$(addsuffix .BCON.nc,$(notdir $(sort $(wildcard ../CONC/$(FILEPAT)))))
+
+# ICTARGETS should be the first file
+ICTARGETS=$(subst BCON,ICON,$(firstword $(BCTARGETS)))
 
 all: $(BCTARGETS) $(ICTARGETS)
 
-CCTM_%.BCON.nc: ../CONC/CCTM_%
-	python bcon.py -O --grid $(GRID) $^ $@
+%.BCON.nc: ../CONC/%
+	python bcon.py -O $(EXPR) --grid $(GRID) $^ $@
 
-CCTM_%.ICON.nc: ../CONC/CCTM_%
-	python bcon.py -O --grid $(GRID) --icon $^ $@
+%.ICON.nc: ../CONC/%
+	python bcon.py -O $(EXPR) --grid $(GRID) --icon $^ $@
 
 clean:
 	rm -f *.nc

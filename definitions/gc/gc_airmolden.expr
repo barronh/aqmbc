@@ -1,0 +1,3 @@
+# Source: GEOS-Chem v8,v9,v10,v11,v12 bpch
+AIRMOLDEN = (PSURF[:][:][:, [0]].T * hybm[:][:].reshape(1, -1).T + hyam[:][:].reshape(1, -1).T).T * 100 / 8.3144621 / TMPU[:][:]
+AIRMOLDEN.units ="mole/m3"

@@ -3,6 +3,7 @@ import numpy as np
 import PseudoNetCDF as pnc
 import functools
 
+
 def wndw(varfile, metaf, dimkeys):
     """
     Arguments
@@ -49,6 +50,7 @@ def wndw(varfile, metaf, dimkeys):
 
     return wndwf, iwndw, jwndw
 
+
 def ijslice(infile, metaf, i, j, dimkeys):
     """
     Arguments
@@ -71,6 +73,7 @@ def ijslice(infile, metaf, i, j, dimkeys):
                                    newdims=dims, verbose=1)
     return bconf
 
+
 def kinterp(infile, metaf, vmethod):
     """
     Arguments
@@ -88,7 +91,7 @@ def kinterp(infile, metaf, vmethod):
         getattr(infile, 'VGLVLS', []) == metaf.VGLVLS and
         getattr(infile, 'VGTOP', -1) == infile.VGTOP
     ):
-        bconvf = infile 
+        bconvf = infile
     else:
         print('vint', flush=True)
         bconvf = infile.interpSigma(vglvls=metaf.VGLVLS, vgtop=metaf.VGTOP,
@@ -98,31 +101,35 @@ def kinterp(infile, metaf, vmethod):
 
     return bconvf
 
-def translate(infile, exprpath):
+
+def translate(infile, exprpaths):
     """
     Arguments
     ---------
     infile : file input
-    exprpath : path to expr file
+    exprpaths : paths to expr file
 
     Returns
     -------
     outf : file output
     """
     # Translate species and/or units
-    if exprpath is None:
+    if exprpaths is None:
         outf = infile
     else:
         print('translate', flush=True)
-        outf = infile.eval(open(exprpath, 'r').read(), inplace=False)
+        exprstr = ''.join([
+            open(exprpath, 'r').read() for exprpath in exprpaths
+        ])
+        outf = infile.eval(exprstr, inplace=False)
 
     return outf
 
+
 def bc(
     inpath, outpath, metaf,
-    tslice=None, vmethod='conserve',
-    exprpath=None, clobber=False,
-    dimkeys=None, format_kw=None
+    tslice=None, vmethod='conserve', exprpaths=None, clobber=False,
+    dimkeys=None, format_kw=None, history=''
 ):
     """
     Arguments
@@ -132,7 +139,7 @@ def bc(
     metaf : metadata file (CRO for ICON, BDY for BCON)
     tslice : (optional) time slice (e.g., slice(0) for ICON
     vmethod : method to use for vertical interpolation
-    exprpath : text file with species translations
+    exprpaths : text files with species translations
     clobber : overwrite existing files
 
     Returns
@@ -150,7 +157,7 @@ def bc(
     """
     global imin, imax, jmin, jmax, iwndw, jwndw, props
     if format_kw is None:
-        format_kw=dict(format='ioapi')
+        format_kw = dict(format='ioapi')
     if dimkeys is None:
         dimkeys = {
             'ROW': 'ROW', 'COL': 'COL', 'TSTEP': 'TSTEP', 'LAY': 'LAY'
@@ -174,10 +181,10 @@ def bc(
     except Exception as e:
         print(str(e), 'vertical interp first')
         kfirst = True
-    
+
     easyk = functools.partial(kinterp, metaf=metaf, vmethod=vmethod)
     easyij = functools.partial(ijslice, metaf=metaf, i=i, j=j, dimkeys=dimkeys)
-    easyx = functools.partial(translate, exprpath=exprpath)
+    easyx = functools.partial(translate, exprpaths=exprpaths)
 
     if kfirst:
         funcs = [easyk, easyij, easyx]
@@ -188,6 +195,36 @@ def bc(
     for func in funcs:
         outf = func(outf)
 
+    if exprpaths is None:
+        outf.FILEDESC = 'Boundary conditions from {}'.format(inpath)
+    else:
+        outf.FILEDESC = (
+            'Boundary conditions from ' +
+            '{} with {}'.format(inpath, exprpaths)
+        )
+
+    fhistory = getattr(outf, 'HISTORY', '')
+    history = fhistory + history
+    setattr(outf, 'HISTORY', history)
+    return saveioapi(wndwf, outf, outpath, metaf, dimkeys)
+
+
+def saveioapi(inf, outf, outpath, metaf, dimkeys):
+    """
+    Parameters
+    ----------
+    outf : netcdf-like file
+        file for output
+    metaf : netcdf-like file
+        metadata file
+    dimkeys : dict
+        translation dictionary for dimensions
+
+    Results
+    -------
+    out : netcdf-like file
+        file that was output
+    """
     # Prepare metadata
     props = metaf.getncatts()
     for outdk, indk in dimkeys.items():
@@ -199,10 +236,8 @@ def bc(
     del props['VAR-LIST']
     if 'PERIM' in metaf.dimensions:
         outdims = ('TSTEP', 'LAY', 'PERIM')
-        ndim = 3
     else:
         outdims = ('TSTEP', 'LAY', 'ROW', 'COL')
-        ndim = 4
 
     outkeys = [
         vk
@@ -234,7 +269,7 @@ def bc(
         if dk not in outdims + ('VAR', 'DATE-TIME'):
             del outf.dimensions[dk]
 
-    time = wndwf.getTimes()
+    time = inf.getTimes()
     if 'TFLAG' not in outf.variables:
         tflag = outf.createVariable(
             'TFLAG', 'i', ('TSTEP', 'VAR', 'DATE-TIME')
@@ -254,55 +289,128 @@ def bc(
 
     outf.SDATE = int(time[0].strftime('%Y%j'))
     outf.STIME = int(time[0].strftime('%H%M%S'))
-    if exprpath is None:
-        outf.FILEDESC = 'Boundary conditions from {}'.format(inpath)
-    else:
-        outf.FILEDESC = (
-            'Boundary conditions from ' +
-            '{} with {}'.format(inpath, exprpath)
-        )
-
     # Save to outpath
     print('save', flush=True)
 
-    gigs = np.prod([len(outf.dimensions[dk]) for dk in outdims]) * outf.NVARS * 4 / 1024**3
+    gigs = (
+        np.prod([len(outf.dimensions[dk]) for dk in outdims]) *
+        outf.NVARS * 4 / 1024**3
+    )
     if gigs > 2:
-        outformat='NETCDF3_64BIT_OFFSET'
+        outformat = 'NETCDF3_64BIT_OFFSET'
     else:
-        outformat='NETCDF3_CLASSIC'
+        outformat = 'NETCDF3_CLASSIC'
 
-    outf.save(outpath, format=outformat, verbose=0, outmode='w')
+    out = outf.save(outpath, format=outformat, verbose=0, outmode='w')
 
     print('done', flush=True)
+    return out
+
+
+def formatparser(fmtstr):
+    """
+    Parameters
+    ----------
+    fmtstr : str
+        string with format and option key value pairs delimited by commas
+        option key value pairs should be in a format consistent with
+        dict call dict(key1=val1, key2=val2, ...)
+
+    Returns
+    -------
+    out : dict
+        format=first word
+        otherkeys=key value pairs delimited by commas
+    """
+    pieces = fmtstr.split(',')
+    out = dict(format=pieces[0])
+    if len(pieces) > 1:
+        opts = eval('dict(' + ','.join(pieces[1:]) + ')')
+        out.update(**opts)
+
+    return out
+
+
+def dimparser(dimstr):
+    """
+    Parameters
+    ----------
+    dimstr : str
+        key=value pairs delimited by commas
+
+    Returns
+    -------
+    out : dict
+        mapping table between IOAPI gridded and input dimensions
+    """
+    return
 
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-O', '--clobber', default=False, action='store_true')
-    parser.add_argument('--grid', default=None, help='Grid name from GRIDDESC')
-    parser.add_argument('--icon', default=False, action='store_true')
-    parser.add_argument(
-        '--expr', dest='exprpath', default=None, help='Expressions for model'
-    )
-    parser.add_argument('inpath')
-    parser.add_argument('outpath')
-    args = parser.parse_args()
     # variables for metafile
-    _vglvls = [1., 0.9975, 0.995, 0.99, 0.985, 0.98, 0.97, 0.96, 0.95, 0.94,
+    _vglvls = (1., 0.9975, 0.995, 0.99, 0.985, 0.98, 0.97, 0.96, 0.95, 0.94,
                0.93, 0.92, 0.91, 0.9, 0.88, 0.86, 0.84, 0.82, 0.8, 0.77,
                0.74, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3,
-               0.25, 0.2, 0.15, 0.1, 0.05, 0.]
+               0.25, 0.2, 0.15, 0.1, 0.05, 0.)
     _vgtop = 5000.
-    dimkeys = {
+    _gc_dimkeys = {
         'ROW': 'latitude',
         'COL': 'longitude',
         'TSTEP': 'time',
         'LAY': 'layer47'
     }
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-O', '--clobber', default=False, action='store_true')
+    parser.add_argument(
+        '--format', default=None, type=formatparser,
+        help=('File format for input files. CMAQ: "ioapi"; GEOS-Chem: ' +
+              '"bpch,nogroup=True"')
+    )
+    parser.add_argument(
+        '--dimkeys', default=None, type=dimparser,
+        help=('Translations from IOAPI to input dimensions'
+              'e.g., TSTEP=time,LAY=layer47,ROW=latitude,COL=longitude')
+    )
+    parser.add_argument(
+        '--vglvls', type=tuple, default=_vglvls,
+        help='Vertical grid levels (WRF sigma)'
+    )
+    parser.add_argument(
+        '--vgtop', default=_vgtop, type=float,
+        help='Top of model atmosphere in Pa')
+    parser.add_argument('--grid', default=None, help='Grid name from GRIDDESC')
+    parser.add_argument('--icon', default=False, action='store_true')
+    parser.add_argument(
+        '--expr', dest='exprpaths', default=[], action='append',
+        help='Expressions for model'
+    )
+    parser.add_argument(
+        '--interp', choices=['linear', 'conserve'], default=None,
+        help=('Conserve is mass conserving and may be more complex without ' +
+              'much benefit in some cases')
+    )
+    parser.add_argument('inpath')
+    parser.add_argument('outpath')
+    args = parser.parse_args()
+    if args.format is None:
+        if args.inpath.endswith('bpch'):
+            args.format = dict(format='bpch', nogroup=True)
+        else:
+            args.format = dict(format='ioapi')
+
+    if args.interp is None:
+        if args.format['format'] == 'bpch':
+            args.interp = 'linear'
+        else:
+            args.interp = 'conserve'
+
+    if args.dimkeys is None and args.format['format'] == 'bpch':
+        args.dimkeys = _gc_dimkeys
+
     metaf = pnc.pncopen(
         '../GRIDDESC', format='griddesc',
-        VGLVLS=_vglvls, VGTOP=_vgtop,
+        VGLVLS=args.vglvls, VGTOP=args.vgtop,
         FTYPE=(1 if args.icon else 2),
         GDNAM=args.grid
     )
@@ -313,6 +421,7 @@ if __name__ == '__main__':
         tslice = None
 
     bc(args.inpath, args.outpath, metaf,
-       tslice=tslice, vmethod='conserve',
-       exprpath=args.exprpath, clobber=args.clobber,
-       dimkeys=None, format_kw=dict(format='ioapi'))
+       tslice=tslice, vmethod=args.interp,
+       exprpaths=args.exprpaths, clobber=args.clobber,
+       dimkeys=args.dimkeys, format_kw=args.format,
+       history=str(args))

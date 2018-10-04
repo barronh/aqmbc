@@ -1,16 +1,16 @@
-TARGETS=$(patsubst %.nc,%.combine.nc,$(notdir $(sort $(wildcard ../BCON/CCTM_*))))
-LITTLETARGETS=$(patsubst %.nc,%.combine.4LAY.nc,$(notdir $(sort $(wildcard ../BCON/CCTM_*))))
+TARGETS=$(patsubst %.nc,%.combine.nc,$(notdir $(sort $(wildcard ../BCON/*.BCON.nc))))
+LITTLETARGETS=$(patsubst %.nc,%.combine.4LAY.nc,$(notdir $(sort $(wildcard ../BCON/*.BCON.nc))))
 
 
 all: $(TARGETS) $(LITTLETARGETS)
 
-CCTM_%.BCON.combine.nc: ../BCON/CCTM_%.BCON.nc
+%.BCON.combine.nc: ../BCON/%.BCON.nc
 	python combine.py -O --expr=cb6r3_ae6.expr $^ $@
 
-CCTM_%.ICON.combine.nc: ../BCON/CCTM_%.ICON.nc
+%.ICON.combine.nc: ../BCON/%.ICON.nc
 	python combine.py -O --expr=cb6r3_ae6.expr $^ $@
 
-CCTM_%.combine.4LAY.nc: CCTM_%.combine.nc
+%.combine.4LAY.nc: %.combine.nc
 	python collapse.py -O $^ $@
 
 clean:
