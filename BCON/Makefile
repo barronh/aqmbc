@@ -22,10 +22,10 @@ ICTARGETS=$(subst BCON,ICON,$(firstword $(BCTARGETS)))
 all: $(BCTARGETS) $(ICTARGETS)
 
 %.BCON.nc: ../CONC/%
-	python bcon.py -O $(EXPR) --grid $(GRID) $^ $@
+	python bcon.py -O $(BCOPTS) $(EXPR) --grid $(GRID) $^ $@
 
 %.ICON.nc: ../CONC/%
-	python bcon.py -O $(EXPR) --grid $(GRID) --icon $^ $@
+	python bcon.py -O $(BCOPTS) $(EXPR) --grid $(GRID) --icon $^ $@
 
 clean:
 	rm -f *.nc

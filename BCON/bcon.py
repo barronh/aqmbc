@@ -343,7 +343,7 @@ def dimparser(dimstr):
     out : dict
         mapping table between IOAPI gridded and input dimensions
     """
-    return
+    return dict([kv.split('=') for kv in dimstr.split(',')])
 
 
 if __name__ == '__main__':
