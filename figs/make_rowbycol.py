@@ -32,7 +32,7 @@ def makerowbycol(plotfile, vark, lslice, norm, outpath):
 
 
 lnorm = plt.matplotlib.colors.LogNorm()
-onorm = plt.matplotlib.colors.BoundaryNorm([20, 25, 35, 40, 45, 50, 55], 256)
+onorm = plt.matplotlib.colors.BoundaryNorm([20, 25, 30, 35, 40, 45, 50, 55], 256)
 
 pmakerc = partial(
     makerowbycol,
