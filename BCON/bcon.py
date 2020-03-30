@@ -88,7 +88,7 @@ def kinterp(infile, metaf, vmethod):
     """
     # Extract output vertical if not already the same
     if (
-        getattr(infile, 'VGLVLS', []) == metaf.VGLVLS and
+        (getattr(infile, 'VGLVLS', 0) == metaf.VGLVLS).all() and
         getattr(infile, 'VGTOP', -1) == infile.VGTOP
     ):
         bconvf = infile
