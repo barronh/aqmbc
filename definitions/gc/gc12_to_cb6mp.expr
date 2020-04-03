@@ -1,0 +1,12 @@
+# Source: GEOS-Chem v12.7 NetCDF output
+# Destination: CMAQ v5.2-v5.3.1 cb6mp
+CARBONTET = (SpeciesConc_CCl4[:]) * 1e6
+CARBONTET.units = "ppmV"
+CHCL3 = (SpeciesConc_CHCl3[:]) * 1e6
+CHCL3.units = "ppmV"
+CL2_ME = (SpeciesConc_CH2Cl2[:]) * 1e6
+CL2_ME.units = "ppmV"
+METHCHLORIDE = (SpeciesConc_CH3Cl[:]) * 1e6
+METHCHLORIDE.units = "ppmV"
+CARBSULFIDE = (SpeciesConc_OCS[:]) * 1e6
+CARBSULFIDE.units = "ppmV"
