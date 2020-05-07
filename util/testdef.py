@@ -47,16 +47,16 @@ extra = sorted([k for k in assigned_sym if k not in tospcs])
 toneeded = sorted([k for k in tospcs if k not in assigned_sym and tospcs[k]['Is_Advected']])
 
 print('\nNeeded Output, but not Assigned')
-print(toneeded)
+print('\n'.join(toneeded))
 
 print('\nAssigned, but not Needed Output')
-print(extra)
+print('\n'.join(extra))
 
 print('\nUsed in Definition, but not avail')
-print(fromneeded)
+print('\n'.join(fromneeded))
 
 print('\nUsed in Definition and Available, but not an Advected species')
-print([k for k in used if k in noadvspc])
+print('\n'.join([k for k in used if k in noadvspc]))
 
 print('\nAvail Not Used')
-print(usable)
+print('\n'.join(usable))

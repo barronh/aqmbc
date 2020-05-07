@@ -198,9 +198,13 @@ def bc(
     if exprpaths is None:
         outf.FILEDESC = 'Boundary conditions from {}'.format(inpath)
     else:
+        exprstr = ''.join([
+            open(exprpath, 'r').read() for exprpath in exprpaths
+        ])
         outf.FILEDESC = (
             'Boundary conditions from ' +
-            '{} with {}'.format(inpath, exprpaths)
+            '{}\nwith definitions {}:'.format(inpath, exprpaths) +
+            '\n{}'.format(exprstr)
         )
 
     fhistory = getattr(outf, 'HISTORY', '')
@@ -232,8 +236,6 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys):
             if indk in outf.dimensions:
                 outf.renameDimension(indk, outdk, inplace=True)
 
-    del props['NVARS']
-    del props['VAR-LIST']
     if 'PERIM' in metaf.dimensions:
         outdims = ('TSTEP', 'LAY', 'PERIM')
     else:
@@ -258,6 +260,8 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys):
 
     props['NVARS'] = len(outkeys)
     props['VAR-LIST'] = ''.join([k.ljust(16) for k in outkeys])
+    props['HISTORY'] = outf.HISTORY
+    props['FILEDESC'] = outf.FILEDESC
     outf.setncatts(props)
     if 'VAR' not in outf.dimensions:
         outf.createDimension('VAR', props['NVARS'])
