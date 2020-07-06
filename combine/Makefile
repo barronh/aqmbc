@@ -1,5 +1,5 @@
-TARGETS=$(patsubst %.nc,%.combine.nc,$(notdir $(sort $(wildcard ../BCON/*.BCON.nc))))
-LITTLETARGETS=$(patsubst %.nc,%.combine.4LAY.nc,$(notdir $(sort $(wildcard ../BCON/*.BCON.nc))))
+TARGETS=$(patsubst %.nc,%.combine.nc,$(notdir $(sort $(wildcard ../BCON/*.?CON.nc))))
+LITTLETARGETS=$(patsubst %.nc,%.combine.4LAY.nc,$(notdir $(sort $(wildcard ../BCON/*.?CON.nc))))
 
 
 all: $(TARGETS) $(LITTLETARGETS)
