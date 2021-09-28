@@ -4,7 +4,7 @@ import PseudoNetCDF as pnc
 import functools
 
 
-def wndw(varfile, metaf, dimkeys):
+def wndw(varfile, metaf, dimkeys, tslice):
     """
     Arguments
     ---------
@@ -172,7 +172,7 @@ def bc(
     # For debug speed, subset variables
     varfile = infile  # .subsetVariables(['O3']) # for testing
 
-    wndwf, i, j = wndw(varfile, metaf, dimkeys)
+    wndwf, i, j = wndw(varfile, metaf, dimkeys, tslice)
 
     try:
         inij = np.prod(wndwf.variables['O3'].shape[2:])
@@ -250,8 +250,14 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys):
     ]
 
     for ok in outkeys:
-        outf.variables[ok].long_name = ok.ljust(16)
-        outf.variables[ok].var_desc = ok.ljust(80)
+        outv = outf.variables[ok]
+        outv.long_name = ok.ljust(16)
+        outv.var_desc = ok.ljust(80)
+        outv.units = outv.units.ljust(16)
+        outv.actual_range = np.array([
+            outv.min(), outv.max()
+        ], dtype=outv.dtype)
+        outv.actual_median = np.median(outv)
 
     extrakeys = set(list(outf.variables)).difference(outkeys + ['TFLAG'])
     for ek in extrakeys:
@@ -357,7 +363,7 @@ if __name__ == '__main__':
                0.93, 0.92, 0.91, 0.9, 0.88, 0.86, 0.84, 0.82, 0.8, 0.77,
                0.74, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3,
                0.25, 0.2, 0.15, 0.1, 0.05, 0.)
-    _vgtop = 5000.
+    _vgtop = np.float32(5000.)
     _gc_dimkeys = {
         'ROW': 'latitude',
         'COL': 'longitude',
@@ -378,10 +384,10 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--vglvls', type=tuple, default=_vglvls,
-        help='Vertical grid levels (WRF sigma)'
+        help='Output vertical grid levels (WRF sigma)'
     )
     parser.add_argument(
-        '--vgtop', default=_vgtop, type=float,
+        '--vgtop', default=_vgtop, type=np.float32,
         help='Top of model atmosphere in Pa')
     parser.add_argument('--grid', default=None, help='Grid name from GRIDDESC')
     parser.add_argument('--icon', default=False, action='store_true')
@@ -414,7 +420,7 @@ if __name__ == '__main__':
 
     metaf = pnc.pncopen(
         '../GRIDDESC', format='griddesc',
-        VGLVLS=args.vglvls, VGTOP=args.vgtop,
+        VGLVLS=np.array(args.vglvls, dtype='f'), VGTOP=np.float32(args.vgtop),
         FTYPE=(1 if args.icon else 2),
         GDNAM=args.grid
     )
