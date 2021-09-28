@@ -87,10 +87,22 @@ def kinterp(infile, metaf, vmethod):
     bconvf : file at new vertical levels
     """
     # Extract output vertical if not already the same
-    if (
-        (getattr(infile, 'VGLVLS', 0) == metaf.VGLVLS).all() and
-        getattr(infile, 'VGTOP', -1) == infile.VGTOP
-    ):
+    tgt_vglvls = getattr(infile, 'VGLVLS', np.array([0], 'f'))
+    src_vglvls = metaf.VGLVLS
+    tgt_vgtop = getattr(infile, 'VGTOP', np.array([-1], 'f'))
+    src_vgtop = metaf.VGTOP
+    tgt_nlays = tgt_vglvls.size - 1
+    src_nlays = metaf.VGLVLS.size - 1
+    if tgt_nlays != src_nlays:
+       lvinterp = True
+    elif not (tgt_vglvls == src_vglvls).all():
+       lvinterp = True
+    elif not (tgt_vgtop == src_vgtop).all():
+       lvinterp = True
+    else:
+       lvinterp = False
+
+    if not lvinterp:
         bconvf = infile
     else:
         print('vint', flush=True)
@@ -383,7 +395,7 @@ if __name__ == '__main__':
               'e.g., TSTEP=time,LAY=layer47,ROW=latitude,COL=longitude')
     )
     parser.add_argument(
-        '--vglvls', type=tuple, default=_vglvls,
+        '--vglvls', type=lambda x: tuple(x.split(',')), default=_vglvls,
         help='Output vertical grid levels (WRF sigma)'
     )
     parser.add_argument(
