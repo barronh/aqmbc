@@ -13,7 +13,8 @@ class raqms(pnc.PseudoNetCDFFile):
         self.setCoords(['lat', 'lon', 'lev', 'Times', 'IDATE', 'wlong', 'slat'])
 
     def ll2ij(self, lon, lat):
-        i = self.val2idx('lon', lon)
+        # raqms longitude is on 0-360, while inputs are on -180, 180
+        i = self.val2idx('lon', lon % 360)
         j = self.val2idx('lat', lat)
         return i, j
 

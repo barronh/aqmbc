@@ -118,7 +118,7 @@ def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
 
     imetaf = pnc.pncopen(
         config.get('common', 'griddesc'),
-        format='griddesc', GDNAM=gdnam, FTYPE=2,
+        format='griddesc', GDNAM=gdnam, FTYPE=1,
         VGLVLS=vglvls, VGTOP=vgtop
     )
     idates = pd.to_datetime(json.loads(config.get('ICON', 'dates')))
