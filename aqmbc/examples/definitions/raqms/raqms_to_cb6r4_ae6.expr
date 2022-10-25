@@ -2,11 +2,11 @@
 #   bro, ibrcl, ibrno3, ibry, ich3br, ihobr, ihbr, in2o, ihcn, ich3cn,
 #   iclno3, icly, if11, if12, if1211, if1301, imvk, inoy, ioclo,
 #   ivrp - peroxide?"
-PRESS = pdash[:] * 100.
-PRESS.units = "Pa"
-TEMP = ttheta[:] * (PRESS[:] / 100000.)**(.286)
+PRES = pdash[:] * 100.
+PRES.units = "Pa"
+TEMP = ttheta[:] * (PRES[:] / 100000.)**(.286)
 TEMP.units = "K"
-AIRMOLDEN = PRESS[:] / 8.3144621 / TEMP
+AIRMOLDEN = PRES[:] / 8.3144621 / TEMP
 AIRMOLDEN.units = "moles/m**3"
 PAR = (0.4 * ic2h6[:] + ipar[:] + iolet[:] + iolei[:] + iaone[:] + ipropar[:]) * 1e6
 PAR.units = "ppmV" 

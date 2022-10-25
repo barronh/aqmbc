@@ -28,7 +28,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires=[
-        "numpy", "matplotlib", "pyproj", "PseudoNetCDF"
-    ]
+    install_requires=["pyproj", "PseudoNetCDF"],
+    include_package_data=True,
+    zip_safe=False,
 )

@@ -14,7 +14,7 @@ __doc__ = """
 Code for making CMAQ-ready boundary condition files
 """
 
-__version__ = '0.2'
+__version__ = '0.3'
 
 
 def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
@@ -95,7 +95,8 @@ def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
 
     bmetaf = pnc.pncopen(
         config.get('common', 'GRIDDESC'),
-        format='griddesc', GDNAM=gdnam, FTYPE=2
+        format='griddesc', GDNAM=gdnam, FTYPE=2,
+        VGLVLS=vglvls, VGTOP=vgtop
     )
     for bdate in bdates:
         inpath = bdate.strftime(intmpl)
@@ -117,7 +118,8 @@ def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
 
     imetaf = pnc.pncopen(
         config.get('common', 'griddesc'),
-        format='griddesc', GDNAM=gdnam, FTYPE=2
+        format='griddesc', GDNAM=gdnam, FTYPE=2,
+        VGLVLS=vglvls, VGTOP=vgtop
     )
     idates = pd.to_datetime(json.loads(config.get('ICON', 'dates')))
     tslice = 0
