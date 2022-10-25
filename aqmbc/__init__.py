@@ -75,10 +75,15 @@ def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
     vgtop = np.float32(vgtop)
     vglvls = json.loads(config.get('common', 'vglvls'))
     vglvls = np.array(vglvls, dtype='f')
-
+    # config parser does not allow number-first strings, so they
+    # are explicitly quoted, which is interpreted as part of the string
+    freq = config.get('BCON', 'freq')
+    if freq.startswith('"') or freq.startswith("'"):
+        freq = freq[1:-1]
     bdates = pd.date_range(
         config.get('BCON', 'start_date'),
-        config.get('BCON', 'end_date')
+        config.get('BCON', 'end_date'),
+        freq=freq
     )
     tslice = None
 
@@ -95,6 +100,8 @@ def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
     for bdate in bdates:
         inpath = bdate.strftime(intmpl)
         outpath = bdate.strftime(bctmpl)
+        outdir = os.path.dirname(outpath)
+        os.makedirs(outdir, exist_ok=True)
         opts = dict(
             inpath=inpath, outpath=outpath, metaf=bmetaf,
             tslice=tslice, vmethod=interpopt,
@@ -117,14 +124,15 @@ def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
     for idate in idates:
         inpath = bdate.strftime(intmpl)
         outpath = bdate.strftime(ictmpl)
-        if os.path.exists(outpath) and not overwrite:
-            continue
+        outdir = os.path.dirname(outpath)
+        os.makedirs(outdir, exist_ok=True)
         opts = dict(
             inpath=inpath, outpath=outpath, metaf=imetaf,
             tslice=tslice, vmethod=interpopt,
             exprpaths=exprpaths, clobber=overwrite,
             dimkeys=dimkeys, format_kw=infmt,
         )
+
         tmp = io.StringIO()
         config.write(tmp)
         tmp.seek(0, 0)

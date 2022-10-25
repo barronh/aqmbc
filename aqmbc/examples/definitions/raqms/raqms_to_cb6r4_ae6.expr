@@ -3,7 +3,7 @@
 #   iclno3, icly, if11, if12, if1211, if1301, imvk, inoy, ioclo,
 #   ivrp - peroxide?"
 PRESS = pdash[:] * 100.
-PRESS = "Pa"
+PRESS.units = "Pa"
 TEMP = ttheta[:] * (PRESS[:] / 100000.)**(.286)
 TEMP.units = "K"
 AIRMOLDEN = PRESS[:] / 8.3144621 / TEMP

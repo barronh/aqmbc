@@ -11,6 +11,10 @@ if __name__ == '__main__':
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
+        '-t', '--template', default=None, type=str,
+        help='Copy example directory to template'
+    )
+    parser.add_argument(
         'config', nargs='*', default=['run.cfg'],
         help=(
             'Configuraton file or files. Parsed in order according to the'
@@ -23,4 +27,10 @@ Example
 """
 
     args = parser.parse_args()
-    runcfg(args.config)
+    if args.template is not None:
+        import shutil
+        import os
+        srcdir = os.path.join(os.path.dirname(__file__), 'examples')
+        shutil.copytree(srcdir, args.template)
+    else:
+        runcfg(args.config)
