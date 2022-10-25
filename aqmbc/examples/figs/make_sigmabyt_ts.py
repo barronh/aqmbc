@@ -10,12 +10,6 @@ from perim import perimslices
 
 np = plt.np
 
-inpaths = sorted(glob('../combine/*BCON.combine.4LAY.nc'))
-infile = pnc.sci_var.stack_files(
-    [pnc.pncopen(path, format='ioapi') for path in inpaths],
-    'TSTEP'
-)
-lays = np.arange(-.5, infile.NLAYS + 1)
 pcolors = dict(S='#2ca02c', N='#d62728', W='#1f77b4', E='#ff7f0e', L='k')
 
 
@@ -57,7 +51,7 @@ def sigmabyt(plotfile, vark, title, pslices, yscale, outpath):
             snvar = pnvar[:, si]
             sxvar = pxvar[:, si]
             c = pcolors[pk[-1]]
-            lmean, = ax.plot(x, smvar, label=pk, color=c)
+            lmean, = ax.plot(x, smvar, label=pk, color=c, marker='o')
             lmax, = ax.plot(x, sxvar, ls='--', color=c)
             lmin, = ax.plot(x, snvar, ls='--', color=c)
             ax.set_title('')
@@ -91,43 +85,55 @@ def sigmabyt(plotfile, vark, title, pslices, yscale, outpath):
     print(outpath)
     return fig
 
+if __name__ == '__main__':
+    import argparse
 
-pslices = perimslices(infile)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--stem', default='ts/BC_')
+    parser.add_argument('-l', '--levels', default=[1, 0.75, 0.5, 0.25, 0])
+    parser.add_argument('inpaths', nargs='+')
+    args = parser.parse_args()
 
-bslices = OrderedDict()
-aslices = bslices['ALL'] = OrderedDict()
-aslices['ALL'] = slice(None)
-wslices = bslices['W'] = OrderedDict()
-wslices['WN'] = pslices['WN']
-wslices['WS'] = pslices['WS']
-eslices = bslices['E'] = OrderedDict()
-eslices['EN'] = pslices['EN']
-eslices['ES'] = pslices['ES']
-nslices = bslices['N'] = OrderedDict()
-nslices['NW'] = pslices['NW']
-nslices['NE'] = pslices['NE']
-sslices = bslices['S'] = OrderedDict()
-sslices['SW'] = pslices['SW']
-sslices['SE'] = pslices['SE']
+    infiles = [
+        pnc.pncopen(path, format='ioapi').interpSigma(vglvls=args.levels)
+        for path in args.inpaths
+    ]
+    infile = infiles[0].stack(infiles[1:], 'TSTEP')
+    lays = np.arange(-.5, infile.NLAYS + 1)
+    pslices = perimslices(infile)
 
-tslice = slice(None, None, 6)
+    bslices = OrderedDict()
+    aslices = bslices['ALL'] = OrderedDict()
+    aslices['ALL'] = slice(None)
+    wslices = bslices['W'] = OrderedDict()
+    wslices['WN'] = pslices['WN']
+    wslices['WS'] = pslices['WS']
+    eslices = bslices['E'] = OrderedDict()
+    eslices['EN'] = pslices['EN']
+    eslices['ES'] = pslices['ES']
+    nslices = bslices['N'] = OrderedDict()
+    nslices['NW'] = pslices['NW']
+    nslices['NE'] = pslices['NE']
+    sslices = bslices['S'] = OrderedDict()
+    sslices['SW'] = pslices['SW']
+    sslices['SE'] = pslices['SE']
 
-pf = infile.sliceDimensions(TSTEP=tslice)
-pf.TSTEP *= tslice.step
+    tslice = slice(None, None, 1)
 
-for k, bpslices in bslices.items():
-    psigmabyt = partial(
-        sigmabyt,
-        plotfile=pf,
-        title=k,
-        pslices=bpslices,
-    )
-    tmpl = 'ts/BC_{0}_{1}_ts.png'.format
-    psigmabyt(vark='O3PPB', yscale='linear', outpath=tmpl('O3', k))
-    psigmabyt(vark='PMIJ', yscale='log', outpath=tmpl('PMIJ', k))
-    psigmabyt(vark='ASO4IJ', yscale='log', outpath=tmpl('ASO4IJ', k))
-    psigmabyt(vark='ANO3IJ', yscale='log', outpath=tmpl('ANO3IJ', k))
-    psigmabyt(vark='ANAIJ', yscale='log', outpath=tmpl('ANAIJ', k))
-    psigmabyt(vark='NOx', yscale='log', outpath=tmpl('NOx', k))
+    pf = infile.sliceDimensions(TSTEP=tslice)
+    pf.TSTEP *= tslice.step
 
-os.system('date > ts/updated')
+    for k, bpslices in bslices.items():
+        psigmabyt = partial(
+            sigmabyt,
+            plotfile=pf,
+            title=k,
+            pslices=bpslices,
+        )
+        tmpl = (args.stem + '{0}_{1}_ts.png').format
+        psigmabyt(vark='O3', yscale='linear', outpath=tmpl('O3', k))
+        # psigmabyt(vark='PMJ', yscale='log', outpath=tmpl('PMJ', k))
+        psigmabyt(vark='ASO4J', yscale='log', outpath=tmpl('ASO4J', k))
+        psigmabyt(vark='ANO3J', yscale='log', outpath=tmpl('ANO3J', k))
+        psigmabyt(vark='ANAJ', yscale='log', outpath=tmpl('ANAJ', k))
+        psigmabyt(vark='NO2', yscale='log', outpath=tmpl('NO2', k))
