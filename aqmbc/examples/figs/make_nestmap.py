@@ -1,22 +1,26 @@
 import PseudoNetCDF as pnc
-import numpy as np
 import matplotlib.colors as mc
 
 
-GDNAM_CHILD = '12US5' # os.environ['GRID']
+GDNAM_CHILD = '12US5'  # os.environ['GRID']
 GDNAM_PARENT = 'HEMI_187_187'
 
-child = pnc.pncopen('../GRIDDESC', format='griddesc', GDNAM=GDNAM_CHILD, FTYPE=2)
-parent = pnc.pncopen('../GRIDDESC', format='griddesc', GDNAM=GDNAM_PARENT, FTYPE=1)
+child = pnc.pncopen(
+    '../GRIDDESC', format='griddesc', GDNAM=GDNAM_CHILD, FTYPE=2
+)
+parent = pnc.pncopen(
+    '../GRIDDESC', format='griddesc', GDNAM=GDNAM_PARENT, FTYPE=1
+)
 
-bmap = parent.getMap(suppress_ticks=False) # resolution='i', states=True)
+bmap = parent.getMap(suppress_ticks=False)  # resolution='i', states=True)
 xp = parent.variables['x'][1:] - parent.XORIG - parent.XCELL / 2
 yp = parent.variables['y'][1:] - parent.YORIG - parent.YCELL / 2
 Xc, Yc = bmap(
     child.variables['longitude'][:],
     child.variables['latitude'][:]
 )
-c = bmap.scatter(Xc, Yc, c=Yc * 0 + 1.5, cmap='bwr', norm=mc.BoundaryNorm([0, 1, 2], 256), marker='+')
+bnorm = mc.BoundaryNorm([0, 1, 2], 256)
+c = bmap.scatter(Xc, Yc, c=Yc * 0 + 1.5, cmap='bwr', norm=bnorm, marker='+')
 bmap.drawcoastlines()
 bmap.drawcountries()
 bmap.drawstates()

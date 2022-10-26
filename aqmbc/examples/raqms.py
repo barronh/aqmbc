@@ -10,7 +10,9 @@ class raqms(pnc.PseudoNetCDFFile):
         self.variables = f.variables
         for k in f.ncattrs():
             setattr(self, k, f.getncattr(k))
-        self.setCoords(['lat', 'lon', 'lev', 'Times', 'IDATE', 'wlong', 'slat'])
+        self.setCoords(
+            ['lat', 'lon', 'lev', 'Times', 'IDATE', 'wlong', 'slat']
+        )
 
     def ll2ij(self, lon, lat):
         # raqms longitude is on 0-360, while inputs are on -180, 180
@@ -23,7 +25,7 @@ class raqms(pnc.PseudoNetCDFFile):
         if bounds:
             raise NotImplementedError('bounds is not available')
         out = np.array([
-            datetime.strptime(str(ti)+ '+0000', '%Y%m%d%H%z')
+            datetime.strptime(str(ti) + '+0000', '%Y%m%d%H%z')
             for ti in self.variables['IDATE'][:]
         ])
         return out
@@ -69,10 +71,12 @@ class raqms(pnc.PseudoNetCDFFile):
         tmpv = np.zeros(newshape, dtype='f')
         for ti, ri, ci in np.ndindex(*itershape):
             fromvglvls = sigma[ti, :, ri, ci]
-            # sigma2coeff expects vglvls to decrease (i.e., surface to top), but
-            # RAQMS is ordered top-to-surface. So, the vglvls are reversed and
-            # the results are reversed as well.
-            tmpv[ti, :, :, ri, ci] = sigma2coeff(fromvglvls[::-1], vglvls)[::-1]
+            # sigma2coeff expects vglvls to decrease (i.e., surface to top),
+            # but RAQMS is ordered top-to-surface. So, the vglvls are reversed
+            # and the results are reversed as well.
+            tmpv[ti, :, :, ri, ci] = sigma2coeff(
+                fromvglvls[::-1], vglvls
+            )[::-1]
 
         pweight = tmpv[:] * pmid[:, :, None, :, :]
         pnorm = pweight.sum(1)
@@ -84,9 +88,12 @@ class raqms(pnc.PseudoNetCDFFile):
         ]
         outvars = {}
         for key in exprkeys:
-            outvars[key] = (self.variables[key][:][:, :, None, :, :] * pweight).sum(1) / pnorm
-            
+            outvars[key] = (
+                self.variables[key][:][:, :, None, :, :] * pweight
+            ).sum(1) / pnorm
+
         return pnc.PseudoNetCDFFile.from_ncvs(**outvars)
+
 
 if __name__ == '__main__':
     import sys

@@ -1,5 +1,3 @@
-from glob import glob
-import os
 from warnings import warn
 from functools import partial
 
@@ -11,6 +9,7 @@ import PseudoNetCDF as pnc
 from perim import perimslices
 
 np = plt.np
+
 
 def sigmabyt(plotfile, vark, title, norm, ticks, formatter, outpath):
     plt.close()
@@ -54,7 +53,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if len(args.variables) == 0:
         args.variables = ['O3', 'ASO4J', 'ANO3J', 'NO2', 'ANAJ']
-    tslice = slice(None, None, 6) 
+    tslice = slice(None, None, 6)
     infiles = [
             pnc.pncopen(
                 inpath, format='ioapi'
@@ -76,7 +75,9 @@ if __name__ == '__main__':
     sticks = base**np.arange(-5, 1, dtype='f')
     nticks = base**np.arange(-6, 0, dtype='f')
     noxticks = base**np.arange(-6, 0, dtype='f')
-    oticks = np.array([25, 27.5, 30, 32.5, 35, 37.5, 40, 45, 50, 55, 60, 70, 80, 160, 320]) / 1000
+    oticks = np.array(
+        [25, 27.5, 30, 32.5, 35, 37.5, 40, 45, 50, 55, 60, 70, 80, 160, 320]
+    ) / 1000
 
     lnorm = plt.matplotlib.colors.LogNorm(vmin=pticks.min(), vmax=pticks.max())
     snorm = plt.matplotlib.colors.LogNorm(vmin=sticks.min(), vmax=sticks.max())
@@ -102,6 +103,12 @@ if __name__ == '__main__':
         psigmabyt(
             vark='ANO3J', norm=nnorm, ticks=nticks, outpath=tmpl(k, 'ANO3J')
         )
-        psigmabyt(vark='NO2', norm=noxnorm, ticks=noxticks, outpath=tmpl(k, 'NO2'))
-        psigmabyt(vark='ANAJ', norm=nnorm, ticks=nticks, outpath=tmpl(k, 'ANAJ'))
-        # psigmabyt(vark='PMJ', norm=lnorm, ticks=pticks, outpath=tmpl(k, 'PMIJ'))
+        psigmabyt(
+            vark='NO2', norm=noxnorm, ticks=noxticks, outpath=tmpl(k, 'NO2')
+        )
+        psigmabyt(
+            vark='ANAJ', norm=nnorm, ticks=nticks, outpath=tmpl(k, 'ANAJ')
+        )
+        # psigmabyt(
+        #     vark='PMJ', norm=lnorm, ticks=pticks, outpath=tmpl(k, 'PMIJ')
+        # )

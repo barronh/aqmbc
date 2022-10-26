@@ -1,5 +1,3 @@
-from glob import glob
-import os
 from collections import OrderedDict
 from functools import partial
 
@@ -75,7 +73,7 @@ def sigmabyt(plotfile, vark, title, pslices, yscale, outpath):
     )
     fig.legend(
         llines,
-        [l.get_label() for l in llines],
+        [line.get_label() for line in llines],
         ncol=8, loc='upper center', bbox_to_anchor=(0.5, 1)
     )
     for ax in axarr:
@@ -84,6 +82,7 @@ def sigmabyt(plotfile, vark, title, pslices, yscale, outpath):
     fig.savefig(outpath)
     print(outpath)
     return fig
+
 
 if __name__ == '__main__':
     import argparse

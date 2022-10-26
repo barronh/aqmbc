@@ -33,7 +33,10 @@ print()
 
 statdf = pd.DataFrame.from_dict(stats, orient='index')
 statdf.index.names = ['path', 'variable']
-summarydf = statdf.groupby(['variable']).agg(unit=('unit', 'min'), mean=('mean', 'mean'), std=('std', 'mean'), max=('max', 'max'), min=('min', 'min'))
+summarydf = statdf.groupby(['variable']).agg(
+    unit=('unit', 'min'), mean=('mean', 'mean'), std=('std', 'mean'),
+    max=('max', 'max'), min=('min', 'min')
+)
 summarydf['path'] = 'Overall'
 summarydf = summarydf.reset_index().set_index(['path', 'variable'])
 outdf = pd.concat([summarydf, statdf])

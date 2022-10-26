@@ -94,13 +94,13 @@ def kinterp(infile, metaf, vmethod):
     tgt_nlays = tgt_vglvls.size - 1
     src_nlays = metaf.VGLVLS.size - 1
     if tgt_nlays != src_nlays:
-       lvinterp = True
+        lvinterp = True
     elif not (tgt_vglvls == src_vglvls).all():
-       lvinterp = True
+        lvinterp = True
     elif not (tgt_vgtop == src_vgtop).all():
-       lvinterp = True
+        lvinterp = True
     else:
-       lvinterp = False
+        lvinterp = False
 
     if not lvinterp:
         bconvf = infile

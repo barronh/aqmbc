@@ -1,6 +1,4 @@
 import numpy as np
-from glob import glob
-import os
 from functools import partial
 import matplotlib.pyplot as plt
 import PseudoNetCDF as pnc
@@ -26,12 +24,11 @@ def makerowbycol(plotfile, vark, lslice, norm, outpath):
     clabel = '{} ({}; {:.3g}, {:.3g})'.format(
         lname, units, valmin, valmax
     )
-    cbar = fig.colorbar(qm, label=clabel, ax=ax)
+    fig.colorbar(qm, label=clabel, ax=ax)
     ax.set_ylabel('row')
     ax.set_xlabel('col')
     print(outpath)
     plt.savefig(outpath)
-
 
 
 if __name__ == '__main__':
@@ -53,7 +50,15 @@ if __name__ == '__main__':
 
     tmpl = 'rowbycol/IC_L{0:02d}_{1}.png'.format
     for lay in [0, 20, 26]:
-        pmakerc(vark='ANO3J', lslice=lay, norm=lnorm, outpath=tmpl(lay, 'ANO3J'))
-        pmakerc(vark='ASO4J', lslice=lay, norm=lnorm, outpath=tmpl(lay, 'ASO4J'))
-        pmakerc(vark='APOCJ', lslice=lay, norm=lnorm, outpath=tmpl(lay, 'APOCJ'))
-        pmakerc(vark='O3', lslice=lay, norm=onorm, outpath=tmpl(lay, 'O3'))
+        pmakerc(
+            vark='ANO3J', lslice=lay, norm=lnorm, outpath=tmpl(lay, 'ANO3J')
+        )
+        pmakerc(
+            vark='ASO4J', lslice=lay, norm=lnorm, outpath=tmpl(lay, 'ASO4J')
+        )
+        pmakerc(
+            vark='APOCJ', lslice=lay, norm=lnorm, outpath=tmpl(lay, 'APOCJ')
+        )
+        pmakerc(
+            vark='O3', lslice=lay, norm=onorm, outpath=tmpl(lay, 'O3')
+        )

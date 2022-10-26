@@ -1,22 +1,22 @@
 import PseudoNetCDF as pnc
 import numpy as np
 import matplotlib.pyplot as plt
-from glob import glob
 import os
 import gc
 
 norms = dict(
-    O3 = plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
-    O3PPB = plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
-    ANO3IJ = plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
-    ASO4IJ = plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
-    APOCIJ = plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
-    PMIJ = plt.matplotlib.colors.LogNorm(vmin=0.2, vmax=10),
-    ANO3J = plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
-    ASO4J = plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
-    APOCJ = plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
-    default = plt.matplotlib.colors.LogNorm()
+    O3=plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
+    O3PPB=plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
+    ANO3IJ=plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
+    ASO4IJ=plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
+    APOCIJ=plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
+    PMIJ=plt.matplotlib.colors.LogNorm(vmin=0.2, vmax=10),
+    ANO3J=plt.matplotlib.colors.LogNorm(vmin=0.02, vmax=1),
+    ASO4J=plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
+    APOCJ=plt.matplotlib.colors.LogNorm(vmin=0.1, vmax=5),
+    default=plt.matplotlib.colors.LogNorm()
 )
+
 
 def curtain(inpaths, vark, stem):
     inf = pnc.sci_var.stack_files(
@@ -26,12 +26,11 @@ def curtain(inpaths, vark, stem):
         ],
         'TSTEP'
     )
-    times = inf.getTimes()
     pslices = dict()
     sslice = pslices['S'] = slice(0, inf.NCOLS + 1)
     eslice = pslices['E'] = slice(sslice.stop, sslice.stop + inf.NROWS + 1)
     nslice = pslices['N'] = slice(eslice.stop, eslice.stop + inf.NCOLS + 1)
-    wslice = pslices['W'] = slice(nslice.stop, nslice.stop + inf.NROWS + 1)
+    pslices['W'] = slice(nslice.stop, nslice.stop + inf.NROWS + 1)
 
     axorder = dict()
     axorder['W'] = 0
@@ -43,7 +42,6 @@ def curtain(inpaths, vark, stem):
     eta = inf.VGLVLS * (101325 - inf.VGTOP) / 100 + inf.VGTOP / 100
     tf = inf.applyAlongDimensions(TSTEP='mean')
     reprdate = tf.getTimes()[0]
-    yyyy = reprdate.strftime('%Y')
     fig, axarr = plt.subplots(
         1, 4,
         figsize=(16, 4),
@@ -87,6 +85,7 @@ def curtain(inpaths, vark, stem):
 
     del inf
     gc.collect()
+
 
 if __name__ == '__main__':
     import argparse
