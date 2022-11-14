@@ -38,7 +38,7 @@ import glob
 
 paths = (
     sorted(glob.glob('BCON/*2016-01-*.12US1.BCON.nc'))
-    sorted(glob.glob('BCON/*2016-02-01*.12US1.BCON.nc'))
+    + sorted(glob.glob('BCON/*2016-02-01*.12US1.BCON.nc'))
 )
 mf = pnc.pncmfopen(paths, format='ioapi', stackdim='TSTEP')
 mf.save('BCON_2016-01.12US1.BCON.nc')
