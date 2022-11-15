@@ -7,7 +7,15 @@ boundary conditions for an Air Quality Model from one or many data sources.
 
 ## Installation
 
-pip install https://github.com/barronh/aqmbc.git
+```bash
+pip install git+https://github.com/barronh/aqmbc.git
+```
+
+or 
+
+```bash
+pip install https://github.com/barronh/aqmbc/archive/refs/heads/main.zip
+```
 
 ## Example
 
