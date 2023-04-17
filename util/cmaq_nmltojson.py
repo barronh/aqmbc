@@ -52,9 +52,10 @@ for nml in args.nmls:
 
     tmpdata.columns = [k.strip().replace('SPECIES', 'SPC') for k in tmpdata.columns]
     #tmpdata.set_index(['TYPE', 'SPC'], inplace=True)
-    datas.append(tmpdata.filter(
-        ['TYPE', 'SPC', 'MOLWT', 'IC', 'BC', 'TRNS', 'WDEP', 'DDEP', 'CONC']
-    ))
+    datas.append(tmpdata)
+    # .filter(
+    #     ['TYPE', 'SPC', 'MOLWT', 'IC', 'BC', 'TRNS', 'WDEP', 'DDEP', 'CONC']
+    # ))
 
 data = pd.concat(datas)
 
@@ -71,19 +72,31 @@ def check(row, key):
 
 for i, row in data.iterrows():
     spc = row['SPC']
-    props[spc] = OrderedDict(
-        Fullname=spc,
-        Formula=spc,
-        Is_Advected=check(row, 'TRNS'),
-        Is_Aero=row['TYPE'] == 'AE',
-        Is_DryDep=check(row, 'DDEP'),
-        Is_Gas=row['TYPE'] == 'GC',
-        Is_HygroGrowth=None,
-        Is_Photolysis=None,
-        Is_WetDep=check(row, 'WDEP'),
-        MW_g=row['MOLWT'],
-        EmMW_g=row['MOLWT'],
-        MolecRatio=1.0000
-    )
+    isaero = row['TYPE'] == 'AE'
+    if isaero:
+        suffixes = []
+        if check(row, 'Aitken'):
+            suffixes.append('I')
+        if check(row, 'Accum'):
+            suffixes.append('J')
+        if check(row, 'Coarse'):
+            suffixes.append('K')
+    else:
+        suffixes = ['']
+    for suffix in suffixes:
+        props[f'{spc}{suffix}'] = OrderedDict(
+            Fullname=f'{spc}{suffix}',
+            Formula=spc,
+            Is_Advected=check(row, 'TRNS'),
+            Is_Aero=row['TYPE'] == 'AE',
+            Is_DryDep=check(row, 'DDEP'),
+            Is_Gas=row['TYPE'] == 'GC',
+            Is_HygroGrowth=None,
+            Is_Photolysis=None,
+            Is_WetDep=check(row, 'WDEP'),
+            MW_g=row['MOLWT'],
+            EmMW_g=row['MOLWT'],
+            MolecRatio=1.0000
+        )
 
 json.dump(props, open(args.outpath, 'w'), indent=4)
