@@ -30,8 +30,8 @@ def wndw(varfile, metaf, dimkeys, tslice):
     jmin, jmax = j.min(), j.max()
     dni = imax - imin
     dnj = jmax - jmin
-    sni = varfile.dimensions[dimkeys['COL']]
-    snj = varfile.dimensions[dimkeys['ROW']]
+    sni = len(varfile.dimensions[dimkeys['COL']])
+    snj = len(varfile.dimensions[dimkeys['ROW']])
     ifrac = dni / sni
     jfrac = dnj / snj
     speedup = (ifrac < 0.5 or jfrac < 0.5)
