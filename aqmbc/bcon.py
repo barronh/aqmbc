@@ -28,7 +28,14 @@ def wndw(varfile, metaf, dimkeys, tslice):
     # purely for speed
     imin, imax = i.min(), i.max()
     jmin, jmax = j.min(), j.max()
-    if max(imin, jmin) > 10:
+    dni = imax - imin
+    dnj = jmax - jmin
+    sni = varfile.dimensions[dimkeys['COL']]
+    snj = varfile.dimensions[dimkeys['ROW']]
+    ifrac = dni / sni
+    jfrac = dnj / snj
+    speedup = (ifrac < 0.5 or jfrac < 0.5)
+    if speedup:
         # purely for speed, window the file
         print('window', flush=True)
         cslice = slice(imin, imax + 1)
@@ -187,7 +194,15 @@ def bc(
     wndwf, i, j = wndw(varfile, metaf, dimkeys, tslice)
 
     try:
-        inij = np.prod(wndwf.variables['O3'].shape[2:])
+        checkk = [
+            k for k, v in wndwf.variables.items()
+            if (
+                k not in wndwf.dimensions
+                and k != 'TFLAG'
+                and len(v.shape) == 4
+            )
+        ][0]
+        inij = np.prod(wndwf.variables[checkk].shape[2:])
         outij = metaf.variables['latitude'].size
         kfirst = inij < outij
     except Exception as e:

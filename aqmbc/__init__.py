@@ -14,7 +14,7 @@ __doc__ = """
 Code for making CMAQ-ready boundary condition files
 """
 
-__version__ = '0.3'
+__version__ = '0.3.3'
 
 
 def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
@@ -124,8 +124,8 @@ def runcfg(cfgobjs, cfgtype='path', warningfilter='ignore', dryrun=False):
     idates = pd.to_datetime(json.loads(config.get('ICON', 'dates')))
     tslice = 0
     for idate in idates:
-        inpath = bdate.strftime(intmpl)
-        outpath = bdate.strftime(ictmpl)
+        inpath = idate.strftime(intmpl)
+        outpath = idate.strftime(ictmpl)
         outdir = os.path.dirname(outpath)
         os.makedirs(outdir, exist_ok=True)
         opts = dict(
