@@ -1,10 +1,11 @@
 import PseudoNetCDF as pnc
 from symtable import symtable
 import json
+import yaml
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--spcprefix', default='', help='Prefix in file (e.g., SpeciesConc_')
+parser.add_argument('--spcprefix', default='SpeciesBC_', help='Prefix in file (e.g., SpeciesConc_')
 parser.add_argument('inpath')
 parser.add_argument('fromjson')
 parser.add_argument('tojson')
@@ -26,13 +27,14 @@ args = parser.parse_args()
 
 f = pnc.pncopen(args.inpath)
 
-fromspcs = json.load(open(args.fromjson, 'r'))
+#fromspcs = json.load(open(args.fromjson, 'r'))
+fromspcs = yaml.load(open(args.fromjson, 'r'))
 tospcs = json.load(open(args.tojson, 'r'))
 exprstr = '\n'.join([open(exprpath, 'r').read() for exprpath in args.exprpaths])
 
-noadvspc = [k for k, v in fromspcs.items() if not v['Is_Advected']]
-gcspc = [k for k, v in fromspcs.items() if not v['Is_Aero'] and v['Is_Advected']]
-aespc = [k for k, v in fromspcs.items() if v['Is_Aero'] and v['Is_Advected']]
+noadvspc = [k for k, v in fromspcs.items() if not v.get('Is_Advected', False)]
+gcspc = [k for k, v in fromspcs.items() if not v.get('Is_Aerosol', False) and v.get('Is_Advected', False)]
+aespc = [k for k, v in fromspcs.items() if v.get('Is_Aerosol', False) and v.get('Is_Advected', False)]
 
 spc = gcspc
 prefix = args.spcprefix
@@ -59,4 +61,4 @@ print('\nUsed in Definition and Available, but not an Advected species')
 print('\n'.join([k for k in used if k in noadvspc]))
 
 print('\nAvail Not Used')
-print('\n'.join(usable))
+print('\n'.join([k + ': ' + fromspcs[k].get('FullName', k) + ' (' + fromspcs[k].get('Formula', '') + ')' for k in usable]))
