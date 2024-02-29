@@ -28,7 +28,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires=["pyproj", "PseudoNetCDF"],
+    install_requires=["pyproj", "PseudoNetCDF", "netcdf4", "xarray", "pandas"],
     include_package_data=True,
     zip_safe=False,
 )

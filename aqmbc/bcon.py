@@ -4,7 +4,7 @@ import PseudoNetCDF as pnc
 import functools
 
 
-def wndw(varfile, metaf, dimkeys, tslice):
+def wndw(varfile, metaf, dimkeys, tslice, speedup=None):
     """
     Arguments
     ---------
@@ -34,7 +34,8 @@ def wndw(varfile, metaf, dimkeys, tslice):
     snj = len(varfile.dimensions[dimkeys['ROW']])
     ifrac = dni / sni
     jfrac = dnj / snj
-    speedup = (ifrac < 0.5 or jfrac < 0.5)
+    if speedup is None:
+        speedup = (ifrac < 0.5 or jfrac < 0.5)
     if speedup:
         # purely for speed, window the file
         print('window', flush=True)
@@ -148,7 +149,7 @@ def translate(infile, exprpaths):
 def bc(
     inpath, outpath, metaf,
     tslice=None, vmethod='conserve', exprpaths=None, clobber=False,
-    dimkeys=None, format_kw=None, history=''
+    dimkeys=None, format_kw=None, history='', speedup=None
 ):
     """
     Arguments
@@ -160,6 +161,7 @@ def bc(
     vmethod : method to use for vertical interpolation
     exprpaths : text files with species translations
     clobber : overwrite existing files
+    speedup : slice file to load into memory. More mem, but faster
 
     Returns
     -------
@@ -191,7 +193,7 @@ def bc(
     # For debug speed, subset variables
     varfile = infile  # .subsetVariables(['O3']) # for testing
 
-    wndwf, i, j = wndw(varfile, metaf, dimkeys, tslice)
+    wndwf, i, j = wndw(varfile, metaf, dimkeys, tslice, speedup=speedup)
 
     try:
         checkk = [
@@ -229,10 +231,10 @@ def bc(
             open(exprpath, 'r').read() for exprpath in exprpaths
         ])
         outf.FILEDESC = (
-            'Boundary conditions from ' +
-            '{}\nwith definitions {}:'.format(inpath, exprpaths) +
-            '\n{}'.format(exprstr)
-        )
+            'Boundary conditions from '
+            + '{}\nwith definitions {}:'.format(inpath, exprpaths)
+        )[:60*80]
+        outf.description = exprstr
 
     fhistory = getattr(outf, 'HISTORY', '')
     history = fhistory + history
@@ -244,6 +246,8 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys):
     """
     Parameters
     ----------
+    inf : netcdf-like file
+        Must support getTimes method
     outf : netcdf-like file
         file for output
     metaf : netcdf-like file
@@ -293,8 +297,8 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys):
 
     props['NVARS'] = len(outkeys)
     props['VAR-LIST'] = ''.join([k.ljust(16) for k in outkeys])
-    props['HISTORY'] = outf.HISTORY
-    props['FILEDESC'] = outf.FILEDESC
+    props['HISTORY'] = outf.HISTORY[:60*80]
+    props['FILEDESC'] = outf.FILEDESC[:60*80]
     outf.setncatts(props)
     if 'VAR' not in outf.dimensions:
         outf.createDimension('VAR', props['NVARS'])
