@@ -1,0 +1,80 @@
+# Converts GEOS-CF to CMAQ
+# Expects variables from three files
+# met_tavg_1hr_g1440x721_v36
+# chm_tavg_1hr_g1440x721_v36
+# xgc_tavg_1hr_g1440x721_v36
+# all from https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim/
+# author: Barron H. Henderson
+ACET = acet * 1e6 # moles carbon or moles?
+ACET.units = 'ppmV'
+ALD2 = ald2 * 1e6
+ALD2.units = 'ppmV'
+PAR = alk4 * 1e6 * 4 # moles carbon or moles?
+PAR.units = 'ppmV'
+BRO = bro * 1e6
+BRO.units = 'ppmV'
+ETHA = c2h6 * 1e6
+ETHA.units = 'ppmV'
+PRPA = c3h8 * 1e6
+PRPA.units = 'ppmV'
+CH4 = ch4 * 1e6
+CH4.units = 'ppmV'
+CLO = clo * 1e6
+CLO.units = 'ppmV'
+CO = co * 1e6
+CO.units = 'ppmV'
+# H2O = h2o * 1e6
+# H2O.units = 'ppmV'
+H2O2 = h2o2 * 1e6
+H2O2.units = 'ppmV'
+FORM = hcho * 1e6
+FORM.units = 'ppmV'
+HONO = hno2 * 1e6
+HONO.units = 'ppmV'
+HNO3 = hno3 * 1e6
+HNO3.units = 'ppmV'
+PNA = hno4 * 1e6
+PNA.units = 'ppmV'
+CL = cl * 1e6
+CL.units = 'ppmV'
+CL2 = cl2 * 1e6
+CL2.units = 'ppmV'
+HCL = hcl * 1e6
+HCL.units = 'ppmV'
+PPN = (npmn + ipmn + ppn) * 1e6
+PPN.units = 'ppmV'
+NTR1 = r4n1 * 1e6
+NTR1.units = 'ppmV'
+NTR2 = r4n2 * 1e6
+NTR2.units = 'ppmV'
+HO2 = ho2_mmr * 28.9628 / 33.01 * 1e6
+HO2.units = 'ppmV'
+IO = io * 1e6
+IO.units = 'ppmV'
+ISOP = isop * 1e6
+ISOP.units = 'ppmV'
+MEK = mek * 1e6
+MEK.units = 'ppmV'
+N2O5 = n2o5 * 1e6
+N2O5.units = 'ppmV'
+NH3 = nh3 * 1e6
+NH3.units = 'ppmV'
+NO = no * 1e6
+NO.units = 'ppmV'
+NO2 = no2 * 1e6
+NO2.units = 'ppmV'
+NOY = noy * 1e6
+NOY.units = 'ppmV'
+O3 = o3 * 1e6
+O3.units = 'ppmV'
+OH = oh_mmr * 28.9628 / 17.007 * 1e6
+OH.units = 'ppmV'
+PAN = pan * 1e6
+PAN.units = 'ppmV'
+# Consider adding PANX as 10% of PAN. (needs citation)
+OLE = prpe * 1e6
+OLE.units = 'ppmV'
+ALDX = rcho * 1e6
+ALDX.units = 'ppmV'
+SO2 = so2 * 1e6# delp lay coordinate is top down, so it must be inverted
+SO2.units = 'ppmV'

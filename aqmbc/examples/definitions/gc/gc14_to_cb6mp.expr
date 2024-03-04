@@ -1,4 +1,4 @@
-# Source: GEOS-Chem v12.7 NetCDF output
+# Source: GEOS-Chem v14 NetCDF output
 # Destination: CMAQ v5.2-v5.3.1 cb6mp
 CARBONTET = (SpeciesBC_CCl4[:]) * 1e6
 CARBONTET.units = "ppmV"

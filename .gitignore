@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# netCDF
+*.nc
+*.nc4
+
 # Distribution / packaging
 .Python
 build/
@@ -21,6 +25,7 @@ sdist/
 var/
 wheels/
 temp/
+./examples/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -65,7 +70,9 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+doc/_build/
+doc/auto_examples/
+doc/sg_execution_times.rst
 
 # PyBuilder
 target/

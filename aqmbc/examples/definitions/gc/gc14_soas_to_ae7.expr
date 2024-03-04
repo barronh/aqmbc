@@ -1,5 +1,5 @@
-# Source: GEOS-Chem v11-v12 Simple SOA NetCDF output
-# Destination: CMAQ v5.2.1 cb6r3_ae6_aq nvPOA
+# Source: GEOS-Chem v14 Simple SOA NetCDF output
+# Destination: CMAQ v5.2.1 cb6r5_ae7_aq
 # author: Barron H. Henderson
 # contributors: Ben Murphy, Havala Pye
 AALJ = (0.05695 * SpeciesBC_DST1[:] * 0.029) * AIRMOLDEN * 1e9

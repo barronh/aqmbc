@@ -1,0 +1,20 @@
+# Converts GEOS-CF to CMAQ
+# Expects variables from three files
+# met_tavg_1hr_g1440x721_v36
+# chm_tavg_1hr_g1440x721_v36
+# xgc_tavg_1hr_g1440x721_v36
+# all from https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim/
+# author: Barron H. Henderson
+PRES = (ps - np.cumsum(delp[:, ::-1], axis=1)[:, ::-1] + delp / 2)
+PRES.units = 'hPa'
+DENS = airdens * (1 - q) # Dry air density has the water removed
+DENS.units = 'kg/m**3'
+AIRMOLDENS = DENS / 0.0289628
+AIRMOLDENS.units = 'n/m**3'
+O3 = o3 * 1e6
+O3.units = 'ppmV'
+ASO4I = (0.01 * so4[:] * 0.096) * airdens / 0.0289628 * 1e9
+ASO4I.units = 'micrograms/m**3'
+# simplified for example only
+ASO4J = (0.99 * so4[:] * 0.096) * airdens / 0.0289628 * 1e9
+ASO4J.units = 'micrograms/m**3'

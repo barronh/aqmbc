@@ -4,7 +4,7 @@ import PseudoNetCDF as pnc
 import functools
 
 
-def wndw(varfile, metaf, dimkeys, tslice, speedup=None):
+def wndw(varfile, metaf, dimkeys, tslice, speedup=None, verbose=1):
     """
     Arguments
     ---------
@@ -20,7 +20,7 @@ def wndw(varfile, metaf, dimkeys, tslice, speedup=None):
     lon = metaf.variables['longitude']
     lat = metaf.variables['latitude']
 
-    i, j = varfile.ll2ij(lon.ravel(), lat.ravel())
+    i, j = varfile.ll2ij(lon.ravel(), lat.ravel(), bounds='warn', clean='clip')
     i = i.reshape(lon.shape)
     j = j.reshape(lat.shape)
 
@@ -38,19 +38,21 @@ def wndw(varfile, metaf, dimkeys, tslice, speedup=None):
         speedup = (ifrac < 0.5 or jfrac < 0.5)
     if speedup:
         # purely for speed, window the file
-        print('window', flush=True)
+        if verbose > 0:
+            print('window', flush=True)
         cslice = slice(imin, imax + 1)
         rslice = slice(jmin, jmax + 1)
         slices = {dimkeys['COL']: cslice, dimkeys['ROW']: rslice}
         if tslice is not None:
             slices[dimkeys['TSTEP']] = tslice
-        wndwf = varfile.sliceDimensions(verbose=1, **slices)
+        wndwf = varfile.slice(verbose=verbose, **slices)
         iwndw = i - imin
         jwndw = j - jmin
     else:
         if tslice is not None:
-            print('window', flush=True)
-            wndwf = varfile.sliceDimensions(**{dimkeys['TSTEP']: tslice})
+            if verbose > 0:
+                print('window', flush=True)
+            wndwf = varfile.slice(**{dimkeys['TSTEP']: tslice})
         else:
             wndwf = varfile
         iwndw = i
@@ -59,7 +61,7 @@ def wndw(varfile, metaf, dimkeys, tslice, speedup=None):
     return wndwf, iwndw, jwndw
 
 
-def ijslice(infile, metaf, i, j, dimkeys):
+def ijslice(infile, metaf, i, j, dimkeys, verbose=1):
     """
     Arguments
     ---------
@@ -70,19 +72,19 @@ def ijslice(infile, metaf, i, j, dimkeys):
     -------
     bconf : file at metaf
     """
-    print('slice', flush=True)
+    if verbose > 0:
+        print('slice', flush=True)
     if 'ROW' in metaf.dimensions:
         dims = ('ROW', 'COL')
     else:
         dims = ('PERIM',)
 
     wslice = {dimkeys['COL']: i, dimkeys['ROW']: j}
-    bconf = infile.sliceDimensions(**wslice,
-                                   newdims=dims, verbose=1)
+    bconf = infile.slice(**wslice, newdims=dims, verbose=verbose)
     return bconf
 
 
-def kinterp(infile, metaf, vmethod):
+def kinterp(infile, metaf, vmethod, verbose=1):
     """
     Arguments
     ---------
@@ -113,16 +115,17 @@ def kinterp(infile, metaf, vmethod):
     if not lvinterp:
         bconvf = infile
     else:
-        print('vint', flush=True)
+        if verbose > 0:
+            print('vint', flush=True)
         bconvf = infile.interpSigma(vglvls=metaf.VGLVLS, vgtop=metaf.VGTOP,
-                                    verbose=1, interptype=vmethod)
+                                    verbose=verbose, interptype=vmethod)
         if not hasattr(bconvf, 'VGTYP'):
             bconvf.VGTYP = metaf.VGTYP
 
     return bconvf
 
 
-def translate(infile, exprpaths):
+def translate(infile, exprpaths, verbose=1):
     """
     Arguments
     ---------
@@ -137,7 +140,8 @@ def translate(infile, exprpaths):
     if len(exprpaths) == 0:
         outf = infile
     else:
-        print('translate', flush=True)
+        if verbose > 0:
+            print('translate', flush=True)
         exprstr = ''.join([
             open(exprpath, 'r').read() for exprpath in exprpaths
         ])
@@ -149,7 +153,7 @@ def translate(infile, exprpaths):
 def bc(
     inpath, outpath, metaf,
     tslice=None, vmethod='conserve', exprpaths=None, clobber=False,
-    dimkeys=None, format_kw=None, history='', speedup=None
+    dimkeys=None, format_kw=None, history='', speedup=None, verbose=1
 ):
     """
     Arguments
@@ -186,14 +190,19 @@ def bc(
     if not clobber and os.path.exists(outpath):
         print('Using cached', outpath, '...')
         return
-    print('Converting', inpath, 'to', outpath)
-    print('open', flush=True)
+    if verbose > 0:
+        print('Converting', inpath, 'to', outpath)
+    if verbose > 0:
+        print('open', flush=True)
     infile = pnc.pncopen(inpath, **format_kw)
 
     # For debug speed, subset variables
     varfile = infile  # .subsetVariables(['O3']) # for testing
 
-    wndwf, i, j = wndw(varfile, metaf, dimkeys, tslice, speedup=speedup)
+    wndwf, i, j = wndw(
+        varfile, metaf, dimkeys, tslice,
+        speedup=speedup, verbose=verbose
+    )
 
     try:
         checkk = [
@@ -211,9 +220,15 @@ def bc(
         print(str(e), 'vertical interp first')
         kfirst = True
 
-    easyk = functools.partial(kinterp, metaf=metaf, vmethod=vmethod)
-    easyij = functools.partial(ijslice, metaf=metaf, i=i, j=j, dimkeys=dimkeys)
-    easyx = functools.partial(translate, exprpaths=exprpaths)
+    easyk = functools.partial(
+        kinterp, metaf=metaf, vmethod=vmethod, verbose=verbose
+    )
+    easyij = functools.partial(
+        ijslice, metaf=metaf, i=i, j=j, dimkeys=dimkeys, verbose=verbose
+    )
+    easyx = functools.partial(
+        translate, exprpaths=exprpaths, verbose=verbose
+    )
 
     if kfirst:
         funcs = [easyk, easyij, easyx]
@@ -239,10 +254,10 @@ def bc(
     fhistory = getattr(outf, 'HISTORY', '')
     history = fhistory + history
     setattr(outf, 'HISTORY', history)
-    return saveioapi(wndwf, outf, outpath, metaf, dimkeys)
+    return saveioapi(wndwf, outf, outpath, metaf, dimkeys, verbose=verbose)
 
 
-def saveioapi(inf, outf, outpath, metaf, dimkeys):
+def saveioapi(inf, outf, outpath, metaf, dimkeys, verbose=1):
     """
     Parameters
     ----------
@@ -331,7 +346,8 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys):
     outf.SDATE = int(time[0].strftime('%Y%j'))
     outf.STIME = int(time[0].strftime('%H%M%S'))
     # Save to outpath
-    print('save', flush=True)
+    if verbose > 0:
+        print('save', flush=True)
 
     gigs = (
         np.prod([len(outf.dimensions[dk]) for dk in outdims]) *
@@ -342,9 +358,12 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys):
     else:
         outformat = 'NETCDF3_CLASSIC'
 
-    out = outf.save(outpath, format=outformat, verbose=0, outmode='w')
+    wverbose = max(verbose - 1, 0)
+    out = outf.save(outpath, format=outformat, verbose=wverbose, outmode='w')
 
-    print('done', flush=True)
+    if verbose > 0:
+        print('done', flush=True)
+
     return out
 
 

@@ -1,4 +1,4 @@
-__all__ = ['bc', 'runcfg', 'cmaq', 'report']
+__all__ = ['bc', 'runcfg', 'exprlib', 'options', 'cmaq', 'report', 'models']
 
 import os
 import io
@@ -8,6 +8,11 @@ import numpy as np
 import warnings
 import configparser
 from .bcon import bc
+from . import exprlib
+from . import options
+from . import report
+from . import cmaq
+from . import models
 
 
 __doc__ = """

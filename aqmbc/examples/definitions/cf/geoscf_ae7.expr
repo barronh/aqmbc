@@ -1,0 +1,127 @@
+# Converts GEOS-CF to CMAQ
+# Expects variables from three files
+# met_tavg_1hr_g1440x721_v36
+# chm_tavg_1hr_g1440x721_v36
+# xgc_tavg_1hr_g1440x721_v36
+# all from https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim/
+# author: Barron H. Henderson
+AALJ = (0.05695 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AALJ.units = 'micrograms/m**3'
+ACAJ = (0.0118 * sala[:] * 0.0314 + 0.0794 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ACAJ.units = 'micrograms/m**3'
+ACLJ = (0.00945 * dst1[:] * 0.029 + 0.5538 * sala[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ACLJ.units = 'micrograms/m**3'
+ACLK = (0.0119 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029) + 0.5538 * salc[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ACLK.units = 'micrograms/m**3'
+AECJ = (0.999 * (bcpi[:] * 0.012 + bcpo[:] * 0.012)) * airdens / 0.0289628 * 1e9
+AECJ.units = 'micrograms/m**3'
+AECI = AECJ[:] / 999
+AECI.units = 'micrograms/m**3'
+AFEJ = (0.03355 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AFEJ.units = 'micrograms/m**3'
+# splitting gly and mgly between cloud and noncloud using 50:50
+# not currently avaiable
+# AGLYJ = 0.5 * (soagx[:] * 0.058 + soamg[:] * 0.072) * airdens / 0.0289628 * 1e9
+# AORGCJ = AGLYJ[:] * 1
+# All ISOPRENE species map elsewhere
+# ISO1 and ISO2 are not directly used.
+# ISN1OG is too volatile to be in the SVISO2
+# not currently avaiable
+# AISO2J = (ionita[:] * 0.014 + indiol[:] * 0.102 + isn1oa[:] * 0.226) * airdens / 0.0289628 * 1e9
+# Ignoring IMAE vapors
+# not currently avaiable
+# SVISO3 = (imae[:]) * 1e6
+# not currently avaiable
+# AISO3J = (soaie[:] * 0.118 + soame[:] * 0.102 + lvocoa[:] * 0.154) * airdens / 0.0289628 * 1e9
+AKJ = (0.0114 * sala[:] * 0.0314 + 0.0377 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AKJ.units = 'micrograms/m**3'
+APOCI = (0.001 * (ocpi[:] + ocpo[:]) * 0.012) * airdens / 0.0289628 * 1e9
+APOCI.units = 'micrograms/m**3'
+APOCJ = (0.999 * (ocpi[:] + ocpo[:]) * 0.012 + 0.5 * 0.01075 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+APOCJ.units = 'micrograms/m**3'
+APNCOMI = 0.4 * APOCI[:]
+APNCOMI.units = 'micrograms/m**3'
+APNCOMJ = 0.4 * APOCJ[:]
+APNCOMJ.units = 'micrograms/m**3'
+AMGJ = (0.0368 * sala[:] * 0.0314) * airdens / 0.0289628 * 1e9
+AMGJ.units = 'micrograms/m**3'
+AMNJ = (0.00115 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AMNJ.units = 'micrograms/m**3'
+ANAJ = (0.3086 * sala[:] * 0.0314 + 0.03935 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ANAJ.units = 'micrograms/m**3'
+ANH4I = (0.01 * nh4[:] * 0.018) * airdens / 0.0289628 * 1e9
+ANH4I.units = 'micrograms/m**3'
+ANH4J = (0.00005 * dst1[:] * 0.029 + 0.99 * nh4[:] * 0.018) * airdens / 0.0289628 * 1e9
+ANH4J.units = 'micrograms/m**3'
+ANO3I = (0.01 * nit[:] * 0.062) * airdens / 0.0289628 * 1e9
+ANO3I.units = 'micrograms/m**3'
+ANO3J = (0.00020 * dst1[:] * 0.029 + 0.99 * nit[:] * 0.062) * airdens / 0.0289628 * 1e9
+ANO3J.units = 'micrograms/m**3'
+ANO3K = (0.0016 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029) + nits[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ANO3K.units = 'micrograms/m**3'
+AOTHRJ = (0.50219 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AOTHRJ.units = 'micrograms/m**3'
+ASEACAT = (0.3685 * salc[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ASEACAT.units = 'micrograms/m**3'
+ASIJ = (0.19435 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ASIJ.units = 'micrograms/m**3'
+ASO4I = (0.01 * so4[:] * 0.096) * airdens / 0.0289628 * 1e9
+ASO4I.units = 'micrograms/m**3'
+ASO4J = (0.99 * so4[:] * 0.096 + msa[:] * 0.096 + 0.0225 * dst1[:] * 0.029 + 0.0776 * sala[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ASO4J.units = 'micrograms/m**3'
+ASO4K = (0.0776 * salc[:] * 0.0314 + 0.02655 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029) + so4s[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ASO4K.units = 'micrograms/m**3'
+ASOIL = (0.95995 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029)) * airdens / 0.0289628 * 1e9
+ASOIL.units = 'micrograms/m**3'
+ATIJ = (0.0028 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ATIJ.units = 'micrograms/m**3'
+AISO2I = 0.15 * (isoa1[:] + isoa2[:] + isoa3[:]) * airdens / 0.0289628 * 1e9 * 0.01
+AISO2I.units = 'micrograms/m**3'
+AISO2J = 0.15 * (isoa1[:] + isoa2[:] + isoa3[:]) * airdens / 0.0289628 * 1e9 * 0.99
+AISO2J.units = 'micrograms/m**3'
+# SQT 1:10 of total terpenes similar to Lee, D'Ambro et al Fig 2
+# not currently avaialble
+# SVSQT = 0.09 * (tsog0[:] + tsog1[:] + tsog2[:] + tsog3[:]) * 1e6
+# SVSQT.units = 'ppmV'
+# ASQTJ = 0.09 * (tsoa0[:] * 0.15 + tsoa1[:] * 0.15 + tsoa2[:] * 0.15 + tsoa3[:] * 0.15) * airdens / 0.0289628 * 1e9
+# ASQTJ.units = 'ppmV'
+# SVMT1 = 0.61 * (tsog0[:]) * 1e6
+# SVMT1.units = 'ppmV'
+AMT1J = 0.61 * (tsoa0[:] * 0.15) * airdens / 0.0289628 * 1e9
+AMT1J.units = 'micrograms/m**3'
+# SVMT2 = 0.3 * (tsog0[:]) * 1e6
+# SVMT2.units = 'ppmV'
+AMT2J = 0.3 * (tsoa0[:] * 0.15) * airdens / 0.0289628 * 1e9
+AMT2J.units = 'micrograms/m**3'
+# SVMT3 = 0.91 * (tsog1[:]) * 1e6
+# SVMT3.units = 'ppmV'
+AMT3J = 0.91 * (tsoa1[:] * 0.15) * airdens / 0.0289628 * 1e9
+AMT3J.units = 'micrograms/m**3'
+# SVMT4 = 0.91 * (tsog2[:]) * 1e6
+# SVMT4.units = 'ppmV'
+AMT4J = 0.91 * (tsoa2[:] * 0.15) * airdens / 0.0289628 * 1e9
+AMT4J.units = 'micrograms/m**3'
+# SVMT5 = 0.91 * (tsog3[:]) * 1e6
+# SVMT5.units = 'ppmV'
+AMT5J = 0.91 * (tsoa3[:] * 0.15) * airdens / 0.0289628 * 1e9
+AMT5J.units = 'micrograms/m**3'
+# SVMT6 = 0.0 * (tsog3[:]) * 1e6
+# SVMT6.units = 'ppmV'
+AMT6J = 0.00 * (tsoa3[:] * 0.15) * airdens / 0.0289628 * 1e9
+AMT6J.units = 'micrograms/m**3'
+# AMTNO3J = (monita[:] * 0.014) * airdens / 0.0289628 * 1e9
+# AMTNO3J.units = 'micrograms/m**3'
+AAVB1J = (asoan[:] * 0.15) * airdens / 0.0289628 * 1e9
+AAVB1J.units = 'micrograms/m**3'
+# SVAVB2 = (asog1[:]) * 1e6
+# SVAVB2.units = 'ppmV'
+AAVB2J = (asoa1[:] * 0.15) * airdens / 0.0289628 * 1e9
+AAVB2J.units = 'micrograms/m**3'
+# SVAVB3 = (asog2[:]) * 1e6
+# SVAVB3.units = 'ppmV'
+AAVB3J = (asoa2[:] * 0.15) * airdens / 0.0289628 * 1e9
+AAVB3J.units = 'micrograms/m**3'
+# SVAVB4 = (asog3[:]) * 1e6
+# SVAVB4.units = 'ppmV'
+AAVB4J = (asoa3[:] * 0.15) * airdens / 0.0289628 * 1e9
+AAVB4J.units = 'micrograms/m**3'

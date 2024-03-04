@@ -1,7 +1,42 @@
 __all__ = ['cmaqready']
 
 
-def cmaqready(date, inpaths, outpath=None):
+def timeindependent(ncf):
+    """
+    Edit SDATE, STIME, TSTEP and TFLAG values to 0. IOAPI reads this as time
+    independent.
+
+    Arguments
+    ---------
+    ncf : netcdf file
+        Must be editable
+
+    Returns
+    -------
+    None
+    """
+    tflag = ncf['TFLAG']
+    if tflag.shape[0] > 1:
+        raise ValueError('Files with 2+ times cannot be time-independent')
+    ncf['TFLAG'][:] = 0
+    ncf.SDATE = tflag[0, 0, 0]
+    ncf.STIME = tflag[0, 0, 0]
+    ncf.TSTEP = tflag[0, 0, 0]
+
+
+def batch_timeindependent(inpaths, verbose=0):
+    """Apply timeindependent to many files on disk"""
+    import netCDF4 as nc
+    if isinstance(inpaths, str):
+        inpaths = [inpaths]
+    for inpath in inpaths:
+        if verbose:
+            print(inpath)
+        ncf = nc.Dataset(inpath, mode='r+')
+        timeindependent(ncf)
+
+
+def cmaqready(date, inpaths, outpath=None, verbose=0):
     """
     Concatenate inpaths on time and then interpolate to 25h instantaneous
     times for CMAQ. Also trims FILEDESC and HISTORY if they are too long.
@@ -15,6 +50,9 @@ def cmaqready(date, inpaths, outpath=None):
     outpath : str or None
         If None, return the file.
         Otherwise, write it out and return the path
+    verbose : int
+        Level of verbosity
+
     Returns
     -------
     outpath : str or dataset

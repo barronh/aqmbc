@@ -14,3 +14,9 @@ TEMP.setncatts(dict(units="K", long_name='Temperature'))
 AIRMOLDEN = PRES * 100 / 8.3144621 / TEMP
 AIRMOLDEN.units ="mole/m3"
 del stdp, stdt, refv
+O3 = (SpeciesConc_O3[:]) * 1e6
+O3.units = "ppmV"
+ASO4I = (0.01 * SpeciesConc_SO4[:] * 0.096) * AIRMOLDEN * 1e9
+ASO4I.units = "micrograms/m**3"
+ASO4J = (0.99 * SpeciesConc_SO4[:] * 0.096) * AIRMOLDEN * 1e9
+ASO4J.units = "micrograms/m**3"
