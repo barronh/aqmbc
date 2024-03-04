@@ -1,12 +1,17 @@
 aqmbc Modify Examples
 =====================
 
-The process of testing and then updating the examples is described in detail below. I use the GEOS-Chem Benchmark as an example. In this example, I assume a new grid called OTHER that is defined in a GRIDDESC in the users home directory. I also provide syntax for both shell (bash or csh) and IPython/Jupyter.
+The process of testing and then updating the examples is described in detail below. I use the GEOS-Chem Benchmark as an example. This describes the entire process for modifying an example. Where a command is executed, it will be shown in shell (bash or csh) and IPython/Jupyter.
 
 #. Install software (requires python3):
 
-   * shell `pip install --user -qq git+https://github.com/barronh/aqmbc.git`
-   * notebook `%pip install --user -qq git+https://github.com/barronh/aqmbc.git`
+   .. code-block:: bash
+
+       pip install --user -qq git+https://github.com/barronh/aqmbc.git
+
+   .. code-block:: ipython
+
+       %pip install --user -qq git+https://github.com/barronh/aqmbc.git
 
 #. Download the gcbc_example.py from the Examples site
 
@@ -16,14 +21,19 @@ The process of testing and then updating the examples is described in detail bel
 
 #. Run gcbc_example.py with no edits.
 
-   * shell `python gcbc_example.py`
-   * notebook `%run gcbc_example.py`
+   .. code-block:: bash
+
+       python gcbc_example.py
+
+   .. code-block:: ipython
+
+       %run gcbc_example.py
 
 #. Edit gcbc_example.py
 
    *  Change domain definition.
 
-     * Change `gdnam='12US1'` to `gdnam='OTHER'` (name must exist in ~/GRIDDESC)
+     * Change `gdnam='12US1'` to `gdnam='OTHER'` (*name must exist in ~/GRIDDESC*)
 
      * Add keyword `gdpath=os.path.expanduser('~/GRIDDESC')`
 
@@ -63,5 +73,11 @@ The process of testing and then updating the examples is described in detail bel
 
 #. Rerun gcbc_example.py
 
-   * shell `python gcbc_example.py`
-   * notebook `%run gcbc_example.py`
+   .. code-block:: bash
+
+       python gcbc_example.py
+
+   .. code-block:: ipython
+
+       %run gcbc_example.py
+

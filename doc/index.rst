@@ -55,5 +55,6 @@ Quick Links
    self
    auto_examples/index
    modifyexamples
+   configexample
    api/aqmbc
    api/modules
