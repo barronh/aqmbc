@@ -60,4 +60,3 @@ sphinx_gallery_conf = {
     ]),
 }
 
-source_suffix = {".ipynb": None, ".py": None}
