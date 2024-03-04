@@ -1,5 +1,5 @@
-aqmbc Example Applications
-==========================
+aqmbc Examples
+==============
 
 Each of the examples below uses a minimum working example. Each example was first tested on the original files from the source model. Afterwards, the input files were subset to make the inputs easy to distribute.
 

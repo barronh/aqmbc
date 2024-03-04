@@ -5,6 +5,10 @@ Air Quality Model Boundary Condition Tools
 Air Quality Model Boundary Conditions is a tool to create time and space
 boundary conditions for an Air Quality Model from one or many data sources.
 
+## Documentation
+
+https://barronh.github.io/aqmbc
+
 ## Installation
 
 ```bash

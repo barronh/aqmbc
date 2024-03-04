@@ -17,7 +17,7 @@ Getting Started
 ---------------
 
 The best way to get started is to install (see below) and then explore the
-examples gallery.
+:doc:`auto_examples/index`.
 
 
 Installation
