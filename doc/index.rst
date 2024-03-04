@@ -44,7 +44,6 @@ Quick Links
 -----------
 
 * :doc:`auto_examples/index`
-* :doc:`aqmbc`
 * :doc:`api/aqmbc`
 
 
@@ -55,4 +54,6 @@ Quick Links
 
    self
    auto_examples/index
+   modifyexamples
    api/aqmbc
+   api/modules

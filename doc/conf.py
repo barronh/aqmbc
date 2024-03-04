@@ -5,6 +5,7 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+from sphinx_gallery.sorting import ExplicitOrder
 
 project = 'aqmbc'
 copyright = '2024, Barron H. Henderson'
@@ -52,4 +53,11 @@ html_static_path = ['_static']
 sphinx_gallery_conf = {
      'examples_dirs': '../examples',   # path to your example scripts
      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+     'subsection_order': ExplicitOrder([
+            '../examples/gcbc_example.py',
+            '../examples/hcmaq_example.py',
+            '../examples/geoscf_example.py',
+    ]),
 }
+
+source_suffix = {".ipynb": None, ".py": None}
