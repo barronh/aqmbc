@@ -17,6 +17,7 @@ class raqms(pnc.PseudoNetCDFFile):
         )
 
     def ll2ij(self, lon, lat):
+        import numpy as np
         # raqms longitude is on 0-360, while inputs are on -180, 180
         i = self.val2idx('lon', lon % 360)
         j = self.val2idx('lat', lat)

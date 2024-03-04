@@ -45,6 +45,8 @@ Quick Links
 
 * :doc:`auto_examples/index`
 * :doc:`aqmbc`
+* :doc:`api/aqmbc`
+
 
 .. toctree::
    :maxdepth: 2
@@ -53,3 +55,4 @@ Quick Links
 
    self
    auto_examples/index
+   api/aqmbc

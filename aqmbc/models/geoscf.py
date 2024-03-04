@@ -40,7 +40,7 @@ def tryandtime(tmpf, label, verbose=1):
     if verbose > 0:
         msg = f'{label} {dt:.0f}s'
         if ntries > 1:
-             msg = f'{msg} ({ntries} tries)'
+            msg = f'{msg} ({ntries} tries)'
         print(msg)
 
     return dt

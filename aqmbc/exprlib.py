@@ -46,7 +46,6 @@ def exprpaths(filenames, prefix=''):
     ----
     Use avail to find all available expression full paths.
     """
-    from warnings import warn
     from os.path import exists
 
     paths = tuple([join(defnpath, prefix, fname) for fname in filenames])

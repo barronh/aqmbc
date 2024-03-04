@@ -20,7 +20,21 @@ with open('../aqmbc/__init__.py', 'r') as initf:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.githubpages',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.viewcode',
+    'IPython.sphinxext.ipython_directive',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'matplotlib.sphinxext.plot_directive',
+    'sphinx_copybutton',
+    'sphinx_design',
+    'sphinx_rtd_theme',
+    'myst_nb',
     'sphinx_gallery.gen_gallery',
+    'sphinx.ext.napoleon',
 ]
 
 templates_path = ['_templates']
