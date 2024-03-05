@@ -18,7 +18,8 @@ vglvls = {
 }
 
 dims = {
-    'gc': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'}
+    'gc': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'},
+    'raqms': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'}
 }
 
 

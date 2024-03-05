@@ -1,0 +1,16 @@
+# Unused species:
+#   bro, ibrcl, ibrno3, ibry, ich3br, ihobr, ihbr, in2o, ihcn, ich3cn,
+#   iclno3, icly, if11, if12, if1211, if1301, imvk, inoy, ioclo,
+#   ivrp - peroxide?"
+PRES = pdash[:] * 100.
+PRES.units = "Pa"
+TEMP = ttheta[:] * (PRES[:] / 100000.)**(.286)
+TEMP.units = "K"
+AIRMOLDEN = PRES[:] / 8.3144621 / TEMP
+AIRMOLDEN.units = "moles/m**3"
+O3 = o3vmr[:] * 1e6
+O3.units = "ppmV" 
+ASO4J = 0.99 * iso4aer[:] * 96. * 1e6 * AIRMOLDEN
+ASO4J.units = "micrograms/m**3" 
+ASO4I = 0.01 * iso4aer[:] * 96. * 1e6 * AIRMOLDEN
+ASO4I.units = "micrograms/m**3" 

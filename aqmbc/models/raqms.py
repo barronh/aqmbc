@@ -1,4 +1,57 @@
+__all__ = ['download', 'raqms']
 import PseudoNetCDF as pnc
+
+
+def download(dates, root=None):
+    """
+    Convenience function for downloading. If root url change
+
+    dates : list
+        Dates to download
+    root : str
+        Root path where RAQMS files are available for downloading.
+        If None, defaults to https://bin.ssec.wisc.edu/pub/raqms/ESRL/RAQMS/
+        If the root path has changed, provide a new value here and raise an
+        issue at  https://github.com/barronh/aqmbc/issues
+
+    Returns
+    -------
+    paths : list
+        List of paths that were downloaded
+    """
+    import pandas as pd
+    import requests
+    from os.path import basename, join, exists
+
+    if root is None:
+        root = 'https://bin.ssec.wisc.edu/pub/raqms/ESRL/RAQMS/'
+
+    destpaths = []
+    for date in pd.to_datetime(dates):
+        url = date.strftime(f'{root}/uwhyb_%m_%d_%Y_%HZ.chem.assim.nc')
+        dest = join('RAQMS', basename(url))
+        if not exists(dest):
+            with requests.get(url, stream=True) as r:
+                total_size = int(r.headers.get("content-length", 0))
+                if total_size == 0:
+                    total_size = 1024**3
+                print('total_size (MB):', total_size / 1024**2)
+                print('Each . represents 1/80th')
+                block_size = 1024 * 1024
+                r_size = 0
+                r.raise_for_status()
+                with open(dest, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=block_size):
+                        f.write(chunk)
+                        r_size += len(chunk)
+                        print(f'\r{int(r_size / total_size * 80)*"."}', end='')
+                    print()
+        else:
+            print(f'Using cached {dest}')
+
+        destpaths.append(dest)
+
+    return destpaths
 
 
 class raqms(pnc.PseudoNetCDFFile):
@@ -16,7 +69,7 @@ class raqms(pnc.PseudoNetCDFFile):
             ['lat', 'lon', 'lev', 'Times', 'IDATE', 'wlong', 'slat']
         )
 
-    def ll2ij(self, lon, lat):
+    def ll2ij(self, lon, lat, bounds='warn', clean='clip'):
         import numpy as np
         # raqms longitude is on 0-360, while inputs are on -180, 180
         i = self.val2idx('lon', lon % 360)
@@ -74,7 +127,7 @@ class raqms(pnc.PseudoNetCDFFile):
         from PseudoNetCDF.coordutil import sigma2coeff
         import numpy as np
 
-        psfc = self.variables['psfc'][:][:, None, :, :] * 100
+        psfc = self.variables['psfc'][:][:, None, ...] * 100
         delp = self.variables['delp'][:] * 100
         pmid = self.variables['pdash'][:] * 100
         ptop = psfc - delp.sum(1)
@@ -84,27 +137,48 @@ class raqms(pnc.PseudoNetCDFFile):
         itershape = [newshape[0]] + newshape[3:]
         sigma = (pedges - vgtop) / (psfc - vgtop)
         tmpv = np.zeros(newshape, dtype='f')
-        for ti, ri, ci in np.ndindex(*itershape):
-            fromvglvls = sigma[ti, :, ri, ci]
+        for idx in np.ndindex(*itershape):
+            srcidx = (idx[0], slice(None)) + tuple(idx[1:])
+            destidx = (idx[0], slice(None), slice(None)) + tuple(idx[1:])
+            fromvglvls = sigma[srcidx]
             # sigma2coeff expects vglvls to decrease (i.e., surface to top),
             # but RAQMS is ordered top-to-surface. So, the vglvls are reversed
             # and the results are reversed as well.
-            tmpv[ti, :, :, ri, ci] = sigma2coeff(
+            tmpv[destidx] = sigma2coeff(
                 fromvglvls[::-1], vglvls
             )[::-1]
 
-        pweight = tmpv[:] * pmid[:, :, None, :, :]
+        pweight = tmpv[:] * pmid[:, :, None, ...]
         pnorm = pweight.sum(1)
-        outdims = ('time', 'lev', 'lat', 'lon')
         exprkeys = [
             key
             for key, var in self.variables.items()
-            if var.dimensions == outdims
+            if var.dimensions[:2] == ('time', 'lev')
         ]
         outvars = {}
         for key in exprkeys:
             outvars[key] = (
-                self.variables[key][:][:, :, None, :, :] * pweight
+                self.variables[key][:][:, :, None, ...] * pweight
             ).sum(1) / pnorm
 
-        return pnc.PseudoNetCDFFile.from_ncvs(**outvars)
+        outf = pnc.PseudoNetCDFFile.from_ncvs(**outvars)
+
+        for pk in self.ncattrs():
+            outf.setncattr(pk, self.getncattr(pk))
+
+        for key, dim in self.dimensions.items():
+            if key not in outf.dimensions:
+                outf.copyDimension(dim, key=key)
+
+        for key, var in self.variables.items():
+            if key not in exprkeys and key not in self.dimensions:
+                outf.copyVariable(var, key=key)
+
+        for vk, ov in self.variables.items():
+            if vk in outf.variables:
+                outf.variables[vk].setncatts({
+                    k: ov.getncattr(k) for k in ov.ncattrs()
+                })
+        outf.VGLVLS = vglvls
+        outf.VGTOP = vgtop
+        return outf
