@@ -25,7 +25,12 @@ sdist/
 var/
 wheels/
 temp/
-./examples/
+#examples/
+examples/12US1
+examples/tempdef
+examples/OutputDir
+examples/OutputDir.tar.gz
+examples/*.csv
 *.egg-info/
 .installed.cfg
 *.egg

@@ -1,9 +1,28 @@
 # aqmbc
 
-Air Quality Model Boundary Condition Tools
+Air Quality Model Boundary Condition (aqmbc) Tools
 
 Air Quality Model Boundary Conditions is a tool to create time and space
 boundary conditions for an Air Quality Model from one or many data sources.
+
+`aqmbc` is a python tool to make boundary conditions for CMAQ.
+
+The key value of `aqmbc` is to provide a single interface to multiple models.
+This makes maintaining a system easy to acheive and hopefully easy to use.
+
+Currently, aqmbc supports:
+
+* GEOS-Chem v12 and v14
+* CMAQ (Hemispheric or Regional)
+* NASA GMAO's GEOS-CF
+* RAQMS
+
+To do:
+
+* aqmbc would like to support WACCM, AM4, and CAMS
+* A future version will allow for explicit output of CAMx readable boundary
+  conditions. For now, use the cmaq2camx tools to convert these files.
+
 
 ## Documentation
 

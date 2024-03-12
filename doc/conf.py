@@ -5,8 +5,7 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-from sphinx_gallery.sorting import ExplicitOrder
-
+from sphinx_gallery.sorting import ExplicitOrder, FileNameSortKey
 project = 'aqmbc'
 copyright = '2024, Barron H. Henderson'
 author = 'Barron H. Henderson'
@@ -50,13 +49,27 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 # -- Options for Gallery --
+class MyOrder:
+    def __init__(self, src_dir):
+        self.src_dir = src_dir
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}>"
+
+    def __call__(self, filename):
+        i = {
+            'gcbc_example.py': 0,
+            'hcmaq_example.py': 1,
+            'geoscf_example.py': 2,
+            'raqms_example.py': 3,
+        }.get(filename, 4)
+        result = (i, filename)
+        print(result)
+        return result
+
 sphinx_gallery_conf = {
      'examples_dirs': '../examples',   # path to your example scripts
      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
-     'subsection_order': ExplicitOrder([
-            '../examples/gcbc_example.py',
-            '../examples/hcmaq_example.py',
-            '../examples/geoscf_example.py',
-    ]),
+     'within_subsection_order': MyOrder
 }
 

@@ -4,12 +4,10 @@ GEOS-CF LBC for CMAQ
 
 This example shows how to use aqmbc with GEOS-CF's publicly available OpenDAP.
 
-* Download from NASA GMAO (only if not available).
+* Download from NASA GMAO (if not available in %Y/%m/%d folder).
 * Define translation.
 * Extract and translate.
-* Display figures and statistics.
-
-Time-independence allows files to be used in CMAQ with multiple dates in the same month, or as a climatology for other years."""
+* Display figures and statistics."""
 
 import PseudoNetCDF as pnc
 from os.path import basename, join

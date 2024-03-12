@@ -7,5 +7,14 @@ Each of the examples below uses a minimum working example. Each example was firs
 * lon/lat was subset to just conver the continental US, and
 * the grid was thinned to 3x3 (corners and midpoints).
 
-Feel free to skip ahead and run the examples. The :doc:`../modifyexamples` section describes in detail how to update an example for a real application.
+The examples assume that you have installed aqmbc:
+
+.. code-block::
+
+    pip install git+https://github.com/barronh/aqmbc.git
+
+
+After that, you can copy or download the code to run it.
+
+When you are comfortable running the examples, read the :doc:`../modifyexamples` section. That describes in detail how to update an example for real-world application. If something is unclear, feel free to open an `issue <https://github.com/barronh/aqmbc/issues>`_. 
 

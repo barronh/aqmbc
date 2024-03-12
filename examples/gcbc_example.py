@@ -4,7 +4,7 @@ GEOS-Chem Benchmark LBC for CMAQ
 
 This example shows how to use aqmbc with GEOS-Chem's publicly available benchmark outputs.
 
-* Dowload from Harvard (only if missing).
+* Dowload from Harvard (if not previously downloaded).
 * Define translations.
 * Extract, translate, and add time-independence metadata.
 * Display figures and statistics.
@@ -31,6 +31,7 @@ inpaths = [
     'OutputDir/GEOSChem.SpeciesConc.20190701_0000z.nc4',
 ]
 if any([not exists(p) for p in inpaths]):
+    # Download 7G tar file
     rurl = 'http://ftp.as.harvard.edu/gcgrid/geos-chem/1yr_benchmarks/'
     url = f'{rurl}/14.0.0-rc.0/GCClassic/FullChem/OutputDir.tar.gz'
     dest = basename(url)
@@ -43,6 +44,7 @@ if any([not exists(p) for p in inpaths]):
     else:
         print('Using cached OutputDir.tar.gz')
 
+    # Unzip only files that will be used.
     tf = tarfile.open(dest)
     for memb in tf.getmembers():
         if memb.path in inpaths:

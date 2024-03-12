@@ -4,12 +4,10 @@ RAQMS LBC for CMAQ
 
 This example shows how to use aqmbc with RAQMS's publicly available forecasts.
 
-* Download from RAQMS (only if not available).
+* Download from RAQMS (only if not available in RAQMS folder).
 * Define translation.
 * Extract and translate.
-* Display figures and statistics.
-
-Time-independence allows files to be used in CMAQ with multiple dates in the same month, or as a climatology for other years."""
+* Display figures and statistics."""
 
 import PseudoNetCDF as pnc
 from os.path import basename, join
@@ -25,12 +23,12 @@ import glob
 gdnam = '12US1'
 
 # %%
-# Download from GMAO OpenDAP
-# --------------------------
+# Download from RAQMS via HTTP
+# ----------------------------
 
-dates = ['2024-03-06T12:00']
-# Typical downloading takes ~4 minutes per hour of source data
-# For the tutorial, we only download 'O3' to make it fast.
+todayat12z = pd.to_datetime('now', utc=True).floor('1d') + pd.to_timedelta('12h')
+dates = [todayat12z]
+
 aqmbc.models.raqms.download(dates)
 
 # %%
