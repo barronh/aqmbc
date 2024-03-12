@@ -22,6 +22,7 @@ def download(dates, root=None):
     import pandas as pd
     import requests
     from os.path import basename, join, exists
+    from os import makedirs
 
     if root is None:
         root = 'https://bin.ssec.wisc.edu/pub/raqms/ESRL/RAQMS/'
@@ -31,6 +32,7 @@ def download(dates, root=None):
         url = date.strftime(f'{root}/uwhyb_%m_%d_%Y_%HZ.chem.assim.nc')
         dest = join('RAQMS', basename(url))
         if not exists(dest):
+            makedirs('RAQMS', exist_ok=True)
             with requests.get(url, stream=True) as r:
                 total_size = int(r.headers.get("content-length", 0))
                 if total_size == 0:
