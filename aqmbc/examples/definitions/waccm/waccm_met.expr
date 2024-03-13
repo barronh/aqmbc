@@ -1,0 +1,17 @@
+# Converts GEOS-CF to CMAQ
+# Expects variables from three files
+# met_tavg_1hr_g1440x721_v36
+# chm_tavg_1hr_g1440x721_v36
+# xgc_tavg_1hr_g1440x721_v36
+# all from https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim/
+# author: Barron H. Henderson
+ZH = Z3 # geopotential meters above sea level
+ZH.units = 'masl'
+# DRYMOLDENS = M_dens [molec/cm3] * N_A**-1 [mol/molec] * 1e6 [cm3/m3] * [kg/kg] = [mol/m3]
+DRYMOLDENS = M_dens / 6.0221367e23 * 1e6 * (1 - Q)
+DRYMOLDENS.units = 'mol/m**3'
+# C_i = x_i [mol/mol] * DRYMOLDENS [mol/m3] * Mw_i [kg/mol] * 1e9 [micrograms/kg] [=] kg/m3
+# DRYMASSDENS = DRYMOLDENS [mol/m3] *  Mw [kg/mol] [=] kg/m3
+DRYMASSDENS = DRYMOLDENS * 0.0289628
+DRYMASSDENS.units = 'kg/m**3'
+# C_i = x_i [kg/kg] * DRYMASSDENS [kg/m3] * 1e9 [micrograms/kg] [=] kg/m3

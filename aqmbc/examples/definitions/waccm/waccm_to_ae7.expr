@@ -1,0 +1,35 @@
+ASO4I = (0.30208 * so4_a2) * DRYMASSDENS *  1e9
+ASO4I.units = "micrograms/m**3"
+ASO4J = (0.30208 * so4_a1) * DRYMASSDENS *  1e9
+ASO4J.units = "micrograms/m**3"
+ANH4J = (1.61111 * NH4) * DRYMOLDENS
+ANH4J.units = "micrograms/m**3"
+print('SOA is currently not used; update definitions waccm_to_ae7.expr')
+# SOA3 and SOA4 need to be translated to ae7
+# These are from the CAMx definition currently
+# Documented at https://wiki.ucar.edu/display/camchem/Aerosols
+# SOA based on Hodzic https://acp.copernicus.org/articles/16/7917/2016/
+# Adjusted in Tilmes https://agupubs.onlinelibrary.wiley.com/doi/epdf/10.1029/2019MS001827
+# Hodzic Table 1 shows the VBS yield at high and low NOx
+#    SOA1,SOA2,SOA3,SOA4,SOA5
+# C*=0.01, 0.1,   1,  10, 100 [=] micrograms/m**3 at 300K
+#    xSOA3,xSOA4 SOA3/SOA4 are biogenic
+# C*=   26, 0.45
+
+# So, then do we match these SOAs to the Ben's?
+# xSOA3 = (0.22308 * soa3_a1 + 0.22308 * soa3_a2 + 0.22308 * soa4_a1 + 0.22308 * soa4_a2 + 0.22308 * soa5_a1 + 0.22308 * soa5_a2) * DRYMASSDENS *  1e9
+# xSOA3.units = "micrograms/m**3"
+# xSOA4 = (0.22308 * soa1_a1 + 0.22308 * soa1_a2 + 0.22308 * soa2_a1 + 0.22308 * soa2_a2) * DRYMASSDENS *  1e9
+# xSOA4.units = "micrograms/m**3"
+AOCJ = (0.13182 * pom_a1 + 0.13182 * pom_a4) * DRYMASSDENS *  1e9
+AOCJ.units = "micrograms/m**3"
+AECJ = (0.29 * bc_a1 + 0.29 * bc_a4) * DRYMASSDENS *  1e9
+AECJ.units = "micrograms/m**3"
+ASOIL = (0.29 * dst_a1 + 0.29 * dst_a2) * DRYMASSDENS *  1e9
+ASOIL.units = "micrograms/m**3"
+ACORS = (0.29 * dst_a3) * DRYMASSDENS *  1e9
+ACORS.units = "micrograms/m**3"
+ANAJ = (1.26087 * ncl_a1 + 1.26087 * ncl_a2) * DRYMASSDENS *  1e9
+ANAJ.units = "micrograms/m**3"
+ACLJ = (0.82857 * ncl_a1 + 0.82857 * ncl_a2) * DRYMASSDENS *  1e9
+ACLJ.units = "micrograms/m**3"
