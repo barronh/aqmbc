@@ -1,0 +1,8 @@
+ANH4J = aerosol_nh4[:] * 1e9
+ANH4J.units = 'micrograms/m**3'
+ANO3J = aerosol_no3[:] * 1e9
+ANO3J.units = 'micrograms/m**3'
+ASO4I = aerosol_so4[:] * 1e9 * 0.01
+ASO4I.units = 'micrograms/m**3'
+ASO4J = aerosol_so4[:] * 1e9 * 0.99
+ASO4J.units = 'micrograms/m**3'

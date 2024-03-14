@@ -1,0 +1,16 @@
+O3 = o3[:] / 1e3
+O3.units = 'ppmV'
+NO2 = no2[:] / 1e6
+NO2.units = 'ppmV'
+NO = no[:] / 1e3
+NO.units = 'ppmV'
+HNO3 = hno3[:] / 1e6
+HNO3.units = 'ppmV'
+SO2 = so2[:] / 1e6
+SO2.units = 'ppmV'
+CO = co[:] / 1e3
+CO.units = 'ppmV'
+CH2O = ch2o[:] / 1e3
+CH2O.units = 'ppmV'
+PAN = pan[:] / 1e3
+PAN.units = 'ppmV'

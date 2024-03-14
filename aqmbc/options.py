@@ -19,7 +19,9 @@ vglvls = {
 
 dims = {
     'gc': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'},
-    'raqms': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'}
+    'raqms': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'},
+    'waccm': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'},
+    'tcr': {'TSTEP': 'time', 'LAY': 'lev', 'ROW': 'lat', 'COL': 'lon'},
 }
 
 
