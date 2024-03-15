@@ -126,7 +126,8 @@ class raqms(pnc.PseudoNetCDFFile):
         When extrapolate is false, the edge values are used for points beyond
         the inputs.
         """
-        from PseudoNetCDF.coordutil import sigma2coeff
+        from PseudoNetCDF.coordutil import sigma2coeff as sigma2coeff_con
+        from .util import sigma2coeff_lin
         import numpy as np
 
         psfc = self.variables['psfc'][:][:, None, ...] * 100
@@ -139,6 +140,13 @@ class raqms(pnc.PseudoNetCDFFile):
         itershape = [newshape[0]] + newshape[3:]
         sigma = (pedges - vgtop) / (psfc - vgtop)
         tmpv = np.zeros(newshape, dtype='f')
+        if interptype not in ('linear', 'conserve'):
+            print(f'Unknown interptype {interptype}; default to linear')
+            interptype = 'linear'
+        if interptype == 'linear':
+            sigma2coeff = sigma2coeff_lin
+        else:
+            sigma2coeff = sigma2coeff_con
         for idx in np.ndindex(*itershape):
             srcidx = (idx[0], slice(None)) + tuple(idx[1:])
             destidx = (idx[0], slice(None), slice(None)) + tuple(idx[1:])

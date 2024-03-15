@@ -30,7 +30,7 @@ aqmbc.exprlib.avail('tcr')
 # %%
 
 exprpaths = aqmbc.exprlib.exprpaths([
-    'tcr_o3so4.expr'
+    'tcr_cb6.expr', 'tcr_ae7.expr'
 ], prefix='tcr')
 
 # For "real" VGLVLS use
@@ -45,7 +45,7 @@ history = f'From {inpath}'
 outf = aqmbc.bc(
     inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
     dimkeys=dims, format_kw={'format': 'tcr'}, history=history,
-    clobber=True, verbose=0
+    clobber=True, verbose=9
 )
 
 # %%
@@ -53,16 +53,17 @@ outf = aqmbc.bc(
 # ----------------------
 
 import xarray as xr
-bconf = pnc.pncopen(outpath, format='ioapi')
+import netCDF4
+import pandas as pd
+
+tflag = (outf['TFLAG'][:, 0, :].astype('l') * np.array([1000000, 1])).sum(1)
+time = pd.to_datetime(tflag, format='%Y%j%H%M%S')
 vprof = xr.Dataset(
     data_vars={
         k: (v.dimensions, v[:], {pk: v.getncattr(pk) for pk in v.ncattrs()})
-        for k, v in bconf.variables.items()
+        for k, v in outf.variables.items()
     },
-    coords={
-        'TSTEP': [t.replace(tzinfo=None) for t in bconf.getTimes()],
-        'LAY': (bconf.VGLVLS[:-1] + bconf.VGLVLS[1:]) / 2
-    }
+    coords={'TSTEP': time, 'LAY': (outf.VGLVLS[:-1] + outf.VGLVLS[1:]) / 2}
 ).mean('PERIM',keep_attrs=True)
 statdf = aqmbc.report.getstats([outpath])
 sumdf = aqmbc.report.summarize(statdf)
@@ -94,7 +95,7 @@ for ti, t in enumerate(v2.TSTEP):
 axx[1].legend()
 axx[0].set(
     xscale='log', xlabel='{long_name} [{units}]'.format(**v1.attrs),
-    xlim=(None, 100), ylabel='VGLVLS [$(p - p_t) / (p_s - p_t)$]', ylim=(1, 0))
+    xlim=(None, 2000), ylabel='VGLVLS [$(p - p_t) / (p_s - p_t)$]', ylim=(1, 0))
 axx[1].set(xscale='log', xlabel='{long_name} [{units}]'.format(**v2.attrs))
 fig.suptitle('TCR Boundary Conditions for CMAQ')
 fig.savefig('tcr_profiles.png')

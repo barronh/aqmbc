@@ -99,7 +99,7 @@ def download_window(
     for t in dates:
         tv = mf.time.sel(time=t, method='nearest').values
         stime = pd.to_datetime(tv).to_pydatetime()
-        outdir = f'{gdnam}/{stime:%Y/%m/%d}'
+        outdir = f'GEOSCF/{gdnam}/{stime:%Y/%m/%d}'
         pathsuf = f'{stime:%Y-%m-%dT%H%M}Z.nc'
         outpath = f'{outdir}/geoscf_mcx_tavg_1hr_g1440x721_v36_{pathsuf}'
         if os.path.exists(outpath):
@@ -193,7 +193,8 @@ class geoscf(pnc.PseudoNetCDFFile):
         When extrapolate is false, the edge values are used for points beyond
         the inputs.
         """
-        from PseudoNetCDF.coordutil import sigma2coeff
+        from PseudoNetCDF.coordutil import sigma2coeff as sigma2coeff_con
+        from .util import sigma2coeff_lin
         import numpy as np
 
         psfc = self.variables['ps'][:][:, None, ...]
@@ -208,6 +209,14 @@ class geoscf(pnc.PseudoNetCDFFile):
         newshape.insert(2, nzout)
         itershape = [newshape[0]] + newshape[3:]
         sigma = (pedges - vgtop) / (psfc - vgtop)
+        if interptype not in ('linear', 'conserve'):
+            print(f'Unknown interptype {interptype}; default to linear')
+            interptype = 'linear'
+        if interptype == 'linear':
+            sigma2coeff = sigma2coeff_lin
+        else:
+            sigma2coeff = sigma2coeff_con
+
         tmpv = np.zeros(newshape, dtype='f')
         for idx in np.ndindex(*itershape):
             srcidx = (idx[0], slice(None)) + tuple(idx[1:])

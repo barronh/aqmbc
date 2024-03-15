@@ -1,16 +1,20 @@
-__all__ = ['download', 'raqms']
+__all__ = ['download', 'tcr']
 import PseudoNetCDF as pnc
+import warnings
 
 
-def download(dates, root=None):
+def download(dates, freq='mon', root=None):
     """
     Convenience function for downloading. If root url change
 
     dates : list
         Dates to download
+    freq : str
+        mon or 6hr
     root : str
-        Root path where RAQMS files are available for downloading.
-        If None, defaults to https://bin.ssec.wisc.edu/pub/raqms/ESRL/RAQMS/
+        Root path where TROPESS Composition Reanalysis (TCR) files are
+        available for downloading.
+        If None, defaults to https://tropess.gesdisc.eosdis.nasa.gov/data/
         If the root path has changed, provide a new value here and raise an
         issue at  https://github.com/barronh/aqmbc/issues
 
@@ -19,7 +23,64 @@ def download(dates, root=None):
     paths : list
         List of paths that were downloaded
     """
-    raise ImplementationError('Not implemented')
+    import pandas as pd
+    import requests
+    from os.path import basename, join, exists
+    from os import makedirs
+
+    if root is None:
+        root = 'https://tropess.gesdisc.eosdis.nasa.gov/data/'
+    years = sorted(set([d.year for d in pd.to_datetime(dates)]))
+    frequ = freq.upper()
+    freql = freq.lower()
+    freqs = {'6HR': '6H', 'MON': 'M'}[frequ]
+    ft = '_VERTCONCS/TRPSCR'
+    st = '3D.1/TROPESS_reanalysis_'
+
+    destpaths = []
+    for year in years:
+        varpaths = [
+            f"TCR2_{frequ}_METFIELDS/TRPSCRT{freqs}{st}{freql}_t_{year}.nc",
+            f"TCR2_{frequ}_METFIELDS/TRPSCRQ{freqs}{st}{freql}_q_{year}.nc",
+            f"TCR2_{frequ}{ft}CO{freqs}{st}{freql}_co_{year}.nc",
+            f"TCR2_{frequ}{ft}O3{freqs}{st}{freql}_o3_{year}.nc",
+            f"TCR2_{frequ}{ft}NO{freqs}{st}{freql}_no_{year}.nc",
+            f"TCR2_{frequ}{ft}NO2{freqs}{st}{freql}_no2_{year}.nc",
+            f"TCR2_{frequ}{ft}HNO3{freqs}{st}{freql}_hno3_{year}.nc",
+            f"TCR2_{frequ}{ft}SO2{freqs}{st}{freql}_so2_{year}.nc",
+            f"TCR2_{frequ}{ft}CH2O{freqs}{st}{freql}_ch2o_{year}.nc",
+            f"TCR2_{frequ}{ft}PAN{freqs}{st}{freql}_pan_{year}.nc",
+            f"TCR2_{frequ}{ft}AERNO3{freqs}{st}{freql}_aero_no3_{year}.nc",
+            f"TCR2_{frequ}{ft}AERNH4{freqs}{st}{freql}_aero_nh4_{year}.nc",
+            f"TCR2_{frequ}{ft}AERSO4{freqs}{st}{freql}_aero_so4_{year}.nc",
+        ]
+        for varpath in varpaths:
+            url = f'{root}/{varpath}'
+            dest = join('TCR', basename(url))
+            if not exists(dest):
+                makedirs('TCR', exist_ok=True)
+                with requests.get(url, stream=True) as r:
+                    ts = int(r.headers.get("content-length", 0))
+                    if ts == 0:
+                        ts = 1024**3
+                    print('total_size (MB):', ts / 1024**2)
+                    print('Each . represents 1/80th')
+                    block_size = 1024 * 1024
+                    rs = 0
+                    r.raise_for_status()
+                    with open(dest, 'wb') as f:
+                        for chunk in r.iter_content(chunk_size=block_size):
+                            f.write(chunk)
+                            rs += len(chunk)
+                            print(f'\r{int(rs / ts * 80)*"."}', end='')
+                        print()
+            else:
+                print(f'Using cached {dest}')
+
+        destpaths.append(dest)
+
+    return destpaths
+
 
 class tcr(pnc.PseudoNetCDFFile):
     def __init__(self, *args, **kwds):
@@ -33,7 +94,7 @@ class tcr(pnc.PseudoNetCDFFile):
         The files will be read in and combined for your convenience. The
         standard ll2ij, getTimes, and interpSigma function have been defined
         to be TCR meta-data aware.
-        
+
         Example
         -------
 
@@ -61,9 +122,12 @@ class tcr(pnc.PseudoNetCDFFile):
         f = tcr('test.txt')
         print(sorted(f.variables))
 
-        # ['aerosol_nh3', 'aerosol_no3', 'aerosol_so4', 'co', 'hno3', 'lat', 'lat_bnds', 'lev', 'lon', 'lon_bnds', 'no', 'no2', 'o3', 'q', 't', 'time', 'time_bnds']
+        # ['aerosol_nh3', 'aerosol_no3', 'aerosol_so4', 'co', 'hno3', 'lat',
+        #  'lat_bnds', 'lev', 'lon', 'lon_bnds', 'no', 'no2', 'o3', 'q', 't',
+        #  'time', 'time_bnds']
         """
         import os
+        import netCDF4
         inpath = args[0]
         if isinstance(inpath, str):
             inpath = open(inpath, 'r')
@@ -80,16 +144,19 @@ class tcr(pnc.PseudoNetCDFFile):
             if not os.path.exists(path):
                 print(f'Warning: not found {path}')
                 continue
-            f = self._fs[path] = pnc.pncopen(path)
+            f = self._fs[path] = netCDF4.Dataset(path)
             self.dimensions.update(f.dimensions)
-            vardict = {k: v for k, v in f.variables.items() if not k.endswith('_bnds')}
+            vardict = {
+                k: v for k, v in f.variables.items()
+                if not k.endswith('_bnds')
+            }
             if 'aerosol' in vardict:
                 var = vardict.pop('aerosol')
                 aerokey = var.long_name.split(' ')[1].lower()
                 vardict['aerosol_' + aerokey] = var
                 if kwds.get('verbose', 0):
                     print(f'Renamed aerosol to aerosol_{aerokey}')
-                
+
             self.variables.update(vardict)
 
         for k in f.ncattrs():
@@ -97,7 +164,6 @@ class tcr(pnc.PseudoNetCDFFile):
         self.setCoords(
             ['time', 'lat', 'lon', 'lev']
         )
-        
 
     def ll2ij(self, lon, lat, bounds='warn', clean='clip'):
         import numpy as np
@@ -152,6 +218,7 @@ class tcr(pnc.PseudoNetCDFFile):
         the inputs.
         """
         from PseudoNetCDF.coordutil import sigma2coeff
+        from .util import sigma2coeff_lin
         import numpy as np
 
         vglvls = np.asarray(vglvls)
@@ -178,30 +245,39 @@ class tcr(pnc.PseudoNetCDFFile):
         wgtslice[2] = slice(None)
         wgtslice = tuple(wgtslice)
         sigma = (pedges - vgtop) / (psfc - vgtop)
-        tmpv = np.zeros((exvar.shape[1], vglvls.size - 1), dtype='f')
-        tmpv[:] = sigma2coeff(sigma, vglvls)
-
-        pweight = (tmpv[:] * levvals[:, None])[wgtslice]
-        pnorm = pweight.sum(1)
         exprkeys = [
             key for key, var in self.variables.items()
             if var.dimensions[:2] == ('time', 'lev')
         ]
         outvars = {}
+        if interptype not in ('conserve', 'linear'):
+            print(f'Unknown {interptype}: default to linear')
+            interptype = 'linear'
+        if interptype == 'conserve':
+            tmpv = sigma2coeff(sigma, vglvls)
+            lweight = (tmpv[:] * levvals[:, None])[wgtslice]
+        elif interptype == 'linear':
+            tmpv = sigma2coeff_lin(sigma, vglvls)
+            lweight = tmpv[wgtslice]
+
         for key in exprkeys:
             var = self.variables[key]
             vals = var[:][:, :, None, ...]
-            vals = np.ma.masked_values(vals, var.fill_value)
+            vals = np.ma.masked_values(vals, var.missing_value)
             mask = np.ma.getmaskarray(vals)
-            pnorm = (pweight * (~mask).astype('i')).sum(1, keepdims=True)
-            wgt = pweight / pnorm
+            lnorm = (lweight * (~mask).astype('i')).sum(1, keepdims=True)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                wgt = lweight / lnorm
             newvals = (
                 vals * wgt
             ).sum(1)
-            for l in np.arange(nz)[::-1][1:]:
-                lbelo = newvals[:, l]
-                labov = newvals[:, l + 1]
-                newvals[:, l] = np.where(np.isnan(lbelo), labov, lbelo)
+            for li in np.arange(vglvls.size - 1)[::-1][1:]:
+                lbelo = newvals[:, li]
+                lbelonan = np.isnan(lbelo)
+                if lbelonan.any():
+                    labov = newvals[:, li + 1]
+                    newvals[:, li] = np.where(lbelonan, labov, lbelo)
 
             outvars[key] = newvals
 

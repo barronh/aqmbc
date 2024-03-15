@@ -6,7 +6,7 @@ This example shows how to use aqmbc with GEOS-Chem's publicly available benchmar
 
 * Dowload from Harvard (if not previously downloaded).
 * Define translations.
-* Extract, translate, and add time-independence metadata.
+* Extract, translate, and create time-independent files.
 * Display figures and statistics.
 
 Time-independence allows files to be used in CMAQ with multiple dates in the same month, or as a climatology for other years."""
@@ -89,11 +89,8 @@ for inpath in inpaths:
     outf = aqmbc.bc(
         inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
         dimkeys=gcdims, format_kw={'format': 'gcnc'}, history=history,
-        clobber=True, verbose=0
+        clobber=True, verbose=0, timeindependent=True
     )
-    if outf is not None:
-        # if not already archived
-        aqmbc.cmaq.timeindependent(outf)
 
     bcpaths.append(outpath)
 

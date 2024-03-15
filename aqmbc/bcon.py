@@ -8,8 +8,10 @@ def wndw(varfile, metaf, dimkeys, tslice, speedup=None, verbose=1):
     """
     Arguments
     ---------
-    varfile : input file
-    metafile : file with longitude and latitude
+    varfile : netcdf-like
+        input file
+    metafile : netcdf-like
+        file with longitude and latitude
 
     Returns
     -------
@@ -23,6 +25,21 @@ def wndw(varfile, metaf, dimkeys, tslice, speedup=None, verbose=1):
     i, j = varfile.ll2ij(lon.ravel(), lat.ravel(), bounds='warn', clean='clip')
     i = i.reshape(lon.shape)
     j = j.reshape(lat.shape)
+    if verbose > 3:
+        import pandas as pd
+        dimstr = '_'.join(lon.dimensions)
+        gdnam = metaf.GDNAM.strip()
+        cellcsv = f'{gdnam}_{dimstr}.csv'
+        print(f'Saving cell mapping to {cellcsv}')
+        outdata = dict(
+            tgtlon=lon.ravel(), tgtlat=lat.ravel(), i=i.ravel(), j=j.ravel()
+        )
+        if 'lon' in varfile.variables:
+            outdata['srclon'] = varfile.variables['lon'][i.ravel()]
+            outdata['srclat'] = varfile.variables['lat'][j.ravel()]
+        csvdf = pd.DataFrame(outdata)
+        csvdf.index.name = 'ordinal'
+        csvdf.to_csv(cellcsv)
 
     # Create indices for windowed file
     # purely for speed
@@ -65,8 +82,10 @@ def ijslice(infile, metaf, i, j, dimkeys, verbose=1):
     """
     Arguments
     ---------
-    infile : input file
-    metafile : file with longitude and latitude
+    infile : netcdf-like
+        input file
+    metafile : netcdf-like
+        file with longitude and latitude
 
     Returns
     -------
@@ -88,9 +107,12 @@ def kinterp(infile, metaf, vmethod, verbose=1):
     """
     Arguments
     ---------
-    infile : input file
-    metaf : file with longitude and latitude
-    vmethod : method for vertical inteprolation
+    infile : netcdf-like
+        input file
+    metaf : netcdf-like
+        file with longitude and latitude
+    vmethod : str
+        method for vertical inteprolation (conserve or linear)
 
     Returns
     -------
@@ -129,8 +151,10 @@ def translate(infile, exprpaths, verbose=1):
     """
     Arguments
     ---------
-    infile : file input
-    exprpaths : paths to expr file
+    infile : netcdf-like
+        File input
+    exprpaths : list
+        paths to expr file
 
     Returns
     -------
@@ -153,19 +177,31 @@ def translate(infile, exprpaths, verbose=1):
 def bc(
     inpath, outpath, metaf,
     tslice=None, vmethod='conserve', exprpaths=None, clobber=False,
-    dimkeys=None, format_kw=None, history='', speedup=None, verbose=1
+    dimkeys=None, format_kw=None, history='', speedup=None,
+    timeindependent=False, verbose=1
 ):
     """
     Arguments
     ---------
-    inpath : path to input file
-    outpath : path to output file
-    metaf : metadata file (CRO for ICON, BDY for BCON)
-    tslice : (optional) time slice (e.g., slice(0) for ICON
-    vmethod : method to use for vertical interpolation
-    exprpaths : text files with species translations
-    clobber : overwrite existing files
-    speedup : slice file to load into memory. More mem, but faster
+    inpath : str
+        path to input file
+    outpath : str
+        path to output file
+    metaf : netcdf-like
+        Metadata file (CRO for ICON, BDY for BCON)
+    tslice : slice
+        Optional time slice (e.g., slice(0) for ICON)
+    vmethod : str
+        method to use for vertical interpolation (conserve or linear)
+    exprpaths : list
+        text files with species translations
+    clobber : bool
+        overwrite existing files
+    speedup : bool
+        slice file to load into memory. More mem, but faster
+    timeindependent: bool
+        If True and input has just 1 time, write out as an IOAPI
+        time-independent file.
 
     Returns
     -------
@@ -254,10 +290,15 @@ def bc(
     fhistory = getattr(outf, 'HISTORY', '')
     history = fhistory + history
     setattr(outf, 'HISTORY', history)
-    return saveioapi(wndwf, outf, outpath, metaf, dimkeys, verbose=verbose)
+    return saveioapi(
+        wndwf, outf, outpath, metaf, dimkeys,
+        timeindependent=timeindependent, verbose=verbose
+    )
 
 
-def saveioapi(inf, outf, outpath, metaf, dimkeys, verbose=1):
+def saveioapi(
+    inf, outf, outpath, metaf, dimkeys, timeindependent=False, verbose=1
+):
     """
     Parameters
     ----------
@@ -269,12 +310,16 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys, verbose=1):
         metadata file
     dimkeys : dict
         translation dictionary for dimensions
+    timeindependent : bool
+        If True and number of times is 1, the file will be stored as IOAPI
+        time-independent
 
     Results
     -------
     out : netcdf-like file
         file that was output
     """
+    from datetime import timedelta
     # Prepare metadata
     props = metaf.getncatts()
     for outdk, indk in dimkeys.items():
@@ -324,8 +369,20 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys, verbose=1):
     for dk in list(outf.dimensions):
         if dk not in outdims + ('VAR', 'DATE-TIME'):
             del outf.dimensions[dk]
-
+    # Get the actual times of the data
     time = inf.getTimes()
+    p1h = timedelta(hours=1)
+    if len(time) > 1:
+        dt = np.diff(time).mean()
+        dth = dt // p1h
+        outf.TSTEP = dth * 10000
+    else:
+        if timeindependent:
+            outf.TSTEP = 0
+            dth = 0
+        else:
+            outf.TSTEP = 10000
+            dth = 1
     if 'TFLAG' not in outf.variables:
         tflag = outf.createVariable(
             'TFLAG', 'i', ('TSTEP', 'VAR', 'DATE-TIME')
@@ -333,15 +390,14 @@ def saveioapi(inf, outf, outpath, metaf, dimkeys, verbose=1):
         tflag.units = '<YYYYJJJ,HHMMSS>'
         tflag.long_name = 'TFLAG'
         tflag.var_desc = 'TFLAG'
-        YYYYJJJ = np.array([t.strftime('%Y%j') for t in time], dtype='i')
-        HHMMSS = np.array([t.strftime('%H%M%S') for t in time], dtype='i')
-        tflag[:, :, 0] = YYYYJJJ[:, None]
-        tflag[:, :, 1] = HHMMSS[:, None]
-
-    if len(time) > 1:
-        outf.TSTEP = int(np.diff(time)[0].total_seconds() / 3600) * 10000
-    else:
-        outf.TSTEP = 10000
+        if dth == 0:
+            tflag[:, :, :] = 0
+        else:
+            otime = time[0] + timedelta(hours=dth) * np.arange(len(time))
+            JDATE = np.array([t.strftime('%Y%j') for t in otime], dtype='i')
+            ITIME = np.array([t.strftime('%H%M%S') for t in otime], dtype='i')
+            tflag[:, :, 0] = JDATE[:, None]
+            tflag[:, :, 1] = ITIME[:, None]
 
     outf.SDATE = int(time[0].strftime('%Y%j'))
     outf.STIME = int(time[0].strftime('%H%M%S'))
