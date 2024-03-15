@@ -2,6 +2,8 @@ ASO4I = (0.30208 * so4_a2) * DRYMASSDENS *  1e9
 ASO4I.units = "micrograms/m**3"
 ASO4J = (0.30208 * so4_a1) * DRYMASSDENS *  1e9
 ASO4J.units = "micrograms/m**3"
+ASO4K = (0.30208 * so4_a3) * DRYMASSDENS *  1e9
+ASO4K.units = "micrograms/m**3"
 ANH4J = (1.61111 * NH4) * DRYMOLDENS
 ANH4J.units = "micrograms/m**3"
 print('SOA is currently not used; update definitions waccm_to_ae7.expr')
@@ -33,3 +35,5 @@ ANAJ = (1.26087 * ncl_a1 + 1.26087 * ncl_a2) * DRYMASSDENS *  1e9
 ANAJ.units = "micrograms/m**3"
 ACLJ = (0.82857 * ncl_a1 + 0.82857 * ncl_a2) * DRYMASSDENS *  1e9
 ACLJ.units = "micrograms/m**3"
+PM25 = PM25 * 1e9
+PM25.units = "micrograms/m**3"

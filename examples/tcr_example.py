@@ -9,14 +9,12 @@ files, which are available thru NASA Earthdata Search
 * Extract and translate.
 * Display figures and statistics."""
 
-import PseudoNetCDF as pnc
 import aqmbc
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.colors as mc
-import copy
 import glob
+import xarray as xr
 
 gdnam = '12US1'
 
@@ -30,14 +28,17 @@ aqmbc.exprlib.avail('tcr')
 # %%
 
 exprpaths = aqmbc.exprlib.exprpaths([
-    'tcr_cb6.expr', 'tcr_ae7.expr'
+    'tcr_o3so4.expr',                 # for a full run, comment this
+    # 'tcr_cb6.expr', 'tcr_ae7.expr'  # for a full run, uncomment this
 ], prefix='tcr')
 
 # For "real" VGLVLS use
 # METBDYD_PATH = '...'
 # metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi')
 metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-inpath = sorted(glob.glob('/work/ROMO/global/TCR-2/tropess.gesdisc.eosdis.nasa.gov/data/TCR2_MON_*/*/*.nc'))
+inpath = sorted(glob.glob(
+    'TCR-2/tropess.gesdisc.eosdis.nasa.gov/data/TCR2_MON_*/*/*.nc'
+))
 suffix = f'_{gdnam}_BCON.nc'
 dims = aqmbc.options.dims['tcr']
 outpath = f'TROPESS_reanalysis_mon_2021_{gdnam}_BCON.nc'
@@ -45,16 +46,12 @@ history = f'From {inpath}'
 outf = aqmbc.bc(
     inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
     dimkeys=dims, format_kw={'format': 'tcr'}, history=history,
-    clobber=True, verbose=9
+    clobber=True, verbose=0
 )
 
 # %%
 # Figures and Statistics
 # ----------------------
-
-import xarray as xr
-import netCDF4
-import pandas as pd
 
 tflag = (outf['TFLAG'][:, 0, :].astype('l') * np.array([1000000, 1])).sum(1)
 time = pd.to_datetime(tflag, format='%Y%j%H%M%S')
@@ -64,7 +61,7 @@ vprof = xr.Dataset(
         for k, v in outf.variables.items()
     },
     coords={'TSTEP': time, 'LAY': (outf.VGLVLS[:-1] + outf.VGLVLS[1:]) / 2}
-).mean('PERIM',keep_attrs=True)
+).mean('PERIM', keep_attrs=True)
 statdf = aqmbc.report.getstats([outpath])
 sumdf = aqmbc.report.summarize(statdf)
 sumdf.to_csv('tcr_summary.csv')
@@ -95,7 +92,7 @@ for ti, t in enumerate(v2.TSTEP):
 axx[1].legend()
 axx[0].set(
     xscale='log', xlabel='{long_name} [{units}]'.format(**v1.attrs),
-    xlim=(None, 2000), ylabel='VGLVLS [$(p - p_t) / (p_s - p_t)$]', ylim=(1, 0))
+    xlim=(None, 100), ylabel='VGLVLS [$(p - p_t) / (p_s - p_t)$]', ylim=(1, 0))
 axx[1].set(xscale='log', xlabel='{long_name} [{units}]'.format(**v2.attrs))
 fig.suptitle('TCR Boundary Conditions for CMAQ')
 fig.savefig('tcr_profiles.png')
@@ -104,7 +101,9 @@ fig.savefig('tcr_profiles.png')
 # Barplot of Concentrations
 # -------------------------
 
-fig, axx = plt.subplots(2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15))
+fig, axx = plt.subplots(
+    2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15)
+)
 gasds = sumdf.query('unit == "ppmV"').xs('Overall')['median']
 aqmbc.report.barplot(gasds.sort_values(), bar_kw=dict(ax=axx[0]))
 pmds = sumdf.query('unit == "micrograms/m**3"').xs('Overall')['median']

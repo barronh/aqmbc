@@ -29,6 +29,7 @@ temp/
 examples/GEOSCF
 examples/RAQMS
 examples/WACCM
+examples/TCR-2
 examples/tempdef
 examples/OutputDir
 examples/OutputDir.tar.gz

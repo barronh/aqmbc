@@ -74,7 +74,10 @@ class waccm(pnc.PseudoNetCDFFile):
         for k in f.ncattrs():
             setattr(self, k, f.getncattr(k))
         self.setCoords(
-            ['lat', 'lon', 'lev', 'time', 'date', 'datesec', 'date']
+            [
+                'lat', 'lon', 'lev', 'time', 'date', 'datesec', 'date',
+                'hyam', 'hybm', 'P0', 'ilev', 'hyai', 'hybi', 'PS'
+            ]
         )
 
     def ll2ij(self, lon, lat, bounds='warn', clean='clip'):

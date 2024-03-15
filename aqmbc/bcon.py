@@ -166,8 +166,8 @@ def translate(infile, exprpaths, verbose=1):
     else:
         if verbose > 0:
             print('translate', flush=True)
-        exprstr = ''.join([
-            open(exprpath, 'r').read() for exprpath in exprpaths
+        exprstr = '\n'.join([
+            open(exprpath, 'r').read().strip() for exprpath in exprpaths
         ])
         outf = infile.eval(exprstr, inplace=False)
 
@@ -216,7 +216,7 @@ def bc(
         3. vertical interpolation
         4. species translation
     """
-    global imin, imax, jmin, jmax, iwndw, jwndw, props
+    import symtable
     if format_kw is None:
         format_kw = dict(format='ioapi')
     if dimkeys is None:
@@ -232,8 +232,26 @@ def bc(
         print('open', flush=True)
     infile = pnc.pncopen(inpath, **format_kw)
 
-    # For debug speed, subset variables
-    varfile = infile  # .subsetVariables(['O3']) # for testing
+    dropvars = list(infile.variables)
+    if len(exprpaths) == 0:
+        varfile = infile
+        keepvars = list(infile.variables)
+    else:
+        exprstr = '\n'.join([
+            open(exprpath, 'r').read().strip() for exprpath in exprpaths
+        ])
+        stbl = symtable.symtable(exprstr, '<bcon>', 'exec')
+        keepvars = []
+        for sym in stbl.get_symbols():
+            symn = sym.get_name()
+            if symn in infile.variables:
+                keepvars.append(symn)
+        varfile = infile.subset(keepvars)
+
+    dropvars = [k for k in dropvars if k not in varfile.variables]
+    if verbose > 0:
+        print('Keep', len(keepvars), keepvars)
+        print('Drop', len(dropvars), dropvars)
 
     wndwf, i, j = wndw(
         varfile, metaf, dimkeys, tslice,

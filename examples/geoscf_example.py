@@ -9,15 +9,9 @@ This example shows how to use aqmbc with GEOS-CF's publicly available OpenDAP.
 * Extract and translate.
 * Display figures and statistics."""
 
-import PseudoNetCDF as pnc
-from os.path import basename, join
-from os import makedirs
+from os.path import basename
 import aqmbc
-import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.colors as mc
-import copy
 import glob
 
 gdnam = '12US1'
@@ -28,8 +22,11 @@ gdnam = '12US1'
 
 dates = ['2023-04-15T12:30', '2023-07-15T12:30']
 # Typical downloading takes ~4 minutes per hour of source data
-# For the tutorial, we only download 'O3' to make it fast.
-aqmbc.models.geoscf.download_window(gdnam, dates, chmvars=['o3', 'so4'], xgcvars=[])
+# For the tutorial, we only download 'o3' and 'so4' to make it fast.
+aqmbc.models.geoscf.download_window(
+    gdnam, dates,
+    chmvars=['o3', 'so4'], xgcvars=[]  # for full run, comment out this line
+)
 
 # %%
 # Define Translation Expressions
@@ -43,7 +40,9 @@ aqmbc.exprlib.avail('cf')
 # A real run will use geoscf_met.expr, geoscf_cb6.expr and geoscf_ae7.expr
 # For simplicity, we use just a simple ozone exmaple
 exprpaths = aqmbc.exprlib.exprpaths([
-    'geoscf_o3so4.expr'
+    'geoscf_o3so4.expr'                      # for full run, comment
+    # 'geoscf_met.expr', 'geoscf_cb6.expr',  # for full run, uncomment
+    # 'geoscf_ae7.expr'                      # for full run, uncomment
 ], prefix='cf')
 
 # %%
@@ -54,13 +53,13 @@ exprpaths = aqmbc.exprlib.exprpaths([
 # METBDYD_PATH = '...'
 # metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi')
 metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-inpaths = sorted(glob.glob(f'{gdnam}/????/??/??/geoscf_*.nc'))
+inpaths = sorted(glob.glob(f'GEOSCF/{gdnam}/????/??/??/geoscf_*.nc'))
 bcpaths = []
 suffix = f'_{gdnam}_BCON.nc'
 gcdims = aqmbc.options.dims['gc']
 for inpath in inpaths:
     print(inpath, flush=True)
-    outpath = basename(inpath).replace('.nc4', suffix)
+    outpath = basename(inpath).replace('.nc', suffix)
     history = f'From {outpath}'
     outf = aqmbc.bc(
         inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
@@ -113,7 +112,9 @@ fig.savefig('geoscf_profiles.png')
 # Barplot of Concentrations
 # -------------------------
 
-fig, axx = plt.subplots(2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15))
+fig, axx = plt.subplots(
+    2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15)
+)
 gasds = sumdf.query('unit == "ppmV"').xs('Overall')['median']
 aqmbc.report.barplot(gasds.sort_values(), bar_kw=dict(ax=axx[0]))
 pmds = sumdf.query('unit == "micrograms/m**3"').xs('Overall')['median']

@@ -9,16 +9,11 @@ This example shows how to use aqmbc with RAQMS's publicly available forecasts.
 * Extract and translate.
 * Display figures and statistics."""
 
-import PseudoNetCDF as pnc
-from os.path import basename, join
-from os import makedirs
+from os.path import basename
 import aqmbc
-import numpy as np
+import glob
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.colors as mc
-import copy
-import glob
 
 gdnam = '12US1'
 
@@ -26,7 +21,9 @@ gdnam = '12US1'
 # Download from RAQMS via HTTP
 # ----------------------------
 
-todayat12z = pd.to_datetime('now', utc=True).floor('1d') + pd.to_timedelta('12h')
+todayat12z = (
+    pd.to_datetime('now', utc=True).floor('1d') + pd.to_timedelta('12h')
+)
 dates = [todayat12z]
 
 aqmbc.models.raqms.download(dates)
@@ -41,7 +38,8 @@ aqmbc.exprlib.avail('raqms')
 # %%
 
 exprpaths = aqmbc.exprlib.exprpaths([
-    'raqms_o3so4.expr' # use raqms_to_cb6r4_ae6.expr for full run
+    'raqms_o3so4.expr'
+    # 'raqms_to_cb6r4_ae6.expr'  # for full run
 ], prefix='raqms')
 
 # %%
@@ -52,7 +50,7 @@ exprpaths = aqmbc.exprlib.exprpaths([
 # METBDYD_PATH = '...'
 # metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi')
 metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-inpaths = sorted(glob.glob(f'RAQMS/uwhyb*.nc'))
+inpaths = sorted(glob.glob('RAQMS/uwhyb*.nc'))
 bcpaths = []
 suffix = f'_{gdnam}_BCON.nc'
 gcdims = aqmbc.options.dims['raqms']
@@ -111,7 +109,9 @@ fig.savefig('raqms_profiles.png')
 # Barplot of Concentrations
 # -------------------------
 
-fig, axx = plt.subplots(2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15))
+fig, axx = plt.subplots(
+    2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15)
+)
 gasds = sumdf.query('unit == "ppmV"').xs('Overall')['median']
 aqmbc.report.barplot(gasds.sort_values(), bar_kw=dict(ax=axx[0]))
 pmds = sumdf.query('unit == "micrograms/m**3"').xs('Overall')['median']

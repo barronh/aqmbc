@@ -10,16 +10,10 @@ This example shows how to use aqmbc with a synthetic Hemispheric CMAQ.
 
 """
 
-import PseudoNetCDF as pnc
-from os.path import basename, join, exists
-from os import makedirs
+from os.path import basename
 import aqmbc
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.colors as mc
-import copy
-import requests
-import tarfile
 
 # %%
 # Create Fake Hemispheric CMAQ Files
@@ -29,21 +23,24 @@ inpaths = [
     'HCMAQFAKECONC.20190401_0000z.nc4',
     'HCMAQFAKECONC.20190701_0000z.nc4',
 ]
-tmpf = aqmbc.options.getmetaf(bctype='icon', gdnam='5940NHEMI2', vgnam='EPA_44L')
+tmpf = aqmbc.options.getmetaf(
+    bctype='icon', gdnam='5940NHEMI2', vgnam='EPA_44L'
+)
 keys = ['O3', 'ASO4I', 'ASO4J']
 for k in keys:
     v = tmpf.createVariable(k, 'f', ('TSTEP', 'LAY', 'ROW', 'COL'))
-    v.setncatts(dict(long_name=k.ljust(16), var_desc=k.ljust(80), units='micrograms/m**3'.ljust(16)))
+    v.setncatts(dict(long_name=k.ljust(16), var_desc=k.ljust(80)))
 
+tmpf.variables['ASO4I'].units = 'micrograms/m**3'.ljust(16)
+tmpf.variables['ASO4J'].units = 'micrograms/m**3'.ljust(16)
 tmpf.variables['O3'].units = 'ppmV'.ljust(16)
-o3vals = np.interp(np.log(tmpf.VGLVLS[1:]), np.log([.01, .2, .3, 1]), [1, .1, .06, .04])
-so4vals = np.interp(np.log(tmpf.VGLVLS[1:]), np.log([.01, .2, .6, .9, 1]), [.06, .06, 0.2, 1, 1])
-#so4vals = 0.02 * 100**tmpf.VGLVLS
-for i, inpath in enumerate(inpaths):
-    tmpf.variables['O3'][:] = o3vals[None, :, None, None] * .9**i
-    tmpf.variables['ASO4I'][:] = so4vals[None, :, None, None] * 0.01 * .9**i
-    tmpf.variables['ASO4J'][:] = tmpf.variables['ASO4I'][:] * 99
-
+tgtx = np.log(tmpf.VGLVLS[1:])
+o3vals = np.interp(tgtx, np.log([.01, .2, .3, 1]), [1, .1, .06, .04])
+so4vals = np.interp(tgtx, np.log([.01, .2, .6, .9, 1]), [.06, .06, 0.2, 1, 1])
+for i, (inpath, factor) in enumerate(zip(inpaths, [1, .9])):
+    tmpf.variables['O3'][:] = o3vals[None, :, None, None] * factor
+    tmpf.variables['ASO4I'][:] = so4vals[None, :, None, None] * 0.01 * factor
+    tmpf.variables['ASO4J'][:] = so4vals[None, :, None, None] * 0.99 * factor
     tmpf.subset(keys).save(inpath, format='NETCDF3_CLASSIC', verbose=0).close()
 
 # %%
@@ -116,7 +113,9 @@ fig.savefig('hcmaq_profiles.png')
 gasds = sumdf.query('unit == "ppmV"').xs('Overall')['median']
 pmds = sumdf.query('unit == "micrograms/m**3"').xs('Overall')['median']
 
-fig, (gax, pax) = plt.subplots(2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15))
+fig, (gax, pax) = plt.subplots(
+    2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15)
+)
 aqmbc.report.barplot(gasds.sort_values(), bar_kw=dict(ax=gax))
 aqmbc.report.barplot(pmds.sort_values(), bar_kw=dict(ax=pax))
 fig.savefig('hcmaq_bar.png')

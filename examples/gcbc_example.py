@@ -2,23 +2,20 @@
 GEOS-Chem Benchmark LBC for CMAQ
 ================================
 
-This example shows how to use aqmbc with GEOS-Chem's publicly available benchmark outputs.
+This example shows how to use aqmbc with GEOS-Chem's publicly available
+benchmark outputs.
 
 * Dowload from Harvard (if not previously downloaded).
 * Define translations.
 * Extract, translate, and create time-independent files.
 * Display figures and statistics.
 
-Time-independence allows files to be used in CMAQ with multiple dates in the same month, or as a climatology for other years."""
+Time-independence allows files to be used in CMAQ with multiple dates in the
+same month, or as a climatology for other years."""
 
-import PseudoNetCDF as pnc
-from os.path import basename, join, exists
-from os import makedirs
+from os.path import basename, exists
 import aqmbc
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.colors as mc
-import copy
 import requests
 import tarfile
 
@@ -63,11 +60,27 @@ if any([not exists(p) for p in inpaths]):
 #    updating for SpeciesConc (prefix SpeciesConc_).
 # 2. Output does not have pressure (surface or mid) or temperature variables.
 #    For simplicity, we use a US standard atmosphere as a surrogate.
-# 
+#
 print(aqmbc.exprlib.avail('gc'))
 exprpaths = aqmbc.exprlib.exprpaths([
-    'gcbench14_o3so4.expr'
+    #                                                      # for a full run,
+    'gcbench14_o3so4.expr'                                 # 1. comment this
+    # 'gcnc_usstd_airmolden.expr', 'gc14_to_cb6r5.expr',   # 2. uncomment this
+    # 'gc14_to_cb6mp.expr', 'gc14_soas_to_ae7.expr'        # 3. uncomment this
 ], prefix='gc')
+
+#                                                          # 4. uncomment these
+# import os
+# os.makedirs('tempdef', exist_ok=True)
+# exprpaths = list(exprpaths)
+# for i, path in enumerate(exprpaths):
+#     with open(path, 'r') as inf:
+#         txt = inf.read()
+#     outpath = os.path.join('tempdef', basename(path))
+#     with open(outpath, 'w') as outf:
+#         outf.write(txt.replace('SpeciesBC_', 'SpeciesConc_'))
+#     exprpaths[i] = outpath
+
 
 # %%
 # Tranlate Files and Make Time-independent
@@ -137,7 +150,9 @@ fig.savefig('gcbc_profiles.png')
 gasds = sumdf.query('unit == "ppmV"').xs('Overall')['median']
 pmds = sumdf.query('unit == "micrograms/m**3"').xs('Overall')['median']
 
-fig, (gax, pax) = plt.subplots(2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15))
+fig, (gax, pax) = plt.subplots(
+    2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15)
+)
 aqmbc.report.barplot(gasds.sort_values(), bar_kw=dict(ax=gax))
 aqmbc.report.barplot(pmds.sort_values(), bar_kw=dict(ax=pax))
 fig.savefig('gcbc_bar.png')

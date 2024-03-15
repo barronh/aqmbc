@@ -9,15 +9,9 @@ This example shows how to use aqmbc with WACCM's publicly available forecasts.
 * Extract and translate.
 * Display figures and statistics."""
 
-import PseudoNetCDF as pnc
-from os.path import basename, join
-from os import makedirs
+from os.path import basename
 import aqmbc
-import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.colors as mc
-import copy
 import glob
 
 gdnam = '12US1'
@@ -40,7 +34,9 @@ aqmbc.exprlib.avail('waccm')
 # %%
 
 exprpaths = aqmbc.exprlib.exprpaths([
-    'waccm_o3so4.expr' # use waccm_to_cb6r4_ae6.expr for full run
+    'waccm_o3so4.expr'                     # for full run, comment this
+    # 'waccm_met.expr', 'waccm_cb6.expr',  # for full run, uncomment this
+    # 'waccm_ae7.expr'                     # for full run, uncomment this
 ], prefix='waccm')
 
 # %%
@@ -51,7 +47,7 @@ exprpaths = aqmbc.exprlib.exprpaths([
 # METBDYD_PATH = '...'
 # metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi')
 metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-inpaths = sorted(glob.glob(f'WACCM/f.e22*.nc'))
+inpaths = sorted(glob.glob('WACCM/f.e22*.nc'))
 bcpaths = []
 suffix = f'_{gdnam}_BCON.nc'
 gcdims = aqmbc.options.dims['waccm']
@@ -110,7 +106,9 @@ fig.savefig('waccm_profiles.png')
 # Barplot of Concentrations
 # -------------------------
 
-fig, axx = plt.subplots(2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15))
+fig, axx = plt.subplots(
+    2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15)
+)
 gasds = sumdf.query('unit == "ppmV"').xs('Overall')['median']
 aqmbc.report.barplot(gasds.sort_values(), bar_kw=dict(ax=axx[0]))
 pmds = sumdf.query('unit == "micrograms/m**3"').xs('Overall')['median']

@@ -68,7 +68,10 @@ class raqms(pnc.PseudoNetCDFFile):
         for k in f.ncattrs():
             setattr(self, k, f.getncattr(k))
         self.setCoords(
-            ['lat', 'lon', 'lev', 'Times', 'IDATE', 'wlong', 'slat']
+            [
+                'lat', 'lon', 'lev', 'Times', 'IDATE', 'wlong', 'slat',
+                'psfc', 'pdash', 'delp'
+            ]
         )
 
     def ll2ij(self, lon, lat, bounds='warn', clean='clip'):
@@ -129,6 +132,7 @@ class raqms(pnc.PseudoNetCDFFile):
         from PseudoNetCDF.coordutil import sigma2coeff as sigma2coeff_con
         from .util import sigma2coeff_lin
         import numpy as np
+        import warnings
 
         psfc = self.variables['psfc'][:][:, None, ...] * 100
         delp = self.variables['delp'][:] * 100
@@ -167,9 +171,11 @@ class raqms(pnc.PseudoNetCDFFile):
         ]
         outvars = {}
         for key in exprkeys:
-            outvars[key] = (
-                self.variables[key][:][:, :, None, ...] * pweight
-            ).sum(1) / pnorm
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                outvars[key] = (
+                    self.variables[key][:][:, :, None, ...] * pweight
+                ).sum(1) / pnorm
 
         outf = pnc.PseudoNetCDFFile.from_ncvs(**outvars)
 
