@@ -24,8 +24,8 @@ import tarfile
 # ---------------------
 
 inpaths = [
-    'OutputDir/GEOSChem.SpeciesConc.20190401_0000z.nc4',
-    'OutputDir/GEOSChem.SpeciesConc.20190701_0000z.nc4',
+    'OutputDir/GEOSChem.SpeciesConc.20190401_0000z.nc4.orig',
+    'OutputDir/GEOSChem.SpeciesConc.20190701_0000z.nc4.orig',
 ]
 if any([not exists(p) for p in inpaths]):
     # Download 7G tar file
@@ -113,33 +113,13 @@ for inpath in inpaths:
 
 vprof = aqmbc.report.get_vertprof(bcpaths)
 statdf = aqmbc.report.getstats(bcpaths)
-sumdf = aqmbc.report.summarize(statdf)
-sumdf.to_csv('gcbc_summary.csv')
+statdf.to_csv('gcbc_summary.csv')
 
 # %%
 # Plot Verical Profiles
 # ~~~~~~~~~~~~~~~~~~~~~
 
-v1 = vprof['O3'] * 1000
-v1.attrs.update(vprof['O3'].attrs)
-v2 = vprof['ASO4I'] + vprof['ASO4J']
-v2.attrs.update(vprof['ASO4I'].attrs)
-v2.attrs['long_name'] = 'ASO4IJ'
-
-fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(18, 6), dpi=72, sharey=True)
-cmap = plt.cm.hsv
-nt = v1.sizes['TSTEP']
-for ti, t in enumerate(v1.TSTEP):
-    label = inpaths[ti].split('_')[0].split('.')[-1][:-2]
-    ax0.plot(v1.sel(TSTEP=t), v1.LAY, label=label, color=cmap(ti / nt))
-    ax1.plot(v2.sel(TSTEP=t), v2.LAY, label=label, color=cmap(ti / nt))
-ax0.legend()
-ax1.legend()
-
-ax0.set(
-    xscale='log', xlabel='{long_name} [{units}]'.format(**v1.attrs),
-    xlim=(None, 100), ylabel='VGLVLS [$(p - p_t) / (p_s - p_t)$]', ylim=(1, 0))
-ax1.set(xscale='log', xlabel='{long_name} [{units}]'.format(**v2.attrs))
+fig = aqmbc.report.plot_2spc_vprof(vprof)
 fig.suptitle('GEOS-Chem v14 Boundary Conditions for CMAQ')
 fig.savefig('gcbc_profiles.png')
 
@@ -147,12 +127,5 @@ fig.savefig('gcbc_profiles.png')
 # Plot Normalized Means
 # ~~~~~~~~~~~~~~~~~~~~~
 
-gasds = sumdf.query('unit == "ppmV"').xs('Overall')['median']
-pmds = sumdf.query('unit == "micrograms/m**3"').xs('Overall')['median']
-
-fig, (gax, pax) = plt.subplots(
-    2, 1, figsize=(18, 8), dpi=72, gridspec_kw=dict(hspace=.8, bottom=0.15)
-)
-aqmbc.report.barplot(gasds.sort_values(), bar_kw=dict(ax=gax))
-aqmbc.report.barplot(pmds.sort_values(), bar_kw=dict(ax=pax))
+fig = aqmbc.report.plot_gaspm_bars(statdf)
 fig.savefig('gcbc_bar.png')

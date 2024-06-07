@@ -178,7 +178,7 @@ def bc(
     inpath, outpath, metaf,
     tslice=None, vmethod='conserve', exprpaths=None, clobber=False,
     dimkeys=None, format_kw=None, history='', speedup=None,
-    timeindependent=False, verbose=1
+    timeindependent=False, verbose=1, minvalue=None
 ):
     """
     Arguments
@@ -202,6 +202,8 @@ def bc(
     timeindependent: bool
         If True and input has just 1 time, write out as an IOAPI
         time-independent file.
+    minvalue : scalar
+        Passed to translate
 
     Returns
     -------
@@ -292,6 +294,14 @@ def bc(
     outf = wndwf
     for func in funcs:
         outf = func(outf)
+
+    # Implement a minimum value
+    if minvalue is not None:
+        for k in outf.variables:
+            if k not in ('TFLAG',):
+                v = outf.variables[k]
+                if v.dtype.char in ('f', 'd'):
+                    np.maximum(v, minvalue, out=v)
 
     if exprpaths is None:
         outf.FILEDESC = 'Boundary conditions from {}'.format(inpath)

@@ -36,7 +36,7 @@ def batch_timeindependent(inpaths, verbose=0):
         timeindependent(ncf)
 
 
-def cmaqready(date, inpaths, outpath=None, verbose=0):
+def cmaqready(date, inpaths, outpath=None, verbose=0, minvalue=1e-30):
     """
     Concatenate inpaths on time and then interpolate to 25h instantaneous
     times for CMAQ. Also trims FILEDESC and HISTORY if they are too long.
@@ -45,13 +45,15 @@ def cmaqready(date, inpaths, outpath=None, verbose=0):
     ---------
     date : date-like or string
         Date for CMAQ-ready file.
-    inpaths : list
-        List of paths to use as the source.
+    inpaths : list or str
+        List of paths to use as the source or template to find inputs
     outpath : str or None
         If None, return the file.
         Otherwise, write it out and return the path
     verbose : int
         Level of verbosity
+    minvalue : scalar
+        Minimum value
 
     Returns
     -------
@@ -72,6 +74,16 @@ def cmaqready(date, inpaths, outpath=None, verbose=0):
     date = pd.to_datetime(date)
     dd = pd.to_timedelta('1d')
     outtimes = pd.date_range(date, date + dd, freq='1h')
+    if isinstance(inpaths, str):
+        inpat = inpaths
+        indates = [date - dd, date, date + dd]
+        testinpaths = [d.strftime(inpat) for d in indates]
+        inpaths = [p for p in testinpaths if os.path.exists(p)]
+        missingpaths = sorted(set(testinpaths).difference(inpaths))
+        if len(missingpaths) > 0:
+            if verbose > 0:
+                print(f'Could not find {missingpaths}')
+
     infiles = [xr.open_dataset(p, decode_cf=False) for p in inpaths]
     tmpds = xr.concat(infiles, dim='TSTEP')
     yyyyjjj = tmpds['TFLAG'][:, 0, 0].values
@@ -82,12 +94,12 @@ def cmaqready(date, inpaths, outpath=None, verbose=0):
     if intime.min() > date:
         warnings.warn(
             f'Input files start {intime.min():%Y-%m-%dT%H}Z after target'
-            f' start {date:%Y-%m-%dT%H}'
+            f' start {date:%Y-%m-%dT%H}; earliest date copied to fill.'
         )
     if intime.max() < (date + dd):
         warnings.warn(
             f'Input files end {intime.max():%Y-%m-%dT%H}Z before target'
-            f' end {date + dd:%Y-%m-%dT%H}'
+            f' end {date + dd:%Y-%m-%dT%H}; latest date copied to fill.'
         )
     tmpds.coords['TSTEP'] = intime
     nvars = tmpds.attrs['NVARS']
@@ -112,11 +124,21 @@ def cmaqready(date, inpaths, outpath=None, verbose=0):
     if len(fdesc) > clim:
         outds.attrs['description'] = fdesc
     outds['TFLAG'] = tflag.astype('i')
+    titimes = list(enumerate(outtimes))
     for key in tmpds.data_vars:
         if key == 'TFLAG':
             continue
-        outds[key] = tmpds[key].astype('f')
-
+        # outds[key] = tmpds[key].astype('f')
+        tmpv = np.maximum(tmpds[key].astype('f'), minvalue)
+        for ti, t in titimes[::-1]:
+            if t < intime.min():
+                tmpv[ti] = tmpv[ti + 1]
+                warnings.warn(f'{t} back filled')
+        for ti, t in titimes:
+            if t > intime.max():
+                tmpv[ti] = tmpv[ti - 1]
+                warnings.warn(f'{t} forward filled')
+        outds[key] = tmpv
     if outpath is not None:
         outds.to_netcdf(outpath)
         return outpath
