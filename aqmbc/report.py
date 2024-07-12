@@ -377,9 +377,14 @@ def reportfromcfg(cfgobjs, cfgtype='path'):
     statdf = getstats(
         inpaths, varkeys=varkeys, verbose=verbose, outpath=sumpath
     )
+    datadesc = f'({dates[0]:%F} to {dates[-1]:%F}, n={len(dates)})'
     if dofigs:
-        for metric in ['median', 'min', 'max']:
+        for metric in ['median', 'mean', 'min', 'max']:
             fig = plot_gaspm_bars(statdf, metric=metric, sortmetric='median')
+            fig.text(
+                0.99, 0.98, datadesc,
+                horizontalalignment='right', verticalalignment='top'
+            )
             fig.savefig(sumpath + f'.{metric}.png')
     varkeys = json.loads(cfg.get('REPORT', 'profilespcs'))
     for funcstr in ['mean', 'min', 'max']:
@@ -403,7 +408,7 @@ def plot_gaspm_bars(
     import matplotlib.pyplot as plt
     filedf = statdf.xs(filekey)
     sortdf = filedf.sort_values(sortmetric, ascending=False)
-    gasds = sortdf.query('unit == "ppmV"')[metric]
+    gasds = sortdf.query('unit in ("ppmV", "ppmv")')[metric]
     pmds = sortdf.query('unit == "micrograms/m**3" or unit == "ug m-3"')[metric]
 
     gskw = dict(left=0.04, hspace=.8, bottom=0.15, right=0.98)
