@@ -170,7 +170,7 @@ def runcfg(
     interpopt = config.get('common', 'vinterp')
 
     gdnam = config.get('common', 'gdnam')
-    minvalue = json.loads(config.get('common', 'minvalue'))
+    minvalue = eval(config.get('common', 'minvalue'))
     vgtop = config.getfloat('common', 'vgtop')
     vgtop = np.float32(vgtop)
     vglvls = json.loads(config.get('common', 'vglvls'))
