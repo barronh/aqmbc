@@ -116,7 +116,7 @@ statdf = aqmbc.report.getstats(bcpaths)
 statdf.to_csv('gcbc_summary.csv')
 
 # %%
-# Plot Verical Profiles
+# Plot Vertical Profiles
 # ~~~~~~~~~~~~~~~~~~~~~
 
 fig = aqmbc.report.plot_2spc_vprof(vprof)
