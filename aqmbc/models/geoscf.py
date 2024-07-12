@@ -51,6 +51,8 @@ def download_window(
     metvars=None, chmvars=None, xgcvars=None
 ):
     """
+    Arguments
+    ---------
     gdnam : str
         Grid name with definition in GRIDDESC at environ['GRIDDESC'],
         ./GRIDDESC or in the GRIDDESC distributed with aqmbc
@@ -59,6 +61,17 @@ def download_window(
     sleep : int
         GEOS-CF OpenDAP will crash if too many calls are made sequentially.
         Heuristically, a minute between calls prevents crashes.
+    metvars : list
+        Optional list of metvars to subset. See GEOS-CF fluid documentation.
+    chemvars : list
+        Optional list of chmvars to subset. See GEOS-CF fluid documentation.
+    xgcvars : list
+        Optional list of xgcvars to subset. See GEOS-CF fluid documentation.
+
+    Returns
+    -------
+    outpaths : list
+        List of paths that were created by download
     """
     import pandas as pd
     import aqmbc
@@ -96,16 +109,20 @@ def download_window(
         xgcvars = list(xf.data_vars)
     else:
         xgcvars = list(xgcvars)
+
+    outpaths = []
     for t in dates:
         tv = mf.time.sel(time=t, method='nearest').values
-        stime = pd.to_datetime(tv).to_pydatetime()
+        stime = pd.to_datetime(tv).round('1s').to_pydatetime()
         outdir = f'GEOSCF/{gdnam}/{stime:%Y/%m/%d}'
         pathsuf = f'{stime:%Y-%m-%dT%H%M}Z.nc'
         outpath = f'{outdir}/geoscf_mcx_tavg_1hr_g1440x721_v36_{pathsuf}'
         if os.path.exists(outpath):
             print(f'Keeping cached: {outpath}')
+            outpaths.append(outpath)
             continue
 
+        print(f'Making: {outpath}')
         tmpmf = mf[metvars].sel(time=tv, lat=ylim, lon=xlim)
         tryandtime(tmpmf, 'met')
         mergefs = [tmpmf]
@@ -121,8 +138,11 @@ def download_window(
         outf.attrs['data_source'] = f'{meturl}, {chmurl}, {xgcurl}'
         os.makedirs(os.path.dirname(outpath), exist_ok=True)
         outf.expand_dims(time=[stime]).to_netcdf(outpath)
+        outpaths.append(outpath)
         if len(dates) > 1:
             time.sleep(sleep)
+
+    return outpaths
 
 
 class geoscf(pnc.PseudoNetCDFFile):
