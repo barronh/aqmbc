@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc.report &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/aqmbc.html">aqmbc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../aqmbc.html">aqmbc</a></li>
+      <li class="breadcrumb-item active">aqmbc.report</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aqmbc.report</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="get_vertprof"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.get_vertprof">[docs]</a><span class="k">def</span> <span class="nf">get_vertprof</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    inbcon : list or str</span>
+<span class="sd">        If str, inbcon = sorted(glob.glob(inbcon))</span>
+<span class="sd">        If list, items should be str or xarray.Dataset object.</span>
+<span class="sd">            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]</span>
+<span class="sd">            If Datasets, infiles = inbcon</span>
+<span class="sd">    varkeys : list or None</span>
+<span class="sd">        variable keys (if None, use all)</span>
+<span class="sd">    func : str</span>
+<span class="sd">        Name of function to apply to each variable (min, mean, max, median)</span>
+<span class="sd">    verbose : int</span>
+<span class="sd">        Level of verbosity</span>
+<span class="sd">    outpath : str or None</span>
+<span class="sd">        Path to save (or retrieve) the vertical profile from</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vf : xarray.Dataset</span>
+<span class="sd">        Variables have func applied to all dimensions except for LAY.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inbcon</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">inbcon</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+            <span class="n">intimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">inbcon</span><span class="p">]</span>
+            <span class="n">outtime</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">intimes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">outtime</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">intimes</span><span class="p">):</span>
+                <span class="n">vprof</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">vprof</span>
+    <span class="n">vprof</span> <span class="o">=</span> <span class="n">make_vertprof</span><span class="p">(</span>
+        <span class="n">inbcon</span><span class="o">=</span><span class="n">inbcon</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="n">varkeys</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vprof</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vprof</span></div>
+
+
+<div class="viewcode-block" id="make_vertprof"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.make_vertprof">[docs]</a><span class="k">def</span> <span class="nf">make_vertprof</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    inbcon : list or str</span>
+<span class="sd">        If str, inbcon = sorted(glob.glob(inbcon))</span>
+<span class="sd">        If list, items should be str or xarray.Dataset object.</span>
+<span class="sd">            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]</span>
+<span class="sd">            If Datasets, infiles = inbcon</span>
+<span class="sd">    varkeys : list or None</span>
+<span class="sd">        variable keys (if None, use all)</span>
+<span class="sd">    func : str</span>
+<span class="sd">        Name of function to apply to each variable (min, mean, max, median)</span>
+<span class="sd">    verbose : int</span>
+<span class="sd">        Level of verbosity</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vf : xarray.Dataset</span>
+<span class="sd">        Variables have func applied to all dimensions except for LAY.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="n">func</span>
+    <span class="n">vfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inbcon</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">inbcon</span><span class="p">))</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inbcon</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">inpath</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inbcon</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">decode_cf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\r</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">n</span><span class="si">:</span><span class="s1">.2%</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">inpath</span>
+        <span class="n">ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">SDATE</span> <span class="o">*</span> <span class="mi">1000000</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">STIME</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;PERIM&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">sizes</span><span class="p">:</span>
+            <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">,</span> <span class="s1">&#39;PERIM&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">,</span> <span class="s1">&#39;ROW&#39;</span><span class="p">,</span> <span class="s1">&#39;COL&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">varkeys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">varkeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">data_vars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;LAY&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">dims</span><span class="p">]</span>
+        <span class="n">vfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">varkeys</span><span class="p">],</span> <span class="n">funcstr</span><span class="p">)(</span><span class="n">dims</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">funcstr</span> <span class="ow">in</span> <span class="n">funcs</span>
+        <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;func&#39;</span><span class="p">))</span>
+    <span class="n">vf</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">vfs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">vkey</span> <span class="ow">in</span> <span class="n">varkeys</span><span class="p">:</span>
+        <span class="n">vf</span><span class="p">[</span><span class="n">vkey</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">vkey</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;LAY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">VGLVLS</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">VGLVLS</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">funcs</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y%j%H%M%S&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1"># time-independent files cannot know their time. Use sequence</span>
+        <span class="c1"># starting at 1</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">pass</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">vf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vf</span></div>
+
+
+<div class="viewcode-block" id="plot_vprof"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.plot_vprof">[docs]</a><span class="k">def</span> <span class="nf">plot_vprof</span><span class="p">(</span><span class="n">vmean</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    vmean : xarray.DataArray</span>
+<span class="sd">        Average of vertical profile at time steps; must have the TSTEP and LAY</span>
+<span class="sd">        dimensions</span>
+<span class="sd">    vmin, vmax : xarray.DataArray</span>
+<span class="sd">        Optional lower and upper bounds</span>
+<span class="sd">    ax : matplotlit.axes.Axes</span>
+<span class="sd">        Optional axes to add lines to.</span>
+<span class="sd">    kwds : mappable</span>
+<span class="sd">        Properties for lines</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ax : matplotlit.axes.Axes</span>
+<span class="sd">        If ax was provided, the same ax is returned.</span>
+<span class="sd">        Otherwise, a new ax is created using subplots.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vmin</span> <span class="o">=</span> <span class="n">vmean</span>
+    <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vmax</span> <span class="o">=</span> <span class="n">vmean</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">vmean</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">)</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">vmin</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">)</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="n">vmax</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">LAY</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_betweenx</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">xmin</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">xmax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="getstats"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.getstats">[docs]</a><span class="k">def</span> <span class="nf">getstats</span><span class="p">(</span>
+    <span class="n">inbcon</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">add_summary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">draft</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    inbcon : list or str</span>
+<span class="sd">        If str, inbcon = sorted(glob.glob(inbcon))</span>
+<span class="sd">        If list, items should be str or xarray.Dataset object.</span>
+<span class="sd">            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]</span>
+<span class="sd">            If Datasets, infiles = inbcon</span>
+<span class="sd">        If outpath is not None, inbcon must be a str or list of paths</span>
+<span class="sd">    varkeys : list</span>
+<span class="sd">        List of variable keys to process</span>
+<span class="sd">    verbose : int</span>
+<span class="sd">        Level of verbosity</span>
+<span class="sd">    add_summary : bool</span>
+<span class="sd">        Add summary level data</span>
+<span class="sd">    outpath : str or None</span>
+<span class="sd">        Path to save (or retrieve) results from. Cached results will only be</span>
+<span class="sd">        used if the outpath file is newer than all the inputs.</span>
+<span class="sd">    draft : bool</span>
+<span class="sd">        If True, use actual_range and actual_median properties instead of file</span>
+<span class="sd">        data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    statdf : pandas.DataFrame</span>
+<span class="sd">        Dataframe with rows for each file and variable combination. Each row</span>
+<span class="sd">        has min, mean, median, max, std</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inbcon</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">inbcon</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+            <span class="n">intimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">inbcon</span><span class="p">]</span>
+            <span class="n">outtime</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">intimes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">outtime</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">intimes</span><span class="p">):</span>
+                <span class="n">statdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">statdf</span>
+
+    <span class="n">statdf</span> <span class="o">=</span> <span class="n">makestats</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="n">varkeys</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">draft</span><span class="o">=</span><span class="n">draft</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">add_summary</span><span class="p">:</span>
+        <span class="n">statdf</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">statdf</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">statdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">statdf</span></div>
+
+
+<div class="viewcode-block" id="makestats"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.makestats">[docs]</a><span class="k">def</span> <span class="nf">makestats</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">draft</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    inbcon : list or str</span>
+<span class="sd">        If str, inbcon = sorted(glob.glob(inbcon))</span>
+<span class="sd">        If list, items should be str or xarray.Dataset object.</span>
+<span class="sd">            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]</span>
+<span class="sd">            If Datasets, infiles = inbcon</span>
+<span class="sd">    varkeys : list</span>
+<span class="sd">        List of variable keys to process</span>
+<span class="sd">    verbose : int</span>
+<span class="sd">        Level of verbosity</span>
+<span class="sd">    draft : bool</span>
+<span class="sd">        If True, use actual_range and actual_median properties instead of file</span>
+<span class="sd">        data.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    statdf : pandas.DataFrame</span>
+<span class="sd">        Dataframe with rows for each file and variable combination. Each row</span>
+<span class="sd">        has min, mean, median, max, std</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inbcon</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inbcon</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">inbcon</span><span class="p">))</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inbcon</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bi</span><span class="p">,</span> <span class="n">inpath</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inbcon</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\r</span><span class="si">{</span><span class="n">bi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">n</span><span class="si">:</span><span class="s1">.2%</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">infile</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">decode_cf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">varkeys</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">varkeys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">varkeys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">infile</span><span class="o">.</span><span class="n">data_vars</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;TFLAG&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">vark</span> <span class="ow">in</span> <span class="n">varkeys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">vark</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">infile</span><span class="p">[</span><span class="n">vark</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">draft</span><span class="p">:</span>
+                <span class="n">vstd</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;actual_std&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">vmean</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;actual_mean&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">vmedian</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;actual_median&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;actual_range&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span> <span class="o">=</span> <span class="n">var</span><span class="p">[:]</span>
+                <span class="n">vmedian</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">vl</span><span class="p">))</span>
+                <span class="n">vmean</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vl</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+                <span class="n">vstd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vl</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
+                <span class="n">vmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vl</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+                <span class="n">vmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vl</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">inpath</span><span class="p">,</span> <span class="n">vark</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">var</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="n">vmean</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">vstd</span><span class="p">,</span>
+                <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">vmedian</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">vmin</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">vmax</span>
+            <span class="p">}</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>
+
+    <span class="n">statdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="n">statdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">statdf</span></div>
+
+
+<div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">statdf</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    statdf : pandas.DataFrame</span>
+<span class="sd">        DataFrame from makestats or getstats</span>
+<span class="sd">    append : bool</span>
+<span class="sd">        If True, add record to statdf and return full dataframe.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    statdf : pandas.DataFrame</span>
+<span class="sd">        Add Overall record for each variable where mean and std are averages,</span>
+<span class="sd">        unit and min are their minimums, max is its maximum, and median is its</span>
+<span class="sd">        median.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">summarydf</span> <span class="o">=</span> <span class="n">statdf</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;variable&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+        <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;unit&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span> <span class="n">mean</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">),</span>
+        <span class="n">median</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">),</span>
+        <span class="n">std</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">),</span> <span class="nb">max</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">summarydf</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Overall&#39;</span>
+    <span class="n">summarydf</span> <span class="o">=</span> <span class="n">summarydf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">append</span><span class="p">:</span>
+        <span class="n">outdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">summarydf</span><span class="p">,</span> <span class="n">statdf</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outdf</span> <span class="o">=</span> <span class="n">summarydf</span>
+
+    <span class="k">return</span> <span class="n">outdf</span></div>
+
+
+<span class="k">def</span> <span class="nf">_scaletxt</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="o">-</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39; [0]&#39;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39; [</span><span class="si">{</span><span class="o">-</span><span class="n">p</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">]&#39;</span>
+
+
+<div class="viewcode-block" id="barplot"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.barplot">[docs]</a><span class="k">def</span> <span class="nf">barplot</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">bar_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    ds : pandas.Series</span>
+<span class="sd">        Series get from makestats or getstats</span>
+<span class="sd">    bar_kw : mappable</span>
+<span class="sd">        Options for the barplot function (including ax)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        Axes object with barplot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="k">if</span> <span class="n">bar_kw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bar_kw</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ds</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)))</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">power</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">power</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_scaletxt</span><span class="p">)</span>
+    <span class="n">pds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">((</span><span class="n">ds</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+    <span class="c1"># print(pd.DataFrame(dict(</span>
+    <span class="c1">#     orig=ds, scale=scale, scaled=ds * scale</span>
+    <span class="c1"># )).to_csv())</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">pds</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="o">**</span><span class="n">bar_kw</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;m x 10$^</span><span class="si">{p}</span><span class="s1">$ (p by species)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+        <span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;species [p]&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+        <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;top&#39;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="reportfromcfg"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.reportfromcfg">[docs]</a><span class="k">def</span> <span class="nf">reportfromcfg</span><span class="p">(</span><span class="n">cfgobjs</span><span class="p">,</span> <span class="n">cfgtype</span><span class="o">=</span><span class="s1">&#39;path&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs getstats, and get_vertprof and save to disk</span>
+<span class="sd">    If summaryfigs=&#39;y&#39;, run plot_gaspm_bars and plot_2spc_vprof and save</span>
+<span class="sd">    results to disk.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    cfgobjs : list</span>
+<span class="sd">        List of paths, files, or dictionaries</span>
+<span class="sd">    cfgtype : str</span>
+<span class="sd">        &#39;path&#39;, &#39;file&#39;, or &#39;dict&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">loadcfg</span>
+    <span class="kn">import</span> <span class="nn">json</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">loadcfg</span><span class="p">(</span><span class="n">cfgobjs</span><span class="p">,</span> <span class="n">cfgtype</span><span class="o">=</span><span class="n">cfgtype</span><span class="p">)</span>
+    <span class="n">dofigs</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REPORT&#39;</span><span class="p">,</span> <span class="s1">&#39;standardfigs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BCON&#39;</span><span class="p">,</span> <span class="s1">&#39;start_date&#39;</span><span class="p">),</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BCON&#39;</span><span class="p">,</span> <span class="s1">&#39;end_date&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span><span class="p">))</span>
+    <span class="n">outtmpl</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BCON&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)</span>
+    <span class="n">inpaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">outtmpl</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">]</span>
+    <span class="n">sumpath</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REPORT&#39;</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">)</span>
+    <span class="n">varkeys</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REPORT&#39;</span><span class="p">,</span> <span class="s1">&#39;summaryspcs&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sumpath</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sumpath</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">statdf</span> <span class="o">=</span> <span class="n">getstats</span><span class="p">(</span>
+        <span class="n">inpaths</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="n">varkeys</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="n">sumpath</span>
+    <span class="p">)</span>
+    <span class="n">datadesc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">%F</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s1">%F</span><span class="si">}</span><span class="s1">, n=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
+    <span class="k">if</span> <span class="n">dofigs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">]:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_gaspm_bars</span><span class="p">(</span><span class="n">statdf</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">sortmetric</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                <span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="n">datadesc</span><span class="p">,</span>
+                <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;top&#39;</span>
+            <span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">sumpath</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s1">.png&#39;</span><span class="p">)</span>
+    <span class="n">varkeys</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REPORT&#39;</span><span class="p">,</span> <span class="s1">&#39;profilespcs&#39;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">funcstr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">]:</span>
+        <span class="n">vpath</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;REPORT&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;profile</span><span class="si">{</span><span class="n">funcstr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">vpath</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">vpath</span><span class="p">)</span>
+        <span class="n">bf</span> <span class="o">=</span> <span class="n">get_vertprof</span><span class="p">(</span>
+            <span class="n">inpaths</span><span class="p">,</span> <span class="n">varkeys</span><span class="o">=</span><span class="n">varkeys</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">funcstr</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">outpath</span><span class="o">=</span><span class="n">vpath</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dofigs</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_2spc_vprof</span><span class="p">(</span><span class="n">bf</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">funcstr</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s1"> around perimiter&#39;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">funcstr</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s1"> around perimiter&#39;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">vpath</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_gaspm_bars"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.plot_gaspm_bars">[docs]</a><span class="k">def</span> <span class="nf">plot_gaspm_bars</span><span class="p">(</span>
+    <span class="n">statdf</span><span class="p">,</span> <span class="n">filekey</span><span class="o">=</span><span class="s1">&#39;Overall&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="n">sortmetric</span><span class="o">=</span><span class="s1">&#39;median&#39;</span>
+<span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="n">filedf</span> <span class="o">=</span> <span class="n">statdf</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="n">filekey</span><span class="p">)</span>
+    <span class="n">sortdf</span> <span class="o">=</span> <span class="n">filedf</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">sortmetric</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">gasds</span> <span class="o">=</span> <span class="n">sortdf</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;unit in (&quot;ppmV&quot;, &quot;ppmv&quot;)&#39;</span><span class="p">)[</span><span class="n">metric</span><span class="p">]</span>
+    <span class="n">pmds</span> <span class="o">=</span> <span class="n">sortdf</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;unit == &quot;micrograms/m**3&quot; or unit == &quot;ug m-3&quot;&#39;</span><span class="p">)[</span><span class="n">metric</span><span class="p">]</span>
+
+    <span class="n">gskw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">.8</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.98</span><span class="p">)</span>
+    <span class="n">gasat12</span> <span class="o">=</span> <span class="n">gasds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.2</span>
+    <span class="n">pmat12</span> <span class="o">=</span> <span class="n">pmds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.2</span>
+    <span class="n">gasfontsize</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span> <span class="o">*</span> <span class="p">(</span><span class="n">gskw</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gskw</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">gasat12</span><span class="p">)</span> <span class="o">*</span> <span class="mi">12</span>
+    <span class="n">pmfontsize</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span> <span class="o">*</span> <span class="p">(</span><span class="n">gskw</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gskw</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">pmat12</span><span class="p">)</span> <span class="o">*</span> <span class="mi">12</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="n">gskw</span><span class="p">)</span>
+    <span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="n">gasfontsize</span><span class="p">)</span>
+    <span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="n">pmfontsize</span><span class="p">)</span>
+    <span class="n">barplot</span><span class="p">(</span><span class="n">gasds</span><span class="p">,</span> <span class="n">bar_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">filekey</span><span class="si">}</span><span class="s1"> gases </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s1"> sorted by </span><span class="si">{</span><span class="n">sortmetric</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">barplot</span><span class="p">(</span><span class="n">pmds</span><span class="p">,</span> <span class="n">bar_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">filekey</span><span class="si">}</span><span class="s1"> particles </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s1"> sorted by </span><span class="si">{</span><span class="n">sortmetric</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="plot_2spc_vprof"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.report.plot_2spc_vprof">[docs]</a><span class="k">def</span> <span class="nf">plot_2spc_vprof</span><span class="p">(</span><span class="n">vprof</span><span class="p">,</span> <span class="n">vminprof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmaxprof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">v1k</span><span class="o">=</span><span class="s1">&#39;O3&#39;</span><span class="p">,</span> <span class="n">v2k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="k">if</span> <span class="n">vprof</span><span class="p">[</span><span class="n">v1k</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">11</span><span class="p">:</span>
+        <span class="n">mvprof</span> <span class="o">=</span> <span class="n">vprof</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;TSTEP.month&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">month</span><span class="o">=</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">)</span>
+        <span class="n">mvprof</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">vprof</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;TSTEP.month&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="s1">&#39;1d&#39;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">vprof</span> <span class="o">=</span> <span class="n">mvprof</span>
+        <span class="n">datefmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">datefmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%F</span><span class="s1">T%H:%MZ&#39;</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">vprof</span><span class="p">[</span><span class="n">v1k</span><span class="p">]</span>
+    <span class="n">v1attrs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">v1</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">v1attrs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+    <span class="n">dvars</span> <span class="o">=</span> <span class="n">vprof</span><span class="o">.</span><span class="n">data_vars</span>
+    <span class="n">std2ks</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dvars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;micrograms&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="n">v2k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;ASO4I&#39;</span> <span class="ow">in</span> <span class="n">dvars</span> <span class="ow">and</span> <span class="s1">&#39;ASO4J&#39;</span> <span class="ow">in</span> <span class="n">dvars</span><span class="p">:</span>
+            <span class="n">v2</span> <span class="o">=</span> <span class="n">vprof</span><span class="p">[</span><span class="s1">&#39;ASO4J&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">vprof</span><span class="p">[</span><span class="s1">&#39;ASO4I&#39;</span><span class="p">]</span>
+            <span class="n">v2</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vprof</span><span class="p">[</span><span class="s1">&#39;ASO4J&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+            <span class="n">v2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ASO4IJ&#39;</span>
+            <span class="n">v2k</span> <span class="o">=</span> <span class="s1">&#39;ASO4IJ&#39;</span>
+            <span class="k">if</span> <span class="n">vminprof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vmaxprof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">vminprof</span><span class="p">[</span><span class="s1">&#39;ASO4IJ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vminprof</span><span class="p">[</span><span class="s1">&#39;ASO4I&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">vminprof</span><span class="p">[</span><span class="s1">&#39;ASO4J&#39;</span><span class="p">]</span>
+                <span class="n">vmaxprof</span><span class="p">[</span><span class="s1">&#39;ASO4IJ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vmaxprof</span><span class="p">[</span><span class="s1">&#39;ASO4I&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">vmaxprof</span><span class="p">[</span><span class="s1">&#39;ASO4J&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s1">&#39;ASO4J&#39;</span> <span class="ow">in</span> <span class="n">dvars</span><span class="p">:</span>
+            <span class="n">v2k</span> <span class="o">=</span> <span class="s1">&#39;ASO4J&#39;</span>
+            <span class="n">v2</span> <span class="o">=</span> <span class="n">vprof</span><span class="p">[</span><span class="n">v2k</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">v2k</span> <span class="ow">in</span> <span class="n">std2ks</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">v2k</span> <span class="ow">in</span> <span class="n">dvars</span><span class="p">:</span>
+                    <span class="n">v2</span> <span class="o">=</span> <span class="n">vprof</span><span class="p">[</span><span class="n">v2k</span><span class="p">]</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Could not find expected keys; specify v2k&#39;</span><span class="p">)</span>
+    <span class="n">v2attrs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">v2</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">v2attrs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+    <span class="n">gskw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.98</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="n">gskw</span>
+    <span class="p">)</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">nipy_spectral</span>
+    <span class="n">nt</span> <span class="o">=</span> <span class="n">v1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">ti</span><span class="p">,</span> <span class="n">v1t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v1</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">v1</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">v1</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">ti</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">datefmt</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v1t</span><span class="p">,</span> <span class="n">v1</span><span class="o">.</span><span class="n">LAY</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">ti</span> <span class="o">/</span> <span class="n">nt</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">vminprof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vmaxprof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmin</span> <span class="o">=</span> <span class="n">vminprof</span><span class="p">[</span><span class="n">v1k</span><span class="p">][</span><span class="n">ti</span><span class="p">]</span>
+            <span class="n">vmax</span> <span class="o">=</span> <span class="n">vmaxprof</span><span class="p">[</span><span class="n">v1k</span><span class="p">][</span><span class="n">ti</span><span class="p">]</span>
+            <span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fill_betweenx</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">v1</span><span class="o">.</span><span class="n">LAY</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">ti</span> <span class="o">/</span> <span class="n">nt</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">nipy_spectral</span>
+    <span class="k">for</span> <span class="n">ti</span><span class="p">,</span> <span class="n">v2t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v2</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">v2</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">v2</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">ti</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">datefmt</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v2t</span><span class="p">,</span> <span class="n">v2</span><span class="o">.</span><span class="n">LAY</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">ti</span> <span class="o">/</span> <span class="n">nt</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">vminprof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vmaxprof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmin</span> <span class="o">=</span> <span class="n">vminprof</span><span class="p">[</span><span class="n">v2k</span><span class="p">][</span><span class="n">ti</span><span class="p">]</span>
+            <span class="n">vmax</span> <span class="o">=</span> <span class="n">vmaxprof</span><span class="p">[</span><span class="n">v2k</span><span class="p">][</span><span class="n">ti</span><span class="p">]</span>
+            <span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_betweenx</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">v2</span><span class="o">.</span><span class="n">LAY</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">ti</span> <span class="o">/</span> <span class="n">nt</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+
+    <span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+        <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{long_name}</span><span class="s1"> [</span><span class="si">{units}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">v1attrs</span><span class="p">),</span>
+        <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;VGLVLS [$(p - p_t) / (p_s - p_t)$]&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{long_name}</span><span class="s1"> [</span><span class="si">{units}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">v2attrs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">v1k</span> <span class="o">==</span> <span class="s1">&#39;O3&#39;</span><span class="p">:</span>
+        <span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">v2k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;ASO4IJ&#39;</span><span class="p">,</span> <span class="s1">&#39;ASO4J&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">v2k</span> <span class="ow">in</span> <span class="n">std2ks</span><span class="p">:</span>
+        <span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xscale</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">argparse</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;python -m aqmbc&#39;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Make report files (summary and profiles) for BCON files from a&#39;</span>
+            <span class="o">+</span> <span class="s1">&#39; configuration file used to make them.&#39;</span>
+        <span class="p">),</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;run.cfg&#39;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Configuraton file or files. Parsed in order according to the&#39;</span>
+            <span class="o">+</span> <span class="s1">&#39; configparser approach using extended interpolation&#39;</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">epilog</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Example</span>
+<span class="s2">    $ python -m aqmbc.report run.cfg</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">reportfromcfg</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

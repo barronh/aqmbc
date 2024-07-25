@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc.cmaq &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/aqmbc.html">aqmbc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../aqmbc.html">aqmbc</a></li>
+      <li class="breadcrumb-item active">aqmbc.cmaq</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aqmbc.cmaq</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cmaqready&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">timeindependent</span><span class="p">(</span><span class="n">ncf</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Edit SDATE, STIME, TSTEP and TFLAG values to 0. IOAPI reads this as time</span>
+<span class="sd">    independent.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    ncf : netcdf file</span>
+<span class="sd">        Must be editable</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tflag</span> <span class="o">=</span> <span class="n">ncf</span><span class="p">[</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">tflag</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Files with 2+ times cannot be time-independent&#39;</span><span class="p">)</span>
+    <span class="n">ncf</span><span class="p">[</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ncf</span><span class="o">.</span><span class="n">SDATE</span> <span class="o">=</span> <span class="n">tflag</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">ncf</span><span class="o">.</span><span class="n">STIME</span> <span class="o">=</span> <span class="n">tflag</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">ncf</span><span class="o">.</span><span class="n">TSTEP</span> <span class="o">=</span> <span class="n">tflag</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">batch_timeindependent</span><span class="p">(</span><span class="n">inpaths</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply timeindependent to many files on disk&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">netCDF4</span> <span class="k">as</span> <span class="nn">nc</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inpaths</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inpaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">inpaths</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">inpath</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">inpath</span><span class="p">)</span>
+        <span class="n">ncf</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r+&#39;</span><span class="p">)</span>
+        <span class="n">timeindependent</span><span class="p">(</span><span class="n">ncf</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="cmaqready"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.cmaq.cmaqready">[docs]</a><span class="k">def</span> <span class="nf">cmaqready</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">inpaths</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minvalue</span><span class="o">=</span><span class="mf">1e-30</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Concatenate inpaths on time and then interpolate to 25h instantaneous</span>
+<span class="sd">    times for CMAQ. Also trims FILEDESC and HISTORY if they are too long.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    date : date-like or string</span>
+<span class="sd">        Date for CMAQ-ready file.</span>
+<span class="sd">    inpaths : list or str</span>
+<span class="sd">        List of paths to use as the source or template to find inputs</span>
+<span class="sd">    outpath : str or None</span>
+<span class="sd">        If None, return the file.</span>
+<span class="sd">        Otherwise, write it out and return the path</span>
+<span class="sd">    verbose : int</span>
+<span class="sd">        Level of verbosity</span>
+<span class="sd">    minvalue : scalar</span>
+<span class="sd">        Minimum value</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outpath : str or dataset</span>
+<span class="sd">        Output file or path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+
+    <span class="n">clim</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">80</span>
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Keeping </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">; remove to remake&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="s1">&#39;1d&#39;</span><span class="p">)</span>
+    <span class="n">outtimes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">date</span> <span class="o">+</span> <span class="n">dd</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;1h&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inpaths</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inpat</span> <span class="o">=</span> <span class="n">inpaths</span>
+        <span class="n">indates</span> <span class="o">=</span> <span class="p">[</span><span class="n">date</span> <span class="o">-</span> <span class="n">dd</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">date</span> <span class="o">+</span> <span class="n">dd</span><span class="p">]</span>
+        <span class="n">testinpaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">inpat</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">indates</span><span class="p">]</span>
+        <span class="n">inpaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">testinpaths</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+        <span class="n">missingpaths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">testinpaths</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">inpaths</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missingpaths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not find </span><span class="si">{</span><span class="n">missingpaths</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">infiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">decode_cf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">]</span>
+    <span class="n">tmpds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">infiles</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">)</span>
+    <span class="n">yyyyjjj</span> <span class="o">=</span> <span class="n">tmpds</span><span class="p">[</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">hhmmss</span> <span class="o">=</span> <span class="n">tmpds</span><span class="p">[</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">intime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">([</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">yj</span><span class="si">}</span><span class="s1">T</span><span class="si">{</span><span class="n">tj</span><span class="si">:</span><span class="s1">06d</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">yj</span><span class="p">,</span> <span class="n">tj</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">yyyyjjj</span><span class="p">,</span> <span class="n">hhmmss</span><span class="p">)</span>
+    <span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y%jT%H%M%S&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">intime</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">date</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Input files start </span><span class="si">{</span><span class="n">intime</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s1">%Y-%m-%dT%H</span><span class="si">}</span><span class="s1">Z after target&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39; start </span><span class="si">{</span><span class="n">date</span><span class="si">:</span><span class="s1">%Y-%m-%dT%H</span><span class="si">}</span><span class="s1">; earliest date copied to fill.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">intime</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">date</span> <span class="o">+</span> <span class="n">dd</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Input files end </span><span class="si">{</span><span class="n">intime</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s1">%Y-%m-%dT%H</span><span class="si">}</span><span class="s1">Z before target&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39; end </span><span class="si">{</span><span class="n">date</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dd</span><span class="si">:</span><span class="s1">%Y-%m-%dT%H</span><span class="si">}</span><span class="s1">; latest date copied to fill.&#39;</span>
+        <span class="p">)</span>
+    <span class="n">tmpds</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">intime</span>
+    <span class="n">nvars</span> <span class="o">=</span> <span class="n">tmpds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;NVARS&#39;</span><span class="p">]</span>
+    <span class="n">tflagdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">outtimes</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">),</span>
+        <span class="n">outtimes</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M%S&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">)</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">nvars</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tflag</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">tflagdata</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">,</span> <span class="s1">&#39;VAR&#39;</span><span class="p">,</span> <span class="s1">&#39;DATE-TIME&#39;</span><span class="p">),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">tmpds</span><span class="p">[</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span>
+    <span class="p">)</span>
+    <span class="n">tmpds</span> <span class="o">=</span> <span class="n">tmpds</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">TSTEP</span><span class="o">=</span><span class="n">outtimes</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">([</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">],</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">outds</span> <span class="o">=</span> <span class="n">tmpds</span><span class="p">[[]]</span>
+    <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmpds</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;SDATE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">))</span>
+    <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;STIME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M%S&#39;</span><span class="p">))</span>
+    <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+    <span class="n">fdesc</span> <span class="o">=</span> <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;FILEDESC&#39;</span><span class="p">]</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HISTORY&#39;</span><span class="p">]</span>
+    <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;FILEDESC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fdesc</span><span class="p">[:</span><span class="n">clim</span><span class="p">]</span>
+    <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HISTORY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[:</span><span class="n">clim</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fdesc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">clim</span><span class="p">:</span>
+        <span class="n">outds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fdesc</span>
+    <span class="n">outds</span><span class="p">[</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tflag</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">)</span>
+    <span class="n">titimes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">outtimes</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tmpds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;TFLAG&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c1"># outds[key] = tmpds[key].astype(&#39;f&#39;)</span>
+        <span class="n">tmpv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">tmpds</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">),</span> <span class="n">minvalue</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ti</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">titimes</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">intime</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
+                <span class="n">tmpv</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpv</span><span class="p">[</span><span class="n">ti</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1"> back filled&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ti</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">titimes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">intime</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+                <span class="n">tmpv</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpv</span><span class="p">[</span><span class="n">ti</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1"> forward filled&#39;</span><span class="p">)</span>
+        <span class="n">outds</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpv</span>
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outpath</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">outds</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

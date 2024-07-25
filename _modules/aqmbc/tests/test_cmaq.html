@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc.tests.test_cmaq &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script src="../../../_static/design-tabs.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/aqmbc.html">aqmbc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../aqmbc.html">aqmbc</a></li>
+      <li class="breadcrumb-item active">aqmbc.tests.test_cmaq</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aqmbc.tests.test_cmaq</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="test_cmaqready"><a class="viewcode-back" href="../../../api/aqmbc.tests.html#aqmbc.tests.test_cmaq.test_cmaqready">[docs]</a><span></span><span class="k">def</span> <span class="nf">test_cmaqready</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">tempfile</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+    <span class="kn">import</span> <span class="nn">PseudoNetCDF</span> <span class="k">as</span> <span class="nn">pnc</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">..cmaq</span> <span class="kn">import</span> <span class="n">cmaqready</span>
+
+    <span class="n">tdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+    <span class="n">gdpath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">tdir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;GRIDDESC&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gdpath</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">gdf</span><span class="p">:</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;&#39; &#39;</span>
+<span class="s2">&#39;CONUS_LCC&#39;</span>
+<span class="s2">2 33.0 45.0 -97.0 -97.0 40.0</span>
+<span class="s2">&#39; &#39;</span>
+<span class="s2">&#39;108US1&#39;</span>
+<span class="s2">&#39;CONUS_LCC&#39;  -2952000.0 -2772000.0 108000.0 108000.0 60 50 1</span>
+<span class="s2">&#39; &#39;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="n">bcpaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">tdir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;test_202201</span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bcpaths</span><span class="p">):</span>
+        <span class="n">bcf</span> <span class="o">=</span> <span class="n">pnc</span><span class="o">.</span><span class="n">pncopen</span><span class="p">(</span>
+            <span class="n">gdpath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;griddesc&#39;</span><span class="p">,</span> <span class="n">GDNAM</span><span class="o">=</span><span class="s1">&#39;108US1&#39;</span><span class="p">,</span> <span class="n">FTYPE</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">SDATE</span><span class="o">=</span><span class="mi">2022001</span> <span class="o">+</span> <span class="n">d</span><span class="p">,</span> <span class="n">STIME</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">TSTEP</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+            <span class="n">var_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;O3&#39;</span><span class="p">:</span> <span class="s1">&#39;ppb&#39;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">bcf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;O3&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">bcf</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">bcf</span> <span class="o">=</span> <span class="n">cmaqready</span><span class="p">(</span><span class="s1">&#39;2022-01-02&#39;</span><span class="p">,</span> <span class="n">bcpaths</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">bcf</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">25</span>
+    <span class="k">assert</span> <span class="n">bcf</span><span class="o">.</span><span class="n">TFLAG</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2022002</span>
+    <span class="k">assert</span> <span class="n">bcf</span><span class="o">.</span><span class="n">TFLAG</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">bcf</span><span class="o">.</span><span class="n">TFLAG</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2022003</span>
+    <span class="k">assert</span> <span class="n">bcf</span><span class="o">.</span><span class="n">TFLAG</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bcf</span><span class="o">.</span><span class="n">O3</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bcf</span><span class="o">.</span><span class="n">O3</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="mi">3</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

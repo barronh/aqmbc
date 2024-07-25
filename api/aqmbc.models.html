@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc.models package &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="aqmbc.tests package" href="aqmbc.tests.html" />
+    <link rel="prev" title="aqmbc package" href="aqmbc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="aqmbc.html">aqmbc package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aqmbc.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">aqmbc.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aqmbc.models.geoscf">aqmbc.models.geoscf module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aqmbc.models.raqms">aqmbc.models.raqms module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aqmbc.models.tcr">aqmbc.models.tcr module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aqmbc.models.util">aqmbc.models.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aqmbc.models.waccm">aqmbc.models.waccm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aqmbc.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aqmbc.tests.html">aqmbc.tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aqmbc.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aqmbc.html#module-aqmbc.bcon">aqmbc.bcon module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aqmbc.html#module-aqmbc.cmaq">aqmbc.cmaq module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aqmbc.html#module-aqmbc.exprlib">aqmbc.exprlib module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aqmbc.html#module-aqmbc.options">aqmbc.options module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aqmbc.html#module-aqmbc.report">aqmbc.report module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aqmbc.html#module-aqmbc">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="aqmbc.html">aqmbc package</a></li>
+      <li class="breadcrumb-item active">aqmbc.models package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/aqmbc.models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aqmbc-models-package">
+<h1>aqmbc.models package<a class="headerlink" href="#aqmbc-models-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-aqmbc.models.geoscf">
+<span id="aqmbc-models-geoscf-module"></span><h2>aqmbc.models.geoscf module<a class="headerlink" href="#module-aqmbc.models.geoscf" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.models.geoscf.download_window">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.models.geoscf.</span></span><span class="sig-name descname"><span class="pre">download_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdnam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metvars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chmvars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xgcvars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/geoscf.html#download_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.geoscf.download_window" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gdnam</strong> (<em>str</em>) – Grid name with definition in GRIDDESC at environ[‘GRIDDESC’],
+./GRIDDESC or in the GRIDDESC distributed with aqmbc</p></li>
+<li><p><strong>dates</strong> (<em>list</em>) – Dates to process. Each will be saved separately on disk.</p></li>
+<li><p><strong>sleep</strong> (<em>int</em>) – GEOS-CF OpenDAP will crash if too many calls are made sequentially.
+Heuristically, a minute between calls prevents crashes.</p></li>
+<li><p><strong>metvars</strong> (<em>list</em>) – Optional list of metvars to subset. See GEOS-CF fluid documentation.</p></li>
+<li><p><strong>chemvars</strong> (<em>list</em>) – Optional list of chmvars to subset. See GEOS-CF fluid documentation.</p></li>
+<li><p><strong>xgcvars</strong> (<em>list</em>) – Optional list of xgcvars to subset. See GEOS-CF fluid documentation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outpaths</strong> – List of paths that were created by download</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.models.raqms">
+<span id="aqmbc-models-raqms-module"></span><h2>aqmbc.models.raqms module<a class="headerlink" href="#module-aqmbc.models.raqms" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.models.raqms.download">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.models.raqms.</span></span><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/raqms.html#download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.raqms.download" title="Permalink to this definition"></a></dt>
+<dd><p>Convenience function for downloading. If root url change</p>
+<dl class="simple">
+<dt>dates<span class="classifier">list</span></dt><dd><p>Dates to download</p>
+</dd>
+<dt>root<span class="classifier">str</span></dt><dd><p>Root path where RAQMS files are available for downloading.
+If None, defaults to <a class="reference external" href="https://bin.ssec.wisc.edu/pub/raqms/ESRL/RAQMS/">https://bin.ssec.wisc.edu/pub/raqms/ESRL/RAQMS/</a>
+If the root path has changed, provide a new value here and raise an
+issue at  <a class="reference external" href="https://github.com/barronh/aqmbc/issues">https://github.com/barronh/aqmbc/issues</a></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paths</strong> – List of paths that were downloaded</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aqmbc.models.raqms.raqms">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aqmbc.models.raqms.</span></span><span class="sig-name descname"><span class="pre">raqms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/raqms.html#raqms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.raqms.raqms" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoNetCDFFile</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.raqms.raqms.getTimes">
+<span class="sig-name descname"><span class="pre">getTimes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datetype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/raqms.html#raqms.getTimes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.raqms.raqms.getTimes" title="Permalink to this definition"></a></dt>
+<dd><p>Get an array of datetime objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datetype</strong> (<em>string</em><em> or </em><em>numpy.dtype</em>) – ‘datetime’ or datetime64 dtype</p></li>
+<li><p><strong>bounds</strong> (<em>boolean</em>) – get time boundaries</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> – datetime objects or array of numpy’s datetype type</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must have a time or TFLAG variable</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.raqms.raqms.interpSigma">
+<span class="sig-name descname"><span class="pre">interpSigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vglvls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vgtop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/raqms.html#raqms.interpSigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.raqms.raqms.interpSigma" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vglvls</strong> (<em>iterable</em>) – the new vglvls (edges)</p></li>
+<li><p><strong>vgtop</strong> (<em>scalar</em>) – Converting to new vgtop</p></li>
+<li><p><strong>interptype</strong> (<em>string</em>) – ‘linear’ uses a linear interpolation
+‘conserve’ uses a mass conserving interpolation</p></li>
+<li><p><strong>extrapolate</strong> (<em>boolean</em>) – allow extrapolation beyond bounds with linear, default False</p></li>
+<li><p><strong>fill_value</strong> (<em>boolean</em>) – set fill value (e.g, nan) to prevent extrapolation or edge
+continuation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outf</strong> – PseudoNetCDFFile with all variables interpolated</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ioapi_base</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When extrapolate is false, the edge values are used for points beyond
+the inputs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.raqms.raqms.ll2ij">
+<span class="sig-name descname"><span class="pre">ll2ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'clip'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/raqms.html#raqms.ll2ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.raqms.raqms.ll2ij" title="Permalink to this definition"></a></dt>
+<dd><p>Converts lon/lat to 0-based indicies (0,M), (0,N)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lon</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – longitudes in decimal degrees</p></li>
+<li><p><strong>lat</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – latitudes in decimal degrees</p></li>
+<li><p><strong>bounds</strong> (<em>string</em>) – ignore, error, warn if i,j are out of domain</p></li>
+<li><p><strong>clean</strong> (<em>string</em>) – none - return values regardless of bounds;
+mask - mask values out of bounds;
+clip - return min(max(0, v), nx - 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>i, j</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>indices (0-based) for variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.models.tcr">
+<span id="aqmbc-models-tcr-module"></span><h2>aqmbc.models.tcr module<a class="headerlink" href="#module-aqmbc.models.tcr" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.models.tcr.download">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.models.tcr.</span></span><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/tcr.html#download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.tcr.download" title="Permalink to this definition"></a></dt>
+<dd><p>Convenience function for downloading. If root url change</p>
+<dl class="simple">
+<dt>dates<span class="classifier">list</span></dt><dd><p>Dates to download</p>
+</dd>
+<dt>freq<span class="classifier">str</span></dt><dd><p>mon or 6hr</p>
+</dd>
+<dt>root<span class="classifier">str</span></dt><dd><p>Root path where TROPESS Composition Reanalysis (TCR) files are
+available for downloading.
+If None, defaults to <a class="reference external" href="https://tropess.gesdisc.eosdis.nasa.gov/data/">https://tropess.gesdisc.eosdis.nasa.gov/data/</a>
+If the root path has changed, provide a new value here and raise an
+issue at  <a class="reference external" href="https://github.com/barronh/aqmbc/issues">https://github.com/barronh/aqmbc/issues</a></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paths</strong> – List of paths that were downloaded</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aqmbc.models.tcr.tcr">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aqmbc.models.tcr.</span></span><span class="sig-name descname"><span class="pre">tcr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/tcr.html#tcr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.tcr.tcr" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoNetCDFFile</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.tcr.tcr.getTimes">
+<span class="sig-name descname"><span class="pre">getTimes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datetype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/tcr.html#tcr.getTimes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.tcr.tcr.getTimes" title="Permalink to this definition"></a></dt>
+<dd><p>Get an array of datetime objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datetype</strong> (<em>string</em><em> or </em><em>numpy.dtype</em>) – ‘datetime’ or datetime64 dtype</p></li>
+<li><p><strong>bounds</strong> (<em>boolean</em>) – get time boundaries</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> – datetime objects or array of numpy’s datetype type</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must have a time or TFLAG variable</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.tcr.tcr.interpSigma">
+<span class="sig-name descname"><span class="pre">interpSigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vglvls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vgtop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/tcr.html#tcr.interpSigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.tcr.tcr.interpSigma" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vglvls</strong> (<em>iterable</em>) – the new vglvls (edges)</p></li>
+<li><p><strong>vgtop</strong> (<em>scalar</em>) – Converting to new vgtop</p></li>
+<li><p><strong>interptype</strong> (<em>string</em>) – ‘linear’ uses a linear interpolation
+‘conserve’ uses a mass conserving interpolation</p></li>
+<li><p><strong>extrapolate</strong> (<em>boolean</em>) – allow extrapolation beyond bounds with linear, default False</p></li>
+<li><p><strong>fill_value</strong> (<em>boolean</em>) – set fill value (e.g, nan) to prevent extrapolation or edge
+continuation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outf</strong> – PseudoNetCDFFile with all variables interpolated</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ioapi_base</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When extrapolate is false, the edge values are used for points beyond
+the inputs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.tcr.tcr.ll2ij">
+<span class="sig-name descname"><span class="pre">ll2ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'clip'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/tcr.html#tcr.ll2ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.tcr.tcr.ll2ij" title="Permalink to this definition"></a></dt>
+<dd><p>Converts lon/lat to 0-based indicies (0,M), (0,N)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lon</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – longitudes in decimal degrees</p></li>
+<li><p><strong>lat</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – latitudes in decimal degrees</p></li>
+<li><p><strong>bounds</strong> (<em>string</em>) – ignore, error, warn if i,j are out of domain</p></li>
+<li><p><strong>clean</strong> (<em>string</em>) – none - return values regardless of bounds;
+mask - mask values out of bounds;
+clip - return min(max(0, v), nx - 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>i, j</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>indices (0-based) for variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.models.util">
+<span id="aqmbc-models-util-module"></span><h2>aqmbc.models.util module<a class="headerlink" href="#module-aqmbc.models.util" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.models.util.sigma2coeff_lin">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.models.util.</span></span><span class="sig-name descname"><span class="pre">sigma2coeff_lin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vglvls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/util.html#sigma2coeff_lin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.util.sigma2coeff_lin" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate weighting coefficients for each source (S) layer to each
+destination (D) layer using a simple piecewise linear interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sigma</strong> (<em>array-like</em>) – Source model edges defined as sigma = (p - ptop) / (psrf / ptop)</p></li>
+<li><p><strong>vglvls</strong> (<em>array-like</em>) – CMAQ model edges defined as sigma = (p - ptop) / (psrf / ptop)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>coeff</strong> – Weights shaped (S,D) of each source (S) layer to each destination (D)
+layer. The sum of coeff over the S (0) axes should be an array of shape
+D with all values set to 1.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Both sigma and vglvls are expected in descending order (1 to 0)</p></li>
+<li><p>Both sigma and vglvls must be use the same ptop and psrf</p></li>
+</ul>
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.models.waccm">
+<span id="aqmbc-models-waccm-module"></span><h2>aqmbc.models.waccm module<a class="headerlink" href="#module-aqmbc.models.waccm" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.models.waccm.download">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.models.waccm.</span></span><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fires</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'finn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/waccm.html#download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.waccm.download" title="Permalink to this definition"></a></dt>
+<dd><p>Convenience function for downloading. If root url change</p>
+<dl class="simple">
+<dt>dates<span class="classifier">list</span></dt><dd><p>Dates to download</p>
+</dd>
+<dt>fires<span class="classifier">str</span></dt><dd><p>finn or qfed</p>
+</dd>
+<dt>root<span class="classifier">str</span></dt><dd><p>Root path where WACCM files are available for downloading.
+If None, defaults to <a class="reference external" href="https://www.acom.ucar.edu/waccm/DATA/">https://www.acom.ucar.edu/waccm/DATA/</a>
+If the root path has changed, provide a new value here and raise an
+issue at  <a class="reference external" href="https://github.com/barronh/aqmbc/issues">https://github.com/barronh/aqmbc/issues</a></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paths</strong> – List of paths that were downloaded</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aqmbc.models.waccm.waccm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aqmbc.models.waccm.</span></span><span class="sig-name descname"><span class="pre">waccm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/waccm.html#waccm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.waccm.waccm" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoNetCDFFile</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.waccm.waccm.interpSigma">
+<span class="sig-name descname"><span class="pre">interpSigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vglvls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vgtop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/waccm.html#waccm.interpSigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.waccm.waccm.interpSigma" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vglvls</strong> (<em>iterable</em>) – the new vglvls (edges)</p></li>
+<li><p><strong>vgtop</strong> (<em>scalar</em>) – Converting to new vgtop</p></li>
+<li><p><strong>interptype</strong> (<em>string</em>) – ‘linear’ uses a linear interpolation
+‘conserve’ uses a mass conserving interpolation</p></li>
+<li><p><strong>extrapolate</strong> (<em>boolean</em>) – allow extrapolation beyond bounds with linear, default False</p></li>
+<li><p><strong>fill_value</strong> (<em>boolean</em>) – set fill value (e.g, nan) to prevent extrapolation or edge
+continuation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outf</strong> – PseudoNetCDFFile with all variables interpolated</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ioapi_base</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When extrapolate is false, the edge values are used for points beyond
+the inputs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aqmbc.models.waccm.waccm.ll2ij">
+<span class="sig-name descname"><span class="pre">ll2ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'clip'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/models/waccm.html#waccm.ll2ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.models.waccm.waccm.ll2ij" title="Permalink to this definition"></a></dt>
+<dd><p>Converts lon/lat to 0-based indicies (0,M), (0,N)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lon</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – longitudes in decimal degrees</p></li>
+<li><p><strong>lat</strong> (<em>scalar</em><em> or </em><em>iterable</em>) – latitudes in decimal degrees</p></li>
+<li><p><strong>bounds</strong> (<em>string</em>) – ignore, error, warn if i,j are out of domain</p></li>
+<li><p><strong>clean</strong> (<em>string</em>) – none - return values regardless of bounds;
+mask - mask values out of bounds;
+clip - return min(max(0, v), nx - 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>i, j</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>indices (0-based) for variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aqmbc.models" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aqmbc.html" class="btn btn-neutral float-left" title="aqmbc package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aqmbc.tests.html" class="btn btn-neutral float-right" title="aqmbc.tests package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

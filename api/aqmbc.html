@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc package &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="aqmbc.models package" href="aqmbc.models.html" />
+    <link rel="prev" title="aqmbc Config File" href="../configexample.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">aqmbc package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aqmbc.models.html">aqmbc.models package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aqmbc.tests.html">aqmbc.tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-aqmbc.bcon">aqmbc.bcon module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.bc"><code class="docutils literal notranslate"><span class="pre">bc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.dimparser"><code class="docutils literal notranslate"><span class="pre">dimparser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.formatparser"><code class="docutils literal notranslate"><span class="pre">formatparser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.ijslice"><code class="docutils literal notranslate"><span class="pre">ijslice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.kinterp"><code class="docutils literal notranslate"><span class="pre">kinterp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.saveioapi"><code class="docutils literal notranslate"><span class="pre">saveioapi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.translate"><code class="docutils literal notranslate"><span class="pre">translate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bcon.wndw"><code class="docutils literal notranslate"><span class="pre">wndw()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-aqmbc.cmaq">aqmbc.cmaq module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.cmaq.cmaqready"><code class="docutils literal notranslate"><span class="pre">cmaqready()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-aqmbc.exprlib">aqmbc.exprlib module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.exprlib.gc12"><code class="docutils literal notranslate"><span class="pre">gc12</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.exprlib.gc12_soas"><code class="docutils literal notranslate"><span class="pre">gc12_soas</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.exprlib.gc14"><code class="docutils literal notranslate"><span class="pre">gc14</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.exprlib.gc14_soas"><code class="docutils literal notranslate"><span class="pre">gc14_soas</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.exprlib.raqms"><code class="docutils literal notranslate"><span class="pre">raqms</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-aqmbc.options">aqmbc.options module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.options.getmetaf"><code class="docutils literal notranslate"><span class="pre">getmetaf()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-aqmbc.report">aqmbc.report module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.barplot"><code class="docutils literal notranslate"><span class="pre">barplot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.get_vertprof"><code class="docutils literal notranslate"><span class="pre">get_vertprof()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.getstats"><code class="docutils literal notranslate"><span class="pre">getstats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.make_vertprof"><code class="docutils literal notranslate"><span class="pre">make_vertprof()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.makestats"><code class="docutils literal notranslate"><span class="pre">makestats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.plot_2spc_vprof"><code class="docutils literal notranslate"><span class="pre">plot_2spc_vprof()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.plot_gaspm_bars"><code class="docutils literal notranslate"><span class="pre">plot_gaspm_bars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.plot_vprof"><code class="docutils literal notranslate"><span class="pre">plot_vprof()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.reportfromcfg"><code class="docutils literal notranslate"><span class="pre">reportfromcfg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.report.summarize"><code class="docutils literal notranslate"><span class="pre">summarize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-aqmbc">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#contents">Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ex-python-geos-chem">Ex Python GEOS-Chem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ex-scripting">Ex Scripting</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#version-history">Version History</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.bc"><code class="docutils literal notranslate"><span class="pre">bc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aqmbc.runcfg"><code class="docutils literal notranslate"><span class="pre">runcfg()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">aqmbc package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/aqmbc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aqmbc-package">
+<h1>aqmbc package<a class="headerlink" href="#aqmbc-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aqmbc.models.html">aqmbc.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aqmbc.tests.html">aqmbc.tests package</a></li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-aqmbc.bcon">
+<span id="aqmbc-bcon-module"></span><h2>aqmbc.bcon module<a class="headerlink" href="#module-aqmbc.bcon" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.bc">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metaf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tslice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmethod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conserve'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exprpaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clobber</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_kw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speedup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeindependent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minvalue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#bc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.bc" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inpath</strong> (<em>str</em>) – path to input file</p></li>
+<li><p><strong>outpath</strong> (<em>str</em>) – path to output file</p></li>
+<li><p><strong>metaf</strong> (<em>netcdf-like</em>) – Metadata file (CRO for ICON, BDY for BCON)</p></li>
+<li><p><strong>tslice</strong> (<em>slice</em>) – Optional time slice (e.g., slice(0) for ICON)</p></li>
+<li><p><strong>vmethod</strong> (<em>str</em>) – method to use for vertical interpolation (conserve or linear)</p></li>
+<li><p><strong>exprpaths</strong> (<em>list</em>) – text files with species translations</p></li>
+<li><p><strong>clobber</strong> (<em>bool</em>) – overwrite existing files</p></li>
+<li><p><strong>speedup</strong> (<em>bool</em>) – slice file to load into memory. More mem, but faster</p></li>
+<li><p><strong>timeindependent</strong> (<em>bool</em>) – If True and input has just 1 time, write out as an IOAPI
+time-independent file.</p></li>
+<li><p><strong>minvalue</strong> (<em>scalar</em>) – Passed to translate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Saves BCON or ICON to file.</p></li>
+<li><dl class="simple">
+<dt>Operations:</dt><dd><ol class="arabic simple">
+<li><p>window</p></li>
+<li><p>horizontal extraction</p></li>
+<li><p>vertical interpolation</p></li>
+<li><p>species translation</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.dimparser">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">dimparser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimstr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#dimparser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.dimparser" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dimstr</strong> (<em>str</em>) – key=value pairs delimited by commas</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> – mapping table between IOAPI gridded and input dimensions</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.formatparser">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">formatparser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmtstr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#formatparser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.formatparser" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fmtstr</strong> (<em>str</em>) – string with format and option key value pairs delimited by commas
+option key value pairs should be in a format consistent with
+dict call dict(key1=val1, key2=val2, …)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> – format=first word
+otherkeys=key value pairs delimited by commas</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.ijslice">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">ijslice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metaf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimkeys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#ijslice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.ijslice" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>infile</strong> (<em>netcdf-like</em>) – input file</p></li>
+<li><p><strong>metafile</strong> (<em>netcdf-like</em>) – file with longitude and latitude</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>bconf</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>file at metaf</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.kinterp">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">kinterp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metaf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmethod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#kinterp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.kinterp" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>infile</strong> (<em>netcdf-like</em>) – input file</p></li>
+<li><p><strong>metaf</strong> (<em>netcdf-like</em>) – file with longitude and latitude</p></li>
+<li><p><strong>vmethod</strong> (<em>str</em>) – method for vertical inteprolation (conserve or linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>bconvf</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>file at new vertical levels</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.saveioapi">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">saveioapi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metaf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimkeys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeindependent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#saveioapi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.saveioapi" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inf</strong> (<em>netcdf-like file</em>) – Must support getTimes method</p></li>
+<li><p><strong>outf</strong> (<em>netcdf-like file</em>) – file for output</p></li>
+<li><p><strong>metaf</strong> (<em>netcdf-like file</em>) – metadata file</p></li>
+<li><p><strong>dimkeys</strong> (<em>dict</em>) – translation dictionary for dimensions</p></li>
+<li><p><strong>timeindependent</strong> (<em>bool</em>) – If True and number of times is 1, the file will be stored as IOAPI
+time-independent</p></li>
+<li><p><strong>Results</strong> – </p></li>
+<li><p><strong>-------</strong> – </p></li>
+<li><p><strong>out</strong> (<em>netcdf-like file</em>) – file that was output</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.translate">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exprpaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.translate" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>infile</strong> (<em>netcdf-like</em>) – File input</p></li>
+<li><p><strong>exprpaths</strong> (<em>list</em>) – paths to expr file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outf</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>file output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bcon.wndw">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.bcon.</span></span><span class="sig-name descname"><span class="pre">wndw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metaf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimkeys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tslice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speedup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#wndw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bcon.wndw" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>varfile</strong> (<em>netcdf-like</em>) – input file</p></li>
+<li><p><strong>metafile</strong> (<em>netcdf-like</em>) – file with longitude and latitude</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>wndwf</strong> (<em>file windows in lon/lat space</em>)</p></li>
+<li><p><strong>i</strong> (<em>indices for wndwf at metaf</em>)</p></li>
+<li><p><strong>j</strong> (<em>indices for wndwf at metaf</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.cmaq">
+<span id="aqmbc-cmaq-module"></span><h2>aqmbc.cmaq module<a class="headerlink" href="#module-aqmbc.cmaq" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.cmaq.cmaqready">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.cmaq.</span></span><span class="sig-name descname"><span class="pre">cmaqready</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inpaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minvalue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/cmaq.html#cmaqready"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.cmaq.cmaqready" title="Permalink to this definition"></a></dt>
+<dd><p>Concatenate inpaths on time and then interpolate to 25h instantaneous
+times for CMAQ. Also trims FILEDESC and HISTORY if they are too long.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date</strong> (<em>date-like</em><em> or </em><em>string</em>) – Date for CMAQ-ready file.</p></li>
+<li><p><strong>inpaths</strong> (<em>list</em><em> or </em><em>str</em>) – List of paths to use as the source or template to find inputs</p></li>
+<li><p><strong>outpath</strong> (<em>str</em><em> or </em><em>None</em>) – If None, return the file.
+Otherwise, write it out and return the path</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – Level of verbosity</p></li>
+<li><p><strong>minvalue</strong> (<em>scalar</em>) – Minimum value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outpath</strong> – Output file or path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.exprlib">
+<span id="aqmbc-exprlib-module"></span><h2>aqmbc.exprlib module<a class="headerlink" href="#module-aqmbc.exprlib" title="Permalink to this heading"></a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="aqmbc.exprlib.gc12">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.exprlib.</span></span><span class="sig-name descname"><span class="pre">gc12</span></span><a class="headerlink" href="#aqmbc.exprlib.gc12" title="Permalink to this definition"></a></dt>
+<dd><p>options for GEOS-Chem version 12 for CB6r3 with AE7 aerosols</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="aqmbc.exprlib.gc12_soas">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.exprlib.</span></span><span class="sig-name descname"><span class="pre">gc12_soas</span></span><a class="headerlink" href="#aqmbc.exprlib.gc12_soas" title="Permalink to this definition"></a></dt>
+<dd><p>same as above, but for the Simple SOA option.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="aqmbc.exprlib.gc14">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.exprlib.</span></span><span class="sig-name descname"><span class="pre">gc14</span></span><a class="headerlink" href="#aqmbc.exprlib.gc14" title="Permalink to this definition"></a></dt>
+<dd><p>options for GEOS-Chem version 14 with CB6r5 with AE7 aerosols</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="aqmbc.exprlib.gc14_soas">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.exprlib.</span></span><span class="sig-name descname"><span class="pre">gc14_soas</span></span><a class="headerlink" href="#aqmbc.exprlib.gc14_soas" title="Permalink to this definition"></a></dt>
+<dd><p>same as above, but for the simple SOA option.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="aqmbc.exprlib.raqms">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.exprlib.</span></span><span class="sig-name descname"><span class="pre">raqms</span></span><a class="headerlink" href="#aqmbc.exprlib.raqms" title="Permalink to this definition"></a></dt>
+<dd><p>cb6r4 and ae6 definitions for RAQMS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.options">
+<span id="aqmbc-options-module"></span><h2>aqmbc.options module<a class="headerlink" href="#module-aqmbc.options" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.options.getmetaf">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.options.</span></span><span class="sig-name descname"><span class="pre">getmetaf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bctype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bcon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdnam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'12US1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vgnam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPA_35L'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/options.html#getmetaf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.options.getmetaf" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>bctype<span class="classifier">str</span></dt><dd><p>bcon (boundary) or icon (initial) boundary conditions.</p>
+</dd>
+<dt>gdnam<span class="classifier">str</span></dt><dd><p>Name of grid in gdpath</p>
+</dd>
+<dt>vgnam<span class="classifier">str</span></dt><dd><p>Name of vertical grid (must exist in vglvls)</p>
+</dd>
+<dt>gdpath<span class="classifier">str or None</span></dt><dd><p>If none, looks for GRIDDESC environment, then looks for a local file,
+then uses the default.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aqmbc.report">
+<span id="aqmbc-report-module"></span><h2>aqmbc.report module<a class="headerlink" href="#module-aqmbc.report" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.barplot">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">barplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_kw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#barplot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.barplot" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>pandas.Series</em>) – Series get from makestats or getstats</p></li>
+<li><p><strong>bar_kw</strong> (<em>mappable</em>) – Options for the barplot function (including ax)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ax</strong> – Axes object with barplot</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.get_vertprof">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">get_vertprof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inbcon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#get_vertprof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.get_vertprof" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inbcon</strong> (<em>list</em><em> or </em><em>str</em>) – <p>If str, inbcon = sorted(glob.glob(inbcon))
+If list, items should be str or xarray.Dataset object.</p>
+<blockquote>
+<div><p>If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+If Datasets, infiles = inbcon</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>varkeys</strong> (<em>list</em><em> or </em><em>None</em>) – variable keys (if None, use all)</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Name of function to apply to each variable (min, mean, max, median)</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – Level of verbosity</p></li>
+<li><p><strong>outpath</strong> (<em>str</em><em> or </em><em>None</em>) – Path to save (or retrieve) the vertical profile from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>vf</strong> – Variables have func applied to all dimensions except for LAY.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.getstats">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">getstats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inbcon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#getstats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.getstats" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inbcon</strong> (<em>list</em><em> or </em><em>str</em>) – <p>If str, inbcon = sorted(glob.glob(inbcon))
+If list, items should be str or xarray.Dataset object.</p>
+<blockquote>
+<div><p>If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+If Datasets, infiles = inbcon</p>
+</div></blockquote>
+<p>If outpath is not None, inbcon must be a str or list of paths</p>
+</p></li>
+<li><p><strong>varkeys</strong> (<em>list</em>) – List of variable keys to process</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – Level of verbosity</p></li>
+<li><p><strong>add_summary</strong> (<em>bool</em>) – Add summary level data</p></li>
+<li><p><strong>outpath</strong> (<em>str</em><em> or </em><em>None</em>) – Path to save (or retrieve) results from. Cached results will only be
+used if the outpath file is newer than all the inputs.</p></li>
+<li><p><strong>draft</strong> (<em>bool</em>) – If True, use actual_range and actual_median properties instead of file
+data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>statdf</strong> – Dataframe with rows for each file and variable combination. Each row
+has min, mean, median, max, std</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.make_vertprof">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">make_vertprof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inbcon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#make_vertprof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.make_vertprof" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inbcon</strong> (<em>list</em><em> or </em><em>str</em>) – <p>If str, inbcon = sorted(glob.glob(inbcon))
+If list, items should be str or xarray.Dataset object.</p>
+<blockquote>
+<div><p>If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+If Datasets, infiles = inbcon</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>varkeys</strong> (<em>list</em><em> or </em><em>None</em>) – variable keys (if None, use all)</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Name of function to apply to each variable (min, mean, max, median)</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – Level of verbosity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>vf</strong> – Variables have func applied to all dimensions except for LAY.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.makestats">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">makestats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inbcon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#makestats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.makestats" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inbcon</strong> (<em>list</em><em> or </em><em>str</em>) – <p>If str, inbcon = sorted(glob.glob(inbcon))
+If list, items should be str or xarray.Dataset object.</p>
+<blockquote>
+<div><p>If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+If Datasets, infiles = inbcon</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>varkeys</strong> (<em>list</em>) – List of variable keys to process</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – Level of verbosity</p></li>
+<li><p><strong>draft</strong> (<em>bool</em>) – If True, use actual_range and actual_median properties instead of file
+data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>statdf</strong> – Dataframe with rows for each file and variable combination. Each row
+has min, mean, median, max, std</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.plot_2spc_vprof">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">plot_2spc_vprof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vprof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vminprof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmaxprof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v1k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'O3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#plot_2spc_vprof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.plot_2spc_vprof" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.plot_gaspm_bars">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">plot_gaspm_bars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filekey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Overall'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sortmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#plot_gaspm_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.plot_gaspm_bars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.plot_vprof">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">plot_vprof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#plot_vprof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.plot_vprof" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vmean</strong> (<em>xarray.DataArray</em>) – Average of vertical profile at time steps; must have the TSTEP and LAY
+dimensions</p></li>
+<li><p><strong>vmin</strong> (<em>xarray.DataArray</em>) – Optional lower and upper bounds</p></li>
+<li><p><strong>vmax</strong> (<em>xarray.DataArray</em>) – Optional lower and upper bounds</p></li>
+<li><p><strong>ax</strong> (<em>matplotlit.axes.Axes</em>) – Optional axes to add lines to.</p></li>
+<li><p><strong>kwds</strong> (<em>mappable</em>) – Properties for lines</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ax</strong> – If ax was provided, the same ax is returned.
+Otherwise, a new ax is created using subplots.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlit.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.reportfromcfg">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">reportfromcfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfgobjs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfgtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'path'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#reportfromcfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.reportfromcfg" title="Permalink to this definition"></a></dt>
+<dd><p>Runs getstats, and get_vertprof and save to disk
+If summaryfigs=’y’, run plot_gaspm_bars and plot_2spc_vprof and save
+results to disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfgobjs</strong> (<em>list</em>) – List of paths, files, or dictionaries</p></li>
+<li><p><strong>cfgtype</strong> (<em>str</em>) – ‘path’, ‘file’, or ‘dict’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.report.summarize">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.report.</span></span><span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/report.html#summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.report.summarize" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statdf</strong> (<em>pandas.DataFrame</em>) – DataFrame from makestats or getstats</p></li>
+<li><p><strong>append</strong> (<em>bool</em>) – If True, add record to statdf and return full dataframe.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>statdf</strong> – Add Overall record for each variable where mean and std are averages,
+unit and min are their minimums, max is its maximum, and median is its
+median.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aqmbc">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aqmbc" title="Permalink to this heading"></a></h2>
+<p>Code for making CMAQ-ready boundary condition files</p>
+<section id="contents">
+<h3>Contents<a class="headerlink" href="#contents" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>bcon<span class="classifier">module</span></dt><dd><p>module with functions for making boundary condition files</p>
+</dd>
+<dt>cmaq<span class="classifier">module</span></dt><dd><p>module for making files CMAQ ready</p>
+</dd>
+<dt>report<span class="classifier">module</span></dt><dd><p>module with convenience functions for reporting</p>
+</dd>
+<dt>defnpath<span class="classifier">str</span></dt><dd><p>Path to all definition files available in examples.</p>
+</dd>
+<dt>runcfg<span class="classifier">function</span></dt><dd><p>Function to run aqmbc from configuration files</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<section id="ex-python-geos-chem">
+<h4>Ex Python GEOS-Chem<a class="headerlink" href="#ex-python-geos-chem" title="Permalink to this heading"></a></h4>
+<p>import PseudoNetCDF as pnc
+import aqmbc</p>
+<p>inpath = ‘/path/to/geoschem.nc’
+bcpath = ‘BCON.nc’
+# using built in expressions
+exprpaths = [f’{aqmbc.defnpath}/gc/gcnc_airmolden.expr’,</p>
+<blockquote>
+<div><p>f’{aqmbc.defnpath}/gc/gc14_to_cb6r5.expr’]</p>
+</div></blockquote>
+<p>metaf = pnc.pncopen(‘/path/to/METCRO3D_ANYDATE’, format=’ioapi’)
+bc(inpath, bcpath, metaf, vmethod=’linear’, exprpaths=exprpaths,</p>
+<blockquote>
+<div><p>dimkeys=dict(TSTEP=’time’, LAY=’lev’, ROW=’lat’, COL=’lon’),
+format_kw=’gcnc’, history=’just a test’)</p>
+</div></blockquote>
+</section>
+<section id="ex-scripting">
+<h4>Ex Scripting<a class="headerlink" href="#ex-scripting" title="Permalink to this heading"></a></h4>
+<p>python -m aqmbc -t runfolder
+cd runfolder
+# copy a cfg file as run.cfg
+# edit run.cfg for your application.
+python -m aqmbc run.cfg</p>
+</section>
+</section>
+<section id="version-history">
+<h3>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>0.4.1: Update bc and cmaqready to apply a minimum value and allow inpaths</dt><dd><p>to be provided by a template. The minimum value (minvalue) can be
+set in the common configuration section. Also, improved reporting
+functions and automated reporting via the config file.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>0.4.0: Change verbose to string for newer configparser compat</dt><dd><p>Update FILEDESC and HISTORY outputs to limit to 60*80 char
+Added cmaq module with cmaqready to stack, interpolate, and
+when necessary clean metadata.
+Added some reporting tools, expression library and examples.
+Needs better documentation on many objects.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.bc">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.</span></span><span class="sig-name descname"><span class="pre">bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metaf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tslice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmethod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conserve'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exprpaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clobber</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_kw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speedup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeindependent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minvalue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc/bcon.html#bc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.bc" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inpath</strong> (<em>str</em>) – path to input file</p></li>
+<li><p><strong>outpath</strong> (<em>str</em>) – path to output file</p></li>
+<li><p><strong>metaf</strong> (<em>netcdf-like</em>) – Metadata file (CRO for ICON, BDY for BCON)</p></li>
+<li><p><strong>tslice</strong> (<em>slice</em>) – Optional time slice (e.g., slice(0) for ICON)</p></li>
+<li><p><strong>vmethod</strong> (<em>str</em>) – method to use for vertical interpolation (conserve or linear)</p></li>
+<li><p><strong>exprpaths</strong> (<em>list</em>) – text files with species translations</p></li>
+<li><p><strong>clobber</strong> (<em>bool</em>) – overwrite existing files</p></li>
+<li><p><strong>speedup</strong> (<em>bool</em>) – slice file to load into memory. More mem, but faster</p></li>
+<li><p><strong>timeindependent</strong> (<em>bool</em>) – If True and input has just 1 time, write out as an IOAPI
+time-independent file.</p></li>
+<li><p><strong>minvalue</strong> (<em>scalar</em>) – Passed to translate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Saves BCON or ICON to file.</p></li>
+<li><dl class="simple">
+<dt>Operations:</dt><dd><ol class="arabic simple">
+<li><p>window</p></li>
+<li><p>horizontal extraction</p></li>
+<li><p>vertical interpolation</p></li>
+<li><p>species translation</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aqmbc.runcfg">
+<span class="sig-prename descclassname"><span class="pre">aqmbc.</span></span><span class="sig-name descname"><span class="pre">runcfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfgobjs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfgtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'path'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warningfilter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ignore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dryrun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speedup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aqmbc.html#runcfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aqmbc.runcfg" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfgobjs</strong> (<em>list</em>) – List of paths, files, or dictionaries</p></li>
+<li><p><strong>cfgtype</strong> (<em>str</em>) – ‘path’, ‘file’, or ‘dict’</p></li>
+<li><p><strong>warningfilter</strong> (<em>str</em>) – str accepted by warnings.simplefilter</p></li>
+<li><p><strong>dryrun</strong> (<em>bool</em>) – If True, return config after testing parsing.</p></li>
+<li><p><strong>speedup</strong> (<em>bool</em><em> or </em><em>None</em>) – If True, use more memory but run faster. If None, heursitcally decide.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../configexample.html" class="btn btn-neutral float-left" title="aqmbc Config File" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aqmbc.models.html" class="btn btn-neutral float-right" title="aqmbc.models package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc.models.geoscf &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script src="../../../_static/design-tabs.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/aqmbc.html">aqmbc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../aqmbc.html">aqmbc</a></li>
+      <li class="breadcrumb-item active">aqmbc.models.geoscf</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aqmbc.models.geoscf</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;download_window&#39;</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">PseudoNetCDF</span> <span class="k">as</span> <span class="nn">pnc</span>
+
+
+<span class="k">def</span> <span class="nf">tryandtime</span><span class="p">(</span><span class="n">tmpf</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function tries to download data in tmpf via OpenDAP. If it fails,</span>
+<span class="sd">    then it tries again up to maxtries. The entire process is timed.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    tmpf : xarray.Dataset</span>
+<span class="sd">        File from GEOS-CF</span>
+<span class="sd">    verbose : int</span>
+<span class="sd">        Level of verbosity</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dt : float</span>
+<span class="sd">        Time elapsed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+
+    <span class="n">maxtries</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">ntries</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">success</span> <span class="ow">and</span> <span class="n">ntries</span> <span class="o">&lt;</span> <span class="n">maxtries</span><span class="p">:</span>
+        <span class="n">ntries</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Might fail</span>
+            <span class="n">tmpf</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;.retry.&#39;</span><span class="p">)</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">dt</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">s&#39;</span>
+        <span class="k">if</span> <span class="n">ntries</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">ntries</span><span class="si">}</span><span class="s1"> tries)&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dt</span>
+
+
+<div class="viewcode-block" id="download_window"><a class="viewcode-back" href="../../../api/aqmbc.models.html#aqmbc.models.geoscf.download_window">[docs]</a><span class="k">def</span> <span class="nf">download_window</span><span class="p">(</span>
+    <span class="n">gdnam</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">metvars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chmvars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xgcvars</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    gdnam : str</span>
+<span class="sd">        Grid name with definition in GRIDDESC at environ[&#39;GRIDDESC&#39;],</span>
+<span class="sd">        ./GRIDDESC or in the GRIDDESC distributed with aqmbc</span>
+<span class="sd">    dates : list</span>
+<span class="sd">        Dates to process. Each will be saved separately on disk.</span>
+<span class="sd">    sleep : int</span>
+<span class="sd">        GEOS-CF OpenDAP will crash if too many calls are made sequentially.</span>
+<span class="sd">        Heuristically, a minute between calls prevents crashes.</span>
+<span class="sd">    metvars : list</span>
+<span class="sd">        Optional list of metvars to subset. See GEOS-CF fluid documentation.</span>
+<span class="sd">    chemvars : list</span>
+<span class="sd">        Optional list of chmvars to subset. See GEOS-CF fluid documentation.</span>
+<span class="sd">    xgcvars : list</span>
+<span class="sd">        Optional list of xgcvars to subset. See GEOS-CF fluid documentation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outpaths : list</span>
+<span class="sd">        List of paths that were created by download</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">aqmbc</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+
+    <span class="n">sleep</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+    <span class="n">metaf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">getmetaf</span><span class="p">(</span><span class="n">bctype</span><span class="o">=</span><span class="s1">&#39;bcon&#39;</span><span class="p">,</span> <span class="n">gdnam</span><span class="o">=</span><span class="n">gdnam</span><span class="p">)</span>
+    <span class="n">lonp</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">lonp</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="n">latp</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">latp</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+
+    <span class="n">rooturl</span> <span class="o">=</span> <span class="s1">&#39;https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim&#39;</span>
+    <span class="n">meturl</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rooturl</span><span class="si">}</span><span class="s1">/met_tavg_1hr_g1440x721_v36&#39;</span>
+    <span class="n">chmurl</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rooturl</span><span class="si">}</span><span class="s1">/chm_tavg_1hr_g1440x721_v36&#39;</span>
+    <span class="n">xgcurl</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rooturl</span><span class="si">}</span><span class="s1">/xgc_tavg_1hr_g1440x721_v36&#39;</span>
+
+    <span class="n">mf</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">meturl</span><span class="p">)</span>
+    <span class="n">cf</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">chmurl</span><span class="p">)</span>
+    <span class="n">xf</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">xgcurl</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">metvars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">metvars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zl&#39;</span><span class="p">,</span> <span class="s1">&#39;airdens&#39;</span><span class="p">,</span> <span class="s1">&#39;ps&#39;</span><span class="p">,</span> <span class="s1">&#39;delp&#39;</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">metvars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">metvars</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chmvars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chmvars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">data_vars</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">chmvars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chmvars</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">xgcvars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xgcvars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xf</span><span class="o">.</span><span class="n">data_vars</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xgcvars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xgcvars</span><span class="p">)</span>
+
+    <span class="n">outpaths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">:</span>
+        <span class="n">tv</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">stime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">tv</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="s1">&#39;1s&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_pydatetime</span><span class="p">()</span>
+        <span class="n">outdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;GEOSCF/</span><span class="si">{</span><span class="n">gdnam</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">stime</span><span class="si">:</span><span class="s1">%Y/%m/%d</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">pathsuf</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">stime</span><span class="si">:</span><span class="s1">%Y-%m-%dT%H%M</span><span class="si">}</span><span class="s1">Z.nc&#39;</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">outdir</span><span class="si">}</span><span class="s1">/geoscf_mcx_tavg_1hr_g1440x721_v36_</span><span class="si">{</span><span class="n">pathsuf</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Keeping cached: </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">outpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Making: </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">tmpmf</span> <span class="o">=</span> <span class="n">mf</span><span class="p">[</span><span class="n">metvars</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">tv</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">ylim</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="n">xlim</span><span class="p">)</span>
+        <span class="n">tryandtime</span><span class="p">(</span><span class="n">tmpmf</span><span class="p">,</span> <span class="s1">&#39;met&#39;</span><span class="p">)</span>
+        <span class="n">mergefs</span> <span class="o">=</span> <span class="p">[</span><span class="n">tmpmf</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chmvars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tmpcf</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="n">chmvars</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">tv</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">ylim</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="n">xlim</span><span class="p">)</span>
+            <span class="n">tryandtime</span><span class="p">(</span><span class="n">tmpcf</span><span class="p">,</span> <span class="s1">&#39;chm&#39;</span><span class="p">)</span>
+            <span class="n">mergefs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpcf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xgcvars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tmpxf</span> <span class="o">=</span> <span class="n">xf</span><span class="p">[</span><span class="n">xgcvars</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">tv</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">ylim</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="n">xlim</span><span class="p">)</span>
+            <span class="n">tryandtime</span><span class="p">(</span><span class="n">tmpxf</span><span class="p">,</span> <span class="s1">&#39;xgc&#39;</span><span class="p">)</span>
+            <span class="n">mergefs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpxf</span><span class="p">)</span>
+        <span class="n">outf</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">mergefs</span><span class="p">)</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;data_source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">meturl</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">chmurl</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">xgcurl</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">outpath</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">stime</span><span class="p">])</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+        <span class="n">outpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outpaths</span></div>
+
+
+<span class="k">class</span> <span class="nc">geoscf</span><span class="p">(</span><span class="n">pnc</span><span class="o">.</span><span class="n">PseudoNetCDFFile</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Thin wrapper around raqms files to add ll2ij, getTimes, and</span>
+<span class="sd">        interpSigma functions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">pnc</span><span class="o">.</span><span class="n">pncopen</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">dimensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">variables</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">ncattrs</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCoords</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lev&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">ll2ij</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="n">clean</span><span class="o">=</span><span class="s1">&#39;clip&#39;</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val2idx</span><span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val2idx</span><span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span>
+        <span class="n">ni</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">nj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">ic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">ni</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">jc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">nj</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">ic</span> <span class="o">!=</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">|</span> <span class="p">(</span><span class="n">ic</span> <span class="o">!=</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()):</span>
+            <span class="kn">import</span> <span class="nn">warnings</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Some cells are outside the source domain&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ic</span><span class="p">,</span> <span class="n">jc</span>
+
+    <span class="k">def</span> <span class="nf">getTimes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datetype</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">cftime</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cftime</span><span class="o">.</span><span class="n">num2pydate</span><span class="p">(</span><span class="n">time</span><span class="p">[:],</span> <span class="n">units</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">units</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">interpSigma</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vglvls</span><span class="p">,</span> <span class="n">vgtop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">interptype</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        vglvls : iterable</span>
+<span class="sd">            the new vglvls (edges)</span>
+<span class="sd">        vgtop : scalar</span>
+<span class="sd">            Converting to new vgtop</span>
+<span class="sd">        interptype : string</span>
+<span class="sd">             &#39;linear&#39; uses a linear interpolation</span>
+<span class="sd">             &#39;conserve&#39; uses a mass conserving interpolation</span>
+<span class="sd">        extrapolate : boolean</span>
+<span class="sd">            allow extrapolation beyond bounds with linear, default False</span>
+<span class="sd">        fill_value : boolean</span>
+<span class="sd">            set fill value (e.g, nan) to prevent extrapolation or edge</span>
+<span class="sd">            continuation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        outf : ioapi_base</span>
+<span class="sd">            PseudoNetCDFFile with all variables interpolated</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        When extrapolate is false, the edge values are used for points beyond</span>
+<span class="sd">        the inputs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">PseudoNetCDF.coordutil</span> <span class="kn">import</span> <span class="n">sigma2coeff</span> <span class="k">as</span> <span class="n">sigma2coeff_con</span>
+        <span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">sigma2coeff_lin</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+        <span class="n">psfc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;ps&#39;</span><span class="p">][:][:,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+        <span class="n">delp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;delp&#39;</span><span class="p">][:]</span>
+        <span class="n">plow</span> <span class="o">=</span> <span class="n">psfc</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">delp</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pedges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">plow</span><span class="p">,</span> <span class="n">psfc</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pmid</span> <span class="o">=</span> <span class="n">plow</span> <span class="o">+</span> <span class="n">delp</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="n">ptop</span> <span class="o">=</span> <span class="n">psfc</span> <span class="o">-</span> <span class="n">delp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pedges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">ptop</span><span class="p">,</span> <span class="n">ptop</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">delp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">newshape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">delp</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">nzout</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vglvls</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">newshape</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nzout</span><span class="p">)</span>
+        <span class="n">itershape</span> <span class="o">=</span> <span class="p">[</span><span class="n">newshape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">newshape</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="p">(</span><span class="n">pedges</span> <span class="o">-</span> <span class="n">vgtop</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">psfc</span> <span class="o">-</span> <span class="n">vgtop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">interptype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;conserve&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown interptype </span><span class="si">{</span><span class="n">interptype</span><span class="si">}</span><span class="s1">; default to linear&#39;</span><span class="p">)</span>
+            <span class="n">interptype</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+        <span class="k">if</span> <span class="n">interptype</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+            <span class="n">sigma2coeff</span> <span class="o">=</span> <span class="n">sigma2coeff_lin</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sigma2coeff</span> <span class="o">=</span> <span class="n">sigma2coeff_con</span>
+
+        <span class="n">tmpv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">newshape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndindex</span><span class="p">(</span><span class="o">*</span><span class="n">itershape</span><span class="p">):</span>
+            <span class="n">srcidx</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">destidx</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">fromvglvls</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">[</span><span class="n">srcidx</span><span class="p">]</span>
+            <span class="c1"># sigma2coeff expects vglvls to decrease (i.e., surface to top),</span>
+            <span class="c1"># but RAQMS is ordered top-to-surface. So, the vglvls are reversed</span>
+            <span class="c1"># and the results are reversed as well.</span>
+            <span class="n">tmpv</span><span class="p">[</span><span class="n">destidx</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2coeff</span><span class="p">(</span>
+                <span class="n">fromvglvls</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">vglvls</span>
+            <span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">pweight</span> <span class="o">=</span> <span class="n">tmpv</span><span class="p">[:]</span> <span class="o">*</span> <span class="n">pmid</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+        <span class="n">pnorm</span> <span class="o">=</span> <span class="n">pweight</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">exprkeys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">key</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lev&#39;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">outdims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">exprkeys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">dimensions</span>
+
+        <span class="n">outf</span> <span class="o">=</span> <span class="n">pnc</span><span class="o">.</span><span class="n">PseudoNetCDFFile</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;lev&#39;</span><span class="p">:</span>
+                <span class="n">outf</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">nzout</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">outf</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncattrs</span><span class="p">():</span>
+            <span class="n">outf</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s1">&#39;VGLVLS&#39;</span><span class="p">,</span> <span class="n">vglvls</span><span class="p">)</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s1">&#39;VGTOP&#39;</span><span class="p">,</span> <span class="n">vgtop</span><span class="p">)</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s1">&#39;VGTYP&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">exprkeys</span><span class="p">:</span>
+            <span class="n">invar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">props</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">invar</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;delp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ncattrs</span><span class="p">()}</span>
+            <span class="n">outvar</span> <span class="o">=</span> <span class="n">outf</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+                <span class="n">key</span><span class="p">,</span> <span class="n">invar</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="n">outdims</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span>
+            <span class="p">)</span>
+            <span class="n">outvar</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">invar</span><span class="p">[:][:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">*</span> <span class="n">pweight</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">pnorm</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exprkeys</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                <span class="n">outf</span><span class="o">.</span><span class="n">copyVariable</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">outf</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

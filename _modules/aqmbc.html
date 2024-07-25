@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/aqmbc.html">aqmbc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aqmbc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aqmbc</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bc&#39;</span><span class="p">,</span> <span class="s1">&#39;runcfg&#39;</span><span class="p">,</span> <span class="s1">&#39;exprlib&#39;</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span> <span class="s1">&#39;cmaq&#39;</span><span class="p">,</span> <span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="s1">&#39;models&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">PseudoNetCDF</span> <span class="k">as</span> <span class="nn">pnc</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">from</span> <span class="nn">.bcon</span> <span class="kn">import</span> <span class="n">bc</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">exprlib</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">options</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">report</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cmaq</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
+
+
+<span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Code for making CMAQ-ready boundary condition files</span>
+
+<span class="s2">Contents</span>
+<span class="s2">========</span>
+
+<span class="s2">bcon : module</span>
+<span class="s2">    module with functions for making boundary condition files</span>
+<span class="s2">cmaq : module</span>
+<span class="s2">    module for making files CMAQ ready</span>
+<span class="s2">report : module</span>
+<span class="s2">    module with convenience functions for reporting</span>
+<span class="s2">defnpath : str</span>
+<span class="s2">    Path to all definition files available in examples.</span>
+<span class="s2">runcfg : function</span>
+<span class="s2">    Function to run aqmbc from configuration files</span>
+
+
+<span class="s2">Examples</span>
+<span class="s2">========</span>
+
+<span class="s2">Ex Python GEOS-Chem</span>
+<span class="s2">-------------------</span>
+
+<span class="s2">import PseudoNetCDF as pnc</span>
+<span class="s2">import aqmbc</span>
+
+<span class="s2">inpath = &#39;/path/to/geoschem.nc&#39;</span>
+<span class="s2">bcpath = &#39;BCON.nc&#39;</span>
+<span class="s2"># using built in expressions</span>
+<span class="s2">exprpaths = [f&#39;</span><span class="si">{aqmbc.defnpath}</span><span class="s2">/gc/gcnc_airmolden.expr&#39;,</span>
+<span class="s2">             f&#39;</span><span class="si">{aqmbc.defnpath}</span><span class="s2">/gc/gc14_to_cb6r5.expr&#39;]</span>
+<span class="s2">metaf = pnc.pncopen(&#39;/path/to/METCRO3D_ANYDATE&#39;, format=&#39;ioapi&#39;)</span>
+<span class="s2">bc(inpath, bcpath, metaf, vmethod=&#39;linear&#39;, exprpaths=exprpaths,</span>
+<span class="s2">   dimkeys=dict(TSTEP=&#39;time&#39;, LAY=&#39;lev&#39;, ROW=&#39;lat&#39;, COL=&#39;lon&#39;),</span>
+<span class="s2">   format_kw=&#39;gcnc&#39;, history=&#39;just a test&#39;)</span>
+
+
+<span class="s2">Ex Scripting</span>
+<span class="s2">------------</span>
+
+<span class="s2">python -m aqmbc -t runfolder</span>
+<span class="s2">cd runfolder</span>
+<span class="s2"># copy a cfg file as run.cfg</span>
+<span class="s2"># edit run.cfg for your application.</span>
+<span class="s2">python -m aqmbc run.cfg</span>
+
+<span class="s2">Version History</span>
+<span class="s2">===============</span>
+
+<span class="s2">* 0.4.1: Update bc and cmaqready to apply a minimum value and allow inpaths</span>
+<span class="s2">         to be provided by a template. The minimum value (minvalue) can be</span>
+<span class="s2">         set in the common configuration section. Also, improved reporting</span>
+<span class="s2">         functions and automated reporting via the config file.</span>
+<span class="s2">* 0.4.0: Change verbose to string for newer configparser compat</span>
+<span class="s2">         Update FILEDESC and HISTORY outputs to limit to 60*80 char</span>
+<span class="s2">         Added cmaq module with cmaqready to stack, interpolate, and</span>
+<span class="s2">         when necessary clean metadata.</span>
+<span class="s2">         Added some reporting tools, expression library and examples.</span>
+<span class="s2">         Needs better documentation on many objects.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.4.1&#39;</span>
+
+<span class="n">defnpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;examples&#39;</span><span class="p">,</span> <span class="s1">&#39;definitions&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">loadcfg</span><span class="p">(</span><span class="n">cfgobjs</span><span class="p">,</span> <span class="n">cfgtype</span><span class="o">=</span><span class="s1">&#39;path&#39;</span><span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span>
+        <span class="n">default_section</span><span class="o">=</span><span class="s1">&#39;common&#39;</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="n">configparser</span><span class="o">.</span><span class="n">ExtendedInterpolation</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">vglvlstxt</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;[</span>
+<span class="s2">    1.0, 0.9975, 0.995, 0.99, 0.985, 0.98, 0.97, 0.96, 0.95, 0.94,</span>
+<span class="s2">    0.93, 0.92, 0.91, 0.9, 0.88, 0.86, 0.84, 0.82, 0.8, 0.77,</span>
+<span class="s2">    0.74, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3,</span>
+<span class="s2">    0.25, 0.2, 0.15, 0.1, 0.05, 0.0</span>
+<span class="s2">    ]</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    <span class="n">defopts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;common&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;overwrite&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;PWD&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+            <span class="s1">&#39;vgtop&#39;</span><span class="p">:</span> <span class="s1">&#39;5000&#39;</span><span class="p">,</span> <span class="s1">&#39;vglvls&#39;</span><span class="p">:</span> <span class="n">vglvlstxt</span><span class="p">,</span> <span class="s1">&#39;vinterp&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;expressions&#39;</span><span class="p">:</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="s1">&#39;griddesc&#39;</span><span class="p">:</span> <span class="s1">&#39;GRIDDESC&#39;</span><span class="p">,</span> <span class="s1">&#39;minvalue&#39;</span><span class="p">:</span> <span class="s1">&#39;1e-30&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;REPORT&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;summaryspcs&#39;</span><span class="p">:</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="s1">&#39;vprofspcs&#39;</span><span class="p">:</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="s1">&#39;standardfigs&#39;</span><span class="p">:</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="s1">&#39;bcon_summary.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;vprofmean&#39;</span><span class="p">:</span> <span class="s1">&#39;bcon_mean.nc4&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;vprofmin&#39;</span><span class="p">:</span> <span class="s1">&#39;bcon_min.nc4&#39;</span><span class="p">,</span> <span class="s1">&#39;vprofmax&#39;</span><span class="p">:</span> <span class="s1">&#39;bcon_max.nc4&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;debug&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;BCON&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="s1">&#39;BCON_%Y-%m-</span><span class="si">%d</span><span class="s1">.nc&#39;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;ICON&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="s1">&#39;ICON_%Y-%m-</span><span class="si">%d</span><span class="s1">.nc&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">cfgtype</span> <span class="o">==</span> <span class="s1">&#39;path&#39;</span><span class="p">:</span>
+        <span class="n">defopts</span><span class="p">[</span><span class="s1">&#39;common&#39;</span><span class="p">][</span><span class="s1">&#39;rcpath&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">cfgobjs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Default options:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">defopts</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read_dict</span><span class="p">(</span><span class="n">defopts</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cfgtype</span> <span class="o">==</span> <span class="s1">&#39;path&#39;</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cfgobjs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cfgtype</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cfgf</span> <span class="ow">in</span> <span class="n">cfgobjs</span><span class="p">:</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">cfgf</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cfgtype</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cfgd</span> <span class="ow">in</span> <span class="n">cfgobjs</span><span class="p">:</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">read_dict</span><span class="p">(</span><span class="n">cfgd</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;cfgtype must be either path, file or dict; got </span><span class="si">{cfgtype}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">config</span>
+
+
+<div class="viewcode-block" id="runcfg"><a class="viewcode-back" href="../api/aqmbc.html#aqmbc.runcfg">[docs]</a><span class="k">def</span> <span class="nf">runcfg</span><span class="p">(</span>
+    <span class="n">cfgobjs</span><span class="p">,</span> <span class="n">cfgtype</span><span class="o">=</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="n">warningfilter</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">dryrun</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">speedup</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    cfgobjs : list</span>
+<span class="sd">        List of paths, files, or dictionaries</span>
+<span class="sd">    cfgtype : str</span>
+<span class="sd">        &#39;path&#39;, &#39;file&#39;, or &#39;dict&#39;</span>
+<span class="sd">    warningfilter : str</span>
+<span class="sd">        str accepted by warnings.simplefilter</span>
+<span class="sd">    dryrun : bool</span>
+<span class="sd">        If True, return config after testing parsing.</span>
+<span class="sd">    speedup : bool or None</span>
+<span class="sd">        If True, use more memory but run faster. If None, heursitcally decide.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">json</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">warningfilter</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">loadcfg</span><span class="p">(</span><span class="n">cfgobjs</span><span class="p">,</span> <span class="n">cfgtype</span><span class="o">=</span><span class="n">cfgtype</span><span class="p">)</span>
+    <span class="n">infmt</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;format&#39;</span><span class="p">)</span>
+    <span class="n">infmt</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">infmt</span><span class="p">)</span>
+    <span class="n">intmpl</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">)</span>
+    <span class="n">dimkeys</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;dims&#39;</span><span class="p">)</span>
+    <span class="n">dimkeys</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">dimkeys</span><span class="p">)</span>
+
+    <span class="n">ictmpl</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ICON&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)</span>
+    <span class="n">bctmpl</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BCON&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)</span>
+    <span class="n">overwrite</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;overwrite&#39;</span><span class="p">)</span>
+    <span class="n">interpopt</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;vinterp&#39;</span><span class="p">)</span>
+
+    <span class="n">gdnam</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;gdnam&#39;</span><span class="p">)</span>
+    <span class="n">minvalue</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;minvalue&#39;</span><span class="p">))</span>
+    <span class="n">vgtop</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;vgtop&#39;</span><span class="p">)</span>
+    <span class="n">vgtop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">vgtop</span><span class="p">)</span>
+    <span class="n">vglvls</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;vglvls&#39;</span><span class="p">))</span>
+    <span class="n">vglvls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vglvls</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
+    <span class="c1"># config parser does not allow number-first strings, so they</span>
+    <span class="c1"># are explicitly quoted, which is interpreted as part of the string</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BCON&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">freq</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">freq</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">):</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">bdates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BCON&#39;</span><span class="p">,</span> <span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BCON&#39;</span><span class="p">,</span> <span class="s1">&#39;end_date&#39;</span><span class="p">),</span>
+        <span class="n">freq</span><span class="o">=</span><span class="n">freq</span>
+    <span class="p">)</span>
+    <span class="n">tslice</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">exprpaths</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;expressions&#39;</span><span class="p">)</span>
+    <span class="n">exprpaths</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">exprpaths</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dryrun</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">config</span>
+
+    <span class="n">bmetaf</span> <span class="o">=</span> <span class="n">pnc</span><span class="o">.</span><span class="n">pncopen</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;GRIDDESC&#39;</span><span class="p">),</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;griddesc&#39;</span><span class="p">,</span> <span class="n">GDNAM</span><span class="o">=</span><span class="n">gdnam</span><span class="p">,</span> <span class="n">FTYPE</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">VGLVLS</span><span class="o">=</span><span class="n">vglvls</span><span class="p">,</span> <span class="n">VGTOP</span><span class="o">=</span><span class="n">vgtop</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">bdate</span> <span class="ow">in</span> <span class="n">bdates</span><span class="p">:</span>
+        <span class="n">inpath</span> <span class="o">=</span> <span class="n">bdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">intmpl</span><span class="p">)</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">bdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">bctmpl</span><span class="p">)</span>
+        <span class="n">outdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">inpath</span><span class="o">=</span><span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="o">=</span><span class="n">bmetaf</span><span class="p">,</span>
+            <span class="n">tslice</span><span class="o">=</span><span class="n">tslice</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="n">interpopt</span><span class="p">,</span>
+            <span class="n">exprpaths</span><span class="o">=</span><span class="n">exprpaths</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">dimkeys</span><span class="o">=</span><span class="n">dimkeys</span><span class="p">,</span> <span class="n">format_kw</span><span class="o">=</span><span class="n">infmt</span><span class="p">,</span> <span class="n">speedup</span><span class="o">=</span><span class="n">speedup</span><span class="p">,</span>
+            <span class="n">minvalue</span><span class="o">=</span><span class="n">minvalue</span>
+        <span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">])</span>
+        <span class="n">bc</span><span class="p">(</span><span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+
+    <span class="n">imetaf</span> <span class="o">=</span> <span class="n">pnc</span><span class="o">.</span><span class="n">pncopen</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;griddesc&#39;</span><span class="p">),</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;griddesc&#39;</span><span class="p">,</span> <span class="n">GDNAM</span><span class="o">=</span><span class="n">gdnam</span><span class="p">,</span> <span class="n">FTYPE</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">VGLVLS</span><span class="o">=</span><span class="n">vglvls</span><span class="p">,</span> <span class="n">VGTOP</span><span class="o">=</span><span class="n">vgtop</span>
+    <span class="p">)</span>
+    <span class="n">idates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ICON&#39;</span><span class="p">,</span> <span class="s1">&#39;dates&#39;</span><span class="p">)))</span>
+    <span class="n">tslice</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">idate</span> <span class="ow">in</span> <span class="n">idates</span><span class="p">:</span>
+        <span class="n">inpath</span> <span class="o">=</span> <span class="n">idate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">intmpl</span><span class="p">)</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">idate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">ictmpl</span><span class="p">)</span>
+        <span class="n">outdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">inpath</span><span class="o">=</span><span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="o">=</span><span class="n">imetaf</span><span class="p">,</span>
+            <span class="n">tslice</span><span class="o">=</span><span class="n">tslice</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="n">interpopt</span><span class="p">,</span>
+            <span class="n">exprpaths</span><span class="o">=</span><span class="n">exprpaths</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">dimkeys</span><span class="o">=</span><span class="n">dimkeys</span><span class="p">,</span> <span class="n">format_kw</span><span class="o">=</span><span class="n">infmt</span><span class="p">,</span> <span class="n">speedup</span><span class="o">=</span><span class="n">speedup</span>
+        <span class="p">)</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">bc</span><span class="p">(</span><span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

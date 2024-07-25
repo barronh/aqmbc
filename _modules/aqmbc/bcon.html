@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc.bcon &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/aqmbc.html">aqmbc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">aqmbc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../aqmbc.html">aqmbc</a></li>
+      <li class="breadcrumb-item active">aqmbc.bcon</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aqmbc.bcon</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">PseudoNetCDF</span> <span class="k">as</span> <span class="nn">pnc</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+
+<div class="viewcode-block" id="wndw"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.wndw">[docs]</a><span class="k">def</span> <span class="nf">wndw</span><span class="p">(</span><span class="n">varfile</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">dimkeys</span><span class="p">,</span> <span class="n">tslice</span><span class="p">,</span> <span class="n">speedup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    varfile : netcdf-like</span>
+<span class="sd">        input file</span>
+<span class="sd">    metafile : netcdf-like</span>
+<span class="sd">        file with longitude and latitude</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    wndwf : file windows in lon/lat space</span>
+<span class="sd">    i: indices for wndwf at metaf</span>
+<span class="sd">    j: indices for wndwf at metaf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+
+    <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">varfile</span><span class="o">.</span><span class="n">ll2ij</span><span class="p">(</span><span class="n">lon</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">lat</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">bounds</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="n">clean</span><span class="o">=</span><span class="s1">&#39;clip&#39;</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">lon</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+        <span class="n">dimstr</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lon</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span>
+        <span class="n">gdnam</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">GDNAM</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">cellcsv</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">gdnam</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">dimstr</span><span class="si">}</span><span class="s1">.csv&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Saving cell mapping to </span><span class="si">{</span><span class="n">cellcsv</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">outdata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">tgtlon</span><span class="o">=</span><span class="n">lon</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">tgtlat</span><span class="o">=</span><span class="n">lat</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;lon&#39;</span> <span class="ow">in</span> <span class="n">varfile</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="n">outdata</span><span class="p">[</span><span class="s1">&#39;srclon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">varfile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="n">i</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+            <span class="n">outdata</span><span class="p">[</span><span class="s1">&#39;srclat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">varfile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="n">j</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+        <span class="n">csvdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">outdata</span><span class="p">)</span>
+        <span class="n">csvdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ordinal&#39;</span>
+        <span class="n">csvdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">cellcsv</span><span class="p">)</span>
+
+    <span class="c1"># Create indices for windowed file</span>
+    <span class="c1"># purely for speed</span>
+    <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">i</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">jmin</span><span class="p">,</span> <span class="n">jmax</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">j</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">dni</span> <span class="o">=</span> <span class="n">imax</span> <span class="o">-</span> <span class="n">imin</span>
+    <span class="n">dnj</span> <span class="o">=</span> <span class="n">jmax</span> <span class="o">-</span> <span class="n">jmin</span>
+    <span class="n">sni</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">varfile</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;COL&#39;</span><span class="p">]])</span>
+    <span class="n">snj</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">varfile</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;ROW&#39;</span><span class="p">]])</span>
+    <span class="n">ifrac</span> <span class="o">=</span> <span class="n">dni</span> <span class="o">/</span> <span class="n">sni</span>
+    <span class="n">jfrac</span> <span class="o">=</span> <span class="n">dnj</span> <span class="o">/</span> <span class="n">snj</span>
+    <span class="k">if</span> <span class="n">speedup</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">speedup</span> <span class="o">=</span> <span class="p">(</span><span class="n">ifrac</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="ow">or</span> <span class="n">jfrac</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">speedup</span><span class="p">:</span>
+        <span class="c1"># purely for speed, window the file</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cslice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">rslice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">jmin</span><span class="p">,</span> <span class="n">jmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">slices</span> <span class="o">=</span> <span class="p">{</span><span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;COL&#39;</span><span class="p">]:</span> <span class="n">cslice</span><span class="p">,</span> <span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;ROW&#39;</span><span class="p">]:</span> <span class="n">rslice</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">tslice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slices</span><span class="p">[</span><span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tslice</span>
+        <span class="n">wndwf</span> <span class="o">=</span> <span class="n">varfile</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="o">**</span><span class="n">slices</span><span class="p">)</span>
+        <span class="n">iwndw</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">imin</span>
+        <span class="n">jwndw</span> <span class="o">=</span> <span class="n">j</span> <span class="o">-</span> <span class="n">jmin</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tslice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">wndwf</span> <span class="o">=</span> <span class="n">varfile</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">]:</span> <span class="n">tslice</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wndwf</span> <span class="o">=</span> <span class="n">varfile</span>
+        <span class="n">iwndw</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">jwndw</span> <span class="o">=</span> <span class="n">j</span>
+
+    <span class="k">return</span> <span class="n">wndwf</span><span class="p">,</span> <span class="n">iwndw</span><span class="p">,</span> <span class="n">jwndw</span></div>
+
+
+<div class="viewcode-block" id="ijslice"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.ijslice">[docs]</a><span class="k">def</span> <span class="nf">ijslice</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">dimkeys</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    infile : netcdf-like</span>
+<span class="sd">        input file</span>
+<span class="sd">    metafile : netcdf-like</span>
+<span class="sd">        file with longitude and latitude</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bconf : file at metaf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;slice&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;ROW&#39;</span> <span class="ow">in</span> <span class="n">metaf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ROW&#39;</span><span class="p">,</span> <span class="s1">&#39;COL&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;PERIM&#39;</span><span class="p">,)</span>
+
+    <span class="n">wslice</span> <span class="o">=</span> <span class="p">{</span><span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;COL&#39;</span><span class="p">]:</span> <span class="n">i</span><span class="p">,</span> <span class="n">dimkeys</span><span class="p">[</span><span class="s1">&#39;ROW&#39;</span><span class="p">]:</span> <span class="n">j</span><span class="p">}</span>
+    <span class="n">bconf</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="o">**</span><span class="n">wslice</span><span class="p">,</span> <span class="n">newdims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bconf</span></div>
+
+
+<div class="viewcode-block" id="kinterp"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.kinterp">[docs]</a><span class="k">def</span> <span class="nf">kinterp</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">vmethod</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    infile : netcdf-like</span>
+<span class="sd">        input file</span>
+<span class="sd">    metaf : netcdf-like</span>
+<span class="sd">        file with longitude and latitude</span>
+<span class="sd">    vmethod : str</span>
+<span class="sd">        method for vertical inteprolation (conserve or linear)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bconvf : file at new vertical levels</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Extract output vertical if not already the same</span>
+    <span class="n">tgt_vglvls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="s1">&#39;VGLVLS&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;f&#39;</span><span class="p">))</span>
+    <span class="n">src_vglvls</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">VGLVLS</span>
+    <span class="n">tgt_vgtop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="s1">&#39;VGTOP&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;f&#39;</span><span class="p">))</span>
+    <span class="n">src_vgtop</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">VGTOP</span>
+    <span class="n">tgt_nlays</span> <span class="o">=</span> <span class="n">tgt_vglvls</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">src_nlays</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">VGLVLS</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">tgt_nlays</span> <span class="o">!=</span> <span class="n">src_nlays</span><span class="p">:</span>
+        <span class="n">lvinterp</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tgt_vglvls</span> <span class="o">==</span> <span class="n">src_vglvls</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">lvinterp</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tgt_vgtop</span> <span class="o">==</span> <span class="n">src_vgtop</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">lvinterp</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lvinterp</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lvinterp</span><span class="p">:</span>
+        <span class="n">bconvf</span> <span class="o">=</span> <span class="n">infile</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;vint&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">bconvf</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">interpSigma</span><span class="p">(</span><span class="n">vglvls</span><span class="o">=</span><span class="n">metaf</span><span class="o">.</span><span class="n">VGLVLS</span><span class="p">,</span> <span class="n">vgtop</span><span class="o">=</span><span class="n">metaf</span><span class="o">.</span><span class="n">VGTOP</span><span class="p">,</span>
+                                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">interptype</span><span class="o">=</span><span class="n">vmethod</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">bconvf</span><span class="p">,</span> <span class="s1">&#39;VGTYP&#39;</span><span class="p">):</span>
+            <span class="n">bconvf</span><span class="o">.</span><span class="n">VGTYP</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">VGTYP</span>
+
+    <span class="k">return</span> <span class="n">bconvf</span></div>
+
+
+<div class="viewcode-block" id="translate"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.translate">[docs]</a><span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">exprpaths</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    infile : netcdf-like</span>
+<span class="sd">        File input</span>
+<span class="sd">    exprpaths : list</span>
+<span class="sd">        paths to expr file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outf : file output</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Translate species and/or units</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">exprpaths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">outf</span> <span class="o">=</span> <span class="n">infile</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;translate&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">exprstr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">exprpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">exprpath</span> <span class="ow">in</span> <span class="n">exprpaths</span>
+        <span class="p">])</span>
+        <span class="n">outf</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">exprstr</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outf</span></div>
+
+
+<div class="viewcode-block" id="bc"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.bc">[docs]</a><span class="k">def</span> <span class="nf">bc</span><span class="p">(</span>
+    <span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span>
+    <span class="n">tslice</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="s1">&#39;conserve&#39;</span><span class="p">,</span> <span class="n">exprpaths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">dimkeys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">format_kw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">speedup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeindependent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">minvalue</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    inpath : str</span>
+<span class="sd">        path to input file</span>
+<span class="sd">    outpath : str</span>
+<span class="sd">        path to output file</span>
+<span class="sd">    metaf : netcdf-like</span>
+<span class="sd">        Metadata file (CRO for ICON, BDY for BCON)</span>
+<span class="sd">    tslice : slice</span>
+<span class="sd">        Optional time slice (e.g., slice(0) for ICON)</span>
+<span class="sd">    vmethod : str</span>
+<span class="sd">        method to use for vertical interpolation (conserve or linear)</span>
+<span class="sd">    exprpaths : list</span>
+<span class="sd">        text files with species translations</span>
+<span class="sd">    clobber : bool</span>
+<span class="sd">        overwrite existing files</span>
+<span class="sd">    speedup : bool</span>
+<span class="sd">        slice file to load into memory. More mem, but faster</span>
+<span class="sd">    timeindependent: bool</span>
+<span class="sd">        If True and input has just 1 time, write out as an IOAPI</span>
+<span class="sd">        time-independent file.</span>
+<span class="sd">    minvalue : scalar</span>
+<span class="sd">        Passed to translate</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">    * Saves BCON or ICON to file.</span>
+<span class="sd">    * Operations:</span>
+<span class="sd">        1. window</span>
+<span class="sd">        2. horizontal extraction</span>
+<span class="sd">        3. vertical interpolation</span>
+<span class="sd">        4. species translation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">symtable</span>
+    <span class="k">if</span> <span class="n">format_kw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">format_kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ioapi&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dimkeys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dimkeys</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;ROW&#39;</span><span class="p">:</span> <span class="s1">&#39;ROW&#39;</span><span class="p">,</span> <span class="s1">&#39;COL&#39;</span><span class="p">:</span> <span class="s1">&#39;COL&#39;</span><span class="p">,</span> <span class="s1">&#39;TSTEP&#39;</span><span class="p">:</span> <span class="s1">&#39;TSTEP&#39;</span><span class="p">,</span> <span class="s1">&#39;LAY&#39;</span><span class="p">:</span> <span class="s1">&#39;LAY&#39;</span>
+        <span class="p">}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">clobber</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using cached&#39;</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Converting&#39;</span><span class="p">,</span> <span class="n">inpath</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">infile</span> <span class="o">=</span> <span class="n">pnc</span><span class="o">.</span><span class="n">pncopen</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="o">**</span><span class="n">format_kw</span><span class="p">)</span>
+
+    <span class="n">dropvars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">exprpaths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">varfile</span> <span class="o">=</span> <span class="n">infile</span>
+        <span class="n">keepvars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">exprstr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">exprpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">exprpath</span> <span class="ow">in</span> <span class="n">exprpaths</span>
+        <span class="p">])</span>
+        <span class="n">stbl</span> <span class="o">=</span> <span class="n">symtable</span><span class="o">.</span><span class="n">symtable</span><span class="p">(</span><span class="n">exprstr</span><span class="p">,</span> <span class="s1">&#39;&lt;bcon&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;exec&#39;</span><span class="p">)</span>
+        <span class="n">keepvars</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">stbl</span><span class="o">.</span><span class="n">get_symbols</span><span class="p">():</span>
+            <span class="n">symn</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">symn</span> <span class="ow">in</span> <span class="n">infile</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+                <span class="n">keepvars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">symn</span><span class="p">)</span>
+        <span class="n">varfile</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">keepvars</span><span class="p">)</span>
+
+    <span class="n">dropvars</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dropvars</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">varfile</span><span class="o">.</span><span class="n">variables</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Keep&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">keepvars</span><span class="p">),</span> <span class="n">keepvars</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Drop&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dropvars</span><span class="p">),</span> <span class="n">dropvars</span><span class="p">)</span>
+
+    <span class="n">wndwf</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">wndw</span><span class="p">(</span>
+        <span class="n">varfile</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">dimkeys</span><span class="p">,</span> <span class="n">tslice</span><span class="p">,</span>
+        <span class="n">speedup</span><span class="o">=</span><span class="n">speedup</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">checkk</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">wndwf</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">wndwf</span><span class="o">.</span><span class="n">dimensions</span>
+                <span class="ow">and</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;TFLAG&#39;</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+            <span class="p">)</span>
+        <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">inij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">wndwf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">checkk</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="n">outij</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">kfirst</span> <span class="o">=</span> <span class="n">inij</span> <span class="o">&lt;</span> <span class="n">outij</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s1">&#39;vertical interp first&#39;</span><span class="p">)</span>
+        <span class="n">kfirst</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">easyk</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+        <span class="n">kinterp</span><span class="p">,</span> <span class="n">metaf</span><span class="o">=</span><span class="n">metaf</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="n">vmethod</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span>
+    <span class="n">easyij</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+        <span class="n">ijslice</span><span class="p">,</span> <span class="n">metaf</span><span class="o">=</span><span class="n">metaf</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="p">,</span> <span class="n">dimkeys</span><span class="o">=</span><span class="n">dimkeys</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span>
+    <span class="n">easyx</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+        <span class="n">translate</span><span class="p">,</span> <span class="n">exprpaths</span><span class="o">=</span><span class="n">exprpaths</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kfirst</span><span class="p">:</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">easyk</span><span class="p">,</span> <span class="n">easyij</span><span class="p">,</span> <span class="n">easyx</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">easyij</span><span class="p">,</span> <span class="n">easyk</span><span class="p">,</span> <span class="n">easyx</span><span class="p">]</span>
+
+    <span class="n">outf</span> <span class="o">=</span> <span class="n">wndwf</span>
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
+        <span class="n">outf</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">outf</span><span class="p">)</span>
+
+    <span class="c1"># Implement a minimum value</span>
+    <span class="k">if</span> <span class="n">minvalue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">,):</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">):</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">minvalue</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">exprpaths</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">FILEDESC</span> <span class="o">=</span> <span class="s1">&#39;Boundary conditions from </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inpath</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">exprstr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">exprpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">for</span> <span class="n">exprpath</span> <span class="ow">in</span> <span class="n">exprpaths</span>
+        <span class="p">])</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">FILEDESC</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;Boundary conditions from &#39;</span>
+            <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="se">\n</span><span class="s1">with definitions </span><span class="si">{}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">exprpaths</span><span class="p">)</span>
+        <span class="p">)[:</span><span class="mi">60</span><span class="o">*</span><span class="mi">80</span><span class="p">]</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">exprstr</span>
+
+    <span class="n">fhistory</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">outf</span><span class="p">,</span> <span class="s1">&#39;HISTORY&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="n">fhistory</span> <span class="o">+</span> <span class="n">history</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">outf</span><span class="p">,</span> <span class="s1">&#39;HISTORY&#39;</span><span class="p">,</span> <span class="n">history</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">saveioapi</span><span class="p">(</span>
+        <span class="n">wndwf</span><span class="p">,</span> <span class="n">outf</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">dimkeys</span><span class="p">,</span>
+        <span class="n">timeindependent</span><span class="o">=</span><span class="n">timeindependent</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="saveioapi"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.saveioapi">[docs]</a><span class="k">def</span> <span class="nf">saveioapi</span><span class="p">(</span>
+    <span class="n">inf</span><span class="p">,</span> <span class="n">outf</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">dimkeys</span><span class="p">,</span> <span class="n">timeindependent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inf : netcdf-like file</span>
+<span class="sd">        Must support getTimes method</span>
+<span class="sd">    outf : netcdf-like file</span>
+<span class="sd">        file for output</span>
+<span class="sd">    metaf : netcdf-like file</span>
+<span class="sd">        metadata file</span>
+<span class="sd">    dimkeys : dict</span>
+<span class="sd">        translation dictionary for dimensions</span>
+<span class="sd">    timeindependent : bool</span>
+<span class="sd">        If True and number of times is 1, the file will be stored as IOAPI</span>
+<span class="sd">        time-independent</span>
+
+<span class="sd">    Results</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : netcdf-like file</span>
+<span class="sd">        file that was output</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+    <span class="c1"># Prepare metadata</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">getncatts</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">outdk</span><span class="p">,</span> <span class="n">indk</span> <span class="ow">in</span> <span class="n">dimkeys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">outdk</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">indk</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                <span class="n">outf</span><span class="o">.</span><span class="n">renameDimension</span><span class="p">(</span><span class="n">indk</span><span class="p">,</span> <span class="n">outdk</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;PERIM&#39;</span> <span class="ow">in</span> <span class="n">metaf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">outdims</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">,</span> <span class="s1">&#39;LAY&#39;</span><span class="p">,</span> <span class="s1">&#39;PERIM&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outdims</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">,</span> <span class="s1">&#39;LAY&#39;</span><span class="p">,</span> <span class="s1">&#39;ROW&#39;</span><span class="p">,</span> <span class="s1">&#39;COL&#39;</span><span class="p">)</span>
+
+    <span class="n">outkeys</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vk</span>
+        <span class="k">for</span> <span class="n">vk</span><span class="p">,</span> <span class="n">vo</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">vo</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">==</span> <span class="n">outdims</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">ok</span> <span class="ow">in</span> <span class="n">outkeys</span><span class="p">:</span>
+        <span class="n">outv</span> <span class="o">=</span> <span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">ok</span><span class="p">]</span>
+        <span class="n">outv</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="n">ok</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">outv</span><span class="o">.</span><span class="n">var_desc</span> <span class="o">=</span> <span class="n">ok</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+        <span class="n">outv</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">outv</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">outv</span><span class="o">.</span><span class="n">actual_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">outv</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">outv</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">outv</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">outv</span><span class="o">.</span><span class="n">actual_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">outv</span><span class="p">)</span>
+
+    <span class="n">extrakeys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="p">))</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">outkeys</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;TFLAG&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">ek</span> <span class="ow">in</span> <span class="n">extrakeys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ek</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">ek</span><span class="p">]</span>
+
+    <span class="n">props</span><span class="p">[</span><span class="s1">&#39;NVARS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outkeys</span><span class="p">)</span>
+    <span class="n">props</span><span class="p">[</span><span class="s1">&#39;VAR-LIST&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">outkeys</span><span class="p">])</span>
+    <span class="n">props</span><span class="p">[</span><span class="s1">&#39;HISTORY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outf</span><span class="o">.</span><span class="n">HISTORY</span><span class="p">[:</span><span class="mi">60</span><span class="o">*</span><span class="mi">80</span><span class="p">]</span>
+    <span class="n">props</span><span class="p">[</span><span class="s1">&#39;FILEDESC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outf</span><span class="o">.</span><span class="n">FILEDESC</span><span class="p">[:</span><span class="mi">60</span><span class="o">*</span><span class="mi">80</span><span class="p">]</span>
+    <span class="n">outf</span><span class="o">.</span><span class="n">setncatts</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;VAR&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;VAR&#39;</span><span class="p">,</span> <span class="n">props</span><span class="p">[</span><span class="s1">&#39;NVARS&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="s1">&#39;DATE-TIME&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;DATE-TIME&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dk</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">outf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dk</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outdims</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;VAR&#39;</span><span class="p">,</span> <span class="s1">&#39;DATE-TIME&#39;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">outf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="n">dk</span><span class="p">]</span>
+    <span class="c1"># Get the actual times of the data</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">getTimes</span><span class="p">()</span>
+    <span class="n">p1h</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">dth</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">//</span> <span class="n">p1h</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">TSTEP</span> <span class="o">=</span> <span class="n">dth</span> <span class="o">*</span> <span class="mi">10000</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">timeindependent</span><span class="p">:</span>
+            <span class="n">outf</span><span class="o">.</span><span class="n">TSTEP</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">dth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outf</span><span class="o">.</span><span class="n">TSTEP</span> <span class="o">=</span> <span class="mi">10000</span>
+            <span class="n">dth</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="s1">&#39;TFLAG&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outf</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+        <span class="n">tflag</span> <span class="o">=</span> <span class="n">outf</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s1">&#39;TFLAG&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">,</span> <span class="s1">&#39;VAR&#39;</span><span class="p">,</span> <span class="s1">&#39;DATE-TIME&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">tflag</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;&lt;YYYYJJJ,HHMMSS&gt;&#39;</span>
+        <span class="n">tflag</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;TFLAG&#39;</span>
+        <span class="n">tflag</span><span class="o">.</span><span class="n">var_desc</span> <span class="o">=</span> <span class="s1">&#39;TFLAG&#39;</span>
+        <span class="k">if</span> <span class="n">dth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tflag</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">otime</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">dth</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+            <span class="n">JDATE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">otime</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;i&#39;</span><span class="p">)</span>
+            <span class="n">ITIME</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M%S&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">otime</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;i&#39;</span><span class="p">)</span>
+            <span class="n">tflag</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">JDATE</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">tflag</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ITIME</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+    <span class="n">outf</span><span class="o">.</span><span class="n">SDATE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">))</span>
+    <span class="n">outf</span><span class="o">.</span><span class="n">STIME</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M%S&#39;</span><span class="p">))</span>
+    <span class="c1"># Save to outpath</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">gigs</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">outf</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="n">dk</span><span class="p">])</span> <span class="k">for</span> <span class="n">dk</span> <span class="ow">in</span> <span class="n">outdims</span><span class="p">])</span> <span class="o">*</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">NVARS</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">gigs</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">outformat</span> <span class="o">=</span> <span class="s1">&#39;NETCDF3_64BIT_OFFSET&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outformat</span> <span class="o">=</span> <span class="s1">&#39;NETCDF3_CLASSIC&#39;</span>
+
+    <span class="n">wverbose</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">verbose</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">outf</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">outformat</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">wverbose</span><span class="p">,</span> <span class="n">outmode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="formatparser"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.formatparser">[docs]</a><span class="k">def</span> <span class="nf">formatparser</span><span class="p">(</span><span class="n">fmtstr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fmtstr : str</span>
+<span class="sd">        string with format and option key value pairs delimited by commas</span>
+<span class="sd">        option key value pairs should be in a format consistent with</span>
+<span class="sd">        dict call dict(key1=val1, key2=val2, ...)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : dict</span>
+<span class="sd">        format=first word</span>
+<span class="sd">        otherkeys=key value pairs delimited by commas</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">fmtstr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;dict(&#39;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="dimparser"><a class="viewcode-back" href="../../api/aqmbc.html#aqmbc.bcon.dimparser">[docs]</a><span class="k">def</span> <span class="nf">dimparser</span><span class="p">(</span><span class="n">dimstr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dimstr : str</span>
+<span class="sd">        key=value pairs delimited by commas</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : dict</span>
+<span class="sd">        mapping table between IOAPI gridded and input dimensions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">([</span><span class="n">kv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">dimstr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)])</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">argparse</span>
+    <span class="c1"># variables for metafile</span>
+    <span class="n">_vglvls</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.9975</span><span class="p">,</span> <span class="mf">0.995</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.985</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.97</span><span class="p">,</span> <span class="mf">0.96</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.94</span><span class="p">,</span>
+               <span class="mf">0.93</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="mf">0.86</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.77</span><span class="p">,</span>
+               <span class="mf">0.74</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span>
+               <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">_vgtop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mf">5000.</span><span class="p">)</span>
+    <span class="n">_gc_dimkeys</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;ROW&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;COL&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;TSTEP&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;LAY&#39;</span><span class="p">:</span> <span class="s1">&#39;layer47&#39;</span>
+    <span class="p">}</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-O&#39;</span><span class="p">,</span> <span class="s1">&#39;--clobber&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--format&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">formatparser</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;File format for input files. CMAQ: &quot;ioapi&quot;; GEOS-Chem: &#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;&quot;bpch,nogroup=True&quot;&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--dimkeys&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">dimparser</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Translations from IOAPI to input dimensions&#39;</span>
+              <span class="s1">&#39;e.g., TSTEP=time,LAY=layer47,ROW=latitude,COL=longitude&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--vglvls&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)),</span> <span class="n">default</span><span class="o">=</span><span class="n">_vglvls</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output vertical grid levels (WRF sigma)&#39;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--vgtop&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_vgtop</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Top of model atmosphere in Pa&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--grid&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Grid name from GRIDDESC&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--icon&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--expr&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;exprpaths&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Expressions for model&#39;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--interp&#39;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;conserve&#39;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Conserve is mass conserving and may be more complex without &#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;much benefit in some cases&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;inpath&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;outpath&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">inpath</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;bpch&#39;</span><span class="p">):</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;bpch&#39;</span><span class="p">,</span> <span class="n">nogroup</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ioapi&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">interp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">[</span><span class="s1">&#39;format&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;bpch&#39;</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">interp</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">interp</span> <span class="o">=</span> <span class="s1">&#39;conserve&#39;</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">dimkeys</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">[</span><span class="s1">&#39;format&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;bpch&#39;</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">dimkeys</span> <span class="o">=</span> <span class="n">_gc_dimkeys</span>
+
+    <span class="n">metaf</span> <span class="o">=</span> <span class="n">pnc</span><span class="o">.</span><span class="n">pncopen</span><span class="p">(</span>
+        <span class="s1">&#39;../GRIDDESC&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;griddesc&#39;</span><span class="p">,</span>
+        <span class="n">VGLVLS</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">vglvls</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">),</span> <span class="n">VGTOP</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">vgtop</span><span class="p">),</span>
+        <span class="n">FTYPE</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">icon</span> <span class="k">else</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">GDNAM</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">grid</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">icon</span><span class="p">:</span>
+        <span class="n">tslice</span> <span class="o">=</span> <span class="n">metaf</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;TSTEP&#39;</span><span class="p">,))</span>
+        <span class="n">tslice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tslice</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">bc</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">inpath</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span>
+       <span class="n">tslice</span><span class="o">=</span><span class="n">tslice</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">interp</span><span class="p">,</span>
+       <span class="n">exprpaths</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">exprpaths</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">clobber</span><span class="p">,</span>
+       <span class="n">dimkeys</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">dimkeys</span><span class="p">,</span> <span class="n">format_kw</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+       <span class="n">history</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
