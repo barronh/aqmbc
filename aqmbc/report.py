@@ -68,6 +68,10 @@ def make_vertprof(inbcon, varkeys=None, func='mean', verbose=0):
     import xarray as xr
     import numpy as np
 
+    if isinstance(func, str):
+        funcs = [func]
+    else:
+        funcs = func
     vfs = []
     ts = []
     if isinstance(inbcon, str):
@@ -89,12 +93,16 @@ def make_vertprof(inbcon, varkeys=None, func='mean', verbose=0):
             dims = ('TSTEP', 'ROW', 'COL')
         if varkeys is None:
             varkeys = [k for k, v in f.data_vars.items() if 'LAY' in v.dims]
-        vfs.append(getattr(f[varkeys], func)(dims))
+        vfs.append(xr.concat([
+            getattr(f[varkeys], funcstr)(dims)
+            for funcstr in funcs
+        ], dim='func'))
     vf = xr.concat(vfs, dim='TSTEP')
     for vkey in varkeys:
         vf[vkey].attrs.update(f[vkey].attrs)
     vf.attrs.update(f.attrs)
     vf.coords['LAY'] = (f.VGLVLS[1:] + f.VGLVLS[:-1]) / 2
+    vf.coords['func'] = funcs
     try:
         vf.coords['TSTEP'] = pd.to_datetime(ts, format='%Y%j%H%M%S')
     except Exception:
@@ -102,6 +110,8 @@ def make_vertprof(inbcon, varkeys=None, func='mean', verbose=0):
         # starting at 1
         vf.coords['TSTEP'] = np.arange(vf.sizes['TSTEP']) + 1
         pass
+    if isinstance(func, str):
+        vf = vf.isel(func=0)
     return vf
 
 
