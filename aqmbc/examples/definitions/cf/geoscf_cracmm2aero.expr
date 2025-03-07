@@ -1,0 +1,90 @@
+# Converts GEOS-CF to CMAQ-CRACMM2
+# Expects variables from three files
+# met_tavg_1hr_g1440x721_v36
+# chm_tavg_1hr_g1440x721_v36
+# xgc_tavg_1hr_g1440x721_v36
+# all from https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim/
+# ae7 author: Barron H. Henderson
+# Updated October 2024 by Havala Pye for CRACMM version 2
+AALJ = (0.05695 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AALJ.units = 'micrograms/m**3'
+ACAJ = (0.0118 * sala[:] * 0.0314 + 0.0794 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ACAJ.units = 'micrograms/m**3'
+ACLJ = (0.00945 * dst1[:] * 0.029 + 0.5538 * sala[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ACLJ.units = 'micrograms/m**3'
+ACLK = (0.0119 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029) + 0.5538 * salc[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ACLK.units = 'micrograms/m**3'
+AECJ = (0.999 * (bcpi[:] * 0.012 + bcpo[:] * 0.012)) * airdens / 0.0289628 * 1e9
+AECJ.units = 'micrograms/m**3'
+AECI = AECJ[:] / 999
+AECI.units = 'micrograms/m**3'
+AFEJ = (0.03355 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AFEJ.units = 'micrograms/m**3'
+AKJ = (0.0114 * sala[:] * 0.0314 + 0.0377 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AKJ.units = 'micrograms/m**3'
+# CRACMM POA-like species, add NCOM mass based on CRACMM species OM/OC
+# OM/OC * I/J split % * OC * Mw of OC * unit conv.
+AROCN2ALKI = 1.39 * (0.001 * (ocpo[:]) * 0.012) * airdens / 0.0289628 * 1e9
+AROCN2ALKI.units = 'micrograms/m**3'
+AROCN2ALKJ = 1.39 * (0.999 * (ocpo[:]) * 0.012 + 0.5 * 0.01075 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AROCN2ALKJ.units = 'micrograms/m**3'
+AROCN2OXY8I = 2.17* (0.001 * (ocpi[:]) * 0.012) * airdens / 0.0289628 * 1e9
+AROCN2OXY8I.units = 'micrograms/m**3'
+AROCN2OXY8J = 2.17* (0.999 * (ocpi[:]) * 0.012 + 0.5 * 0.01075 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AROCN2OXY8J.units = 'micrograms/m**3'
+# Other species
+AMGJ = (0.0368 * sala[:] * 0.0314) * airdens / 0.0289628 * 1e9
+AMGJ.units = 'micrograms/m**3'
+AMNJ = (0.00115 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AMNJ.units = 'micrograms/m**3'
+ANAJ = (0.3086 * sala[:] * 0.0314 + 0.03935 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ANAJ.units = 'micrograms/m**3'
+ANH4I = (0.01 * nh4[:] * 0.018) * airdens / 0.0289628 * 1e9
+ANH4I.units = 'micrograms/m**3'
+ANH4J = (0.00005 * dst1[:] * 0.029 + 0.99 * nh4[:] * 0.018) * airdens / 0.0289628 * 1e9
+ANH4J.units = 'micrograms/m**3'
+ANO3I = (0.01 * nit[:] * 0.062) * airdens / 0.0289628 * 1e9
+ANO3I.units = 'micrograms/m**3'
+ANO3J = (0.00020 * dst1[:] * 0.029 + 0.99 * nit[:] * 0.062) * airdens / 0.0289628 * 1e9
+ANO3J.units = 'micrograms/m**3'
+ANO3K = (0.0016 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029) + nits[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ANO3K.units = 'micrograms/m**3'
+AOTHRJ = (0.50219 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+AOTHRJ.units = 'micrograms/m**3'
+ASEACAT = (0.3685 * salc[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ASEACAT.units = 'micrograms/m**3'
+ASIJ = (0.19435 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ASIJ.units = 'micrograms/m**3'
+ASO4I = (0.01 * so4[:] * 0.096) * airdens / 0.0289628 * 1e9
+ASO4I.units = 'micrograms/m**3'
+ASO4J = (0.99 * so4[:] * 0.096 + msa[:] * 0.096 + 0.0225 * dst1[:] * 0.029 + 0.0776 * sala[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ASO4J.units = 'micrograms/m**3'
+ASO4K = (0.0776 * salc[:] * 0.0314 + 0.02655 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029) + so4s[:] * 0.0314) * airdens / 0.0289628 * 1e9
+ASO4K.units = 'micrograms/m**3'
+ASOIL = (0.95995 * (dst2[:] * 0.029 + dst3[:] * 0.029 + dst4[:] * 0.029)) * airdens / 0.0289628 * 1e9
+ASOIL.units = 'micrograms/m**3'
+ATIJ = (0.0028 * dst1[:] * 0.029) * airdens / 0.0289628 * 1e9
+ATIJ.units = 'micrograms/m**3'
+# organic species
+# split isoprene SOA evenly across CRACMM isoprene species (all nonvolatile)
+AISO3NOSJ = 0.25 * (isoa1[:] + isoa2[:] + isoa3[:]) * 0.15 * airdens / 0.0289628 * 1e9 
+AISO3NOSJ.units = 'micrograms/m**3'
+AISO3OSJ = 0.25 * (isoa1[:] + isoa2[:] + isoa3[:]) * 0.15 * airdens / 0.0289628 * 1e9 
+AISO3OSJ.units = 'micrograms/m**3'
+AISO4J = 0.25 * (isoa1[:] + isoa2[:] + isoa3[:]) * 0.15 * airdens / 0.0289628 * 1e9 
+AISO4J.units = 'micrograms/m**3'
+AISO5J = 0.25 * (isoa1[:] + isoa2[:] + isoa3[:]) * 0.15 * airdens / 0.0289628 * 1e9 
+AISO5J.units = 'micrograms/m**3'
+AHOMJ =  (tsoa1[:] + tsoa2[:] + tsoa3[:] ) * 0.15 * airdens / 0.0289628 * 1e9
+AHOMJ.units = 'micrograms/m**3'
+AELHOMJ =  (tsoa0[:] * 0.15) * airdens / 0.0289628 * 1e9
+AELHOMJ.units = 'micrograms/m**3'
+# Match CRACMM species of C* and OM/OC
+AROCN2OXY8J = (asoan[:] * 0.15) * airdens / 0.0289628 * 1e9
+AROCN2OXY8J.units = 'micrograms/m**3'
+AROCP0OXY4J = (asoa1[:] * 0.15) * airdens / 0.0289628 * 1e9
+AROCP0OXY4J.units = 'micrograms/m**3'
+AROCP1OXY3J = (asoa2[:] * 0.15) * airdens / 0.0289628 * 1e9
+AROCP1OXY3J.units = 'micrograms/m**3'
+AROCP2OXY2J = (asoa3[:] * 0.15) * airdens / 0.0289628 * 1e9
+AROCP2OXY2J.units = 'micrograms/m**3'

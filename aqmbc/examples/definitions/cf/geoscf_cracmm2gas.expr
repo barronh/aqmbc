@@ -1,0 +1,80 @@
+# Converts GEOS-CF to CMAQ
+# Expects variables from three files
+# met_tavg_1hr_g1440x721_v36
+# chm_tavg_1hr_g1440x721_v36
+# xgc_tavg_1hr_g1440x721_v36
+# all from https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim/
+# Cb6 author: Barron H. Henderson
+# Updated 11 October 2024 for CRACMM2 by Havala Pye
+ACT = acet * 1e6 # acetone
+ACT.units = 'ppmV'
+ACD = ald2 * 1e6 # acetaldehyde
+ACD.units = 'ppmV'
+HC5 = alk4 * 1e6 # >C4 alkanes
+HC5.units = 'ppmV'
+BRO = bro * 1e6  # not used in CMAQ CRACMM
+BRO.units = 'ppmV'
+ETH = c2h6 * 1e6 # ethane
+ETH.units = 'ppmV'
+HC3 = c3h8 * 1e6 # propane
+HC3.units = 'ppmV'
+CH4 = ch4 * 1e6  # methane
+CH4.units = 'ppmV'
+CLO = clo * 1e6  # not used in CMAQ CRACMM
+CLO.units = 'ppmV'
+CO = co * 1e6
+CO.units = 'ppmV'
+# H2O = h2o * 1e6
+# H2O.units = 'ppmV'
+H2O2 = h2o2 * 1e6
+H2O2.units = 'ppmV'
+HCHO = hcho * 1e6 # formaldehyde
+HCHO.units = 'ppmV'
+HONO = hno2 * 1e6
+HONO.units = 'ppmV'
+HNO3 = hno3 * 1e6
+HNO3.units = 'ppmV'
+HNO4 = hno4 * 1e6
+HNO4.units = 'ppmV'
+CL = cl * 1e6
+CL.units = 'ppmV'
+CL2 = cl2 * 1e6
+CL2.units = 'ppmV'
+HCL = hcl * 1e6
+HCL.units = 'ppmV'
+MPAN = ipmn * 1e6 # isoprene MPAN
+MPAN.units = 'ppmV'
+PPN = (npmn + ppn) * 1e6 # peroxyacetyl nitrate (not isoprene)
+PPN.units = 'ppmV'
+ONIT = (r4n1 + r4n2 ) * 1e6 # organic nitrates
+ONIT.units = 'ppmV'
+HO2 = ho2_mmr * 28.9628 / 33.01 * 1e6
+HO2.units = 'ppmV'
+IO = io * 1e6    # not used in CMAQ CRACMM
+IO.units = 'ppmV'
+ISO = isop * 1e6 # isoprene
+ISO.units = 'ppmV'
+MEK = mek * 1e6
+MEK.units = 'ppmV'
+N2O5 = n2o5 * 1e6
+N2O5.units = 'ppmV'
+NH3 = nh3 * 1e6
+NH3.units = 'ppmV'
+NO = no * 1e6
+NO.units = 'ppmV'
+NO2 = no2 * 1e6
+NO2.units = 'ppmV'
+NOY = noy * 1e6  # lumped reactive nitrogen (not used in CMAQ CRACMM)
+NOY.units = 'ppmV'
+O3 = o3 * 1e6
+O3.units = 'ppmV'
+HO = oh_mmr * 28.9628 / 17.007 * 1e6
+HO.units = 'ppmV'
+PAN = pan * 1e6
+PAN.units = 'ppmV'
+OLT = prpe * 1e6
+OLT.units = 'ppmV'
+ALD = rcho * 1e6 # lumped aldehydes
+ALD.units = 'ppmV'
+SO2 = so2 * 1e6  
+SO2.units = 'ppmV'
