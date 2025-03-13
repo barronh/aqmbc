@@ -65,6 +65,8 @@ python -m aqmbc run.cfg
 Version History
 ===============
 
+* 0.4.2: Added geoschem benchmark quick reader and timeindependent options
+         to the config approach.
 * 0.4.1: Update bc and cmaqready to apply a minimum value and allow inpaths
          to be provided by a template. The minimum value (minvalue) can be
          set in the common configuration section. Also, improved reporting
@@ -77,7 +79,7 @@ Version History
          Needs better documentation on many objects.
 """
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 
 defnpath = os.path.join(os.path.dirname(__file__), 'examples', 'definitions')
 
@@ -107,10 +109,10 @@ def loadcfg(cfgobjs, cfgtype='path'):
             'debug': '0'
         },
         'BCON': {
-            'freq': 'd', 'output': 'BCON_%Y-%m-%d.nc',
+            'freq': 'd', 'output': 'BCON_%Y-%m-%d.nc', 'timeindependent': False
         },
         'ICON': {
-            'output': 'ICON_%Y-%m-%d.nc',
+            'output': 'ICON_%Y-%m-%d.nc', 'timeindependent': True
         }
     }
 
@@ -165,7 +167,9 @@ def runcfg(
     dimkeys = json.loads(dimkeys)
 
     ictmpl = config.get('ICON', 'output')
+    ictimeindependent = config.get('ICON', 'timeindependent')
     bctmpl = config.get('BCON', 'output')
+    bctimeindependent = config.get('BCON', 'timeindependent')
     overwrite = config.getboolean('common', 'overwrite')
     interpopt = config.get('common', 'vinterp')
 
@@ -208,7 +212,7 @@ def runcfg(
             tslice=tslice, vmethod=interpopt,
             exprpaths=exprpaths, clobber=overwrite,
             dimkeys=dimkeys, format_kw=infmt, speedup=speedup,
-            minvalue=minvalue
+            minvalue=minvalue, timeindependent=bctimeindependent
         )
         tmp = io.StringIO()
         config.write(tmp)
@@ -233,7 +237,8 @@ def runcfg(
             inpath=inpath, outpath=outpath, metaf=imetaf,
             tslice=tslice, vmethod=interpopt,
             exprpaths=exprpaths, clobber=overwrite,
-            dimkeys=dimkeys, format_kw=infmt, speedup=speedup
+            dimkeys=dimkeys, format_kw=infmt, speedup=speedup,
+            timeindependent=ictimeindependent
         )
 
         tmp = io.StringIO()

@@ -2,6 +2,7 @@ import os
 import numpy as np
 import PseudoNetCDF as pnc
 import functools
+from collections import OrderedDict
 
 
 def wndw(varfile, metaf, dimkeys, tslice, speedup=None, verbose=1):
@@ -426,6 +427,8 @@ def saveioapi(
             ITIME = np.array([t.strftime('%H%M%S') for t in otime], dtype='i')
             tflag[:, :, 0] = JDATE[:, None]
             tflag[:, :, 1] = ITIME[:, None]
+        if isinstance(outf.variables, OrderedDict):
+            outf.variables.move_to_end('TFLAG', last=False)
 
     outf.SDATE = int(time[0].strftime('%Y%j'))
     outf.STIME = int(time[0].strftime('%H%M%S'))
