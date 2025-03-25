@@ -1,0 +1,219 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preparing AQMBC Output for CMAQ &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/clipboard.min.js"></script>
+      <script src="../_static/copybutton.js"></script>
+      <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="TCR LBC for CMAQ" href="tcr_example.html" />
+    <link rel="prev" title="RAQMS LBC for CMAQ" href="raqms_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">aqmbc Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gcbc_example.html">GEOS-Chem Benchmark LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hcmaq_example.html">Hemispheric CMAQ LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geoscf_example.html">GEOS-CF LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raqms_example.html">RAQMS LBC for CMAQ</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Preparing AQMBC Output for CMAQ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-libraries">Import libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-inputs">User Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#daily-processing">Daily Processing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tcr_example.html">TCR LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="waccm_example.html">WACCM LBC for CMAQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/aqmbc.html">aqmbc package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">aqmbc Examples</a></li>
+      <li class="breadcrumb-item active">Preparing AQMBC Output for CMAQ</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/cmaqready_example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-cmaqready-example-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="preparing-aqmbc-output-for-cmaq">
+<span id="sphx-glr-auto-examples-cmaqready-example-py"></span><h1>Preparing AQMBC Output for CMAQ<a class="headerlink" href="#preparing-aqmbc-output-for-cmaq" title="Permalink to this heading"></a></h1>
+<p>CMAQ expects BCON files to have 25 instantaneous outputs that cover from 00Z
+on the simulation day to 00Z on the next day. <cite>aqmbc</cite> is run on individual files,
+which can be a single hour or a few hours. Therefore, often the <cite>aqmbc</cite> outputs
+need to be combined.</p>
+<p>This example uses single hour outputs from GEOS-CF to make CMAQ-ready BCON
+inputs. That is what <cite>aqmbc.cmaq.cmaqready</cite> is for. To do its jobs, <cite>cmaqready</cite>
+takes a <cite>date</cite> to be made, the <cite>inpaths</cite> to make it from, and the outpath to
+save it to.</p>
+<p>The example below creates two days of output from 18 input files. The
+inputs cover 2023-04-30T21:30Z to 2023-05-03T00:30Z in 3-hour intervals.
+To create the inputs, modify the geoscf_example.py script to run for more
+hours. The outputs each cover 25 hours from 00Z to 00Z+1day. To run the
+example, you must have already created the inputs. After the run is complete,
+you will have the outputs.</p>
+<dl class="simple">
+<dt>Required Inputs:</dt><dd><ul class="simple">
+<li><p>geoscf_mcx_tavg_1hr_g1440x721_v36_2023-04-30T2130Z_12US1_BCON.nc</p></li>
+<li><p>geoscf_mcx_tavg_1hr_g1440x721_v36_2023-05-01T0030Z_12US1_BCON.nc</p></li>
+<li><p>… 14 others …</p></li>
+<li><p>geoscf_mcx_tavg_1hr_g1440x721_v36_2023-05-02T2130Z_12US1_BCON.nc</p></li>
+<li><p>geoscf_mcx_tavg_1hr_g1440x721_v36_2023-05-03T0030Z_12US1_BCON.nc</p></li>
+</ul>
+</dd>
+<dt>Produced Outputs:</dt><dd><ul class="simple">
+<li><p>geoscf_mcx_tavg_1hr_g1440x721_v36_2023-05-01_12US1_BCON_hourly.nc</p></li>
+<li><p>geoscf_mcx_tavg_1hr_g1440x721_v36_2023-05-02_12US1_BCON_hourly.nc</p></li>
+</ul>
+</dd>
+</dl>
+<section id="import-libraries">
+<h2>Import libraries<a class="headerlink" href="#import-libraries" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">date_range</span><span class="p">,</span> <span class="n">to_timedelta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aqmbc</span>
+</pre></div>
+</div>
+</section>
+<section id="user-inputs">
+<h2>User Inputs<a class="headerlink" href="#user-inputs" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use the domain name for your domain</span>
+<span class="n">gdnam</span> <span class="o">=</span> <span class="s1">&#39;12US1&#39;</span>
+
+<span class="c1"># Define the date range of interest</span>
+<span class="n">outdates</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="s1">&#39;2023-05-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-05-02&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;1d&#39;</span><span class="p">)</span>
+
+<span class="c1"># Define a strftime templates for paths from aqmbc (intmpl) that need to be</span>
+<span class="c1"># concatenated and interpolated to make CMAQ-ready files (outtmpl)</span>
+<span class="n">intmpl</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;geoscf_mcx_tavg_1hr_g1440x721_v36_%Y-%m-%dT%H%MZ_</span><span class="si">{</span><span class="n">gdnam</span><span class="si">}</span><span class="s1">_BCON.nc&#39;</span>
+<span class="n">outtmpl</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;geoscf_mcx_tavg_1hr_g1440x721_v36_%Y-%m-%d_</span><span class="si">{</span><span class="n">gdnam</span><span class="si">}</span><span class="s1">_BCON_hourly.nc&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="daily-processing">
+<h2>Daily Processing<a class="headerlink" href="#daily-processing" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># For each output date, concatenate input files and interpolate hourly output.</span>
+<span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">outdates</span><span class="p">:</span>
+    <span class="c1"># Define output path</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">outtmpl</span><span class="p">)</span>
+    <span class="c1"># Get paths for date-1day 21:30 ... date+1day 00:30 by 3-hours</span>
+    <span class="n">indates</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;3h&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="n">to_timedelta</span><span class="p">(</span><span class="s1">&#39;-2.5h&#39;</span><span class="p">)</span>
+    <span class="n">inpaths</span> <span class="o">=</span> <span class="n">indates</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">intmpl</span><span class="p">)</span>
+    <span class="c1"># Make 1 output with 25h from 10 single-hour inputs</span>
+    <span class="n">aqmbc</span><span class="o">.</span><span class="n">cmaq</span><span class="o">.</span><span class="n">cmaqready</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">inpaths</span><span class="p">,</span> <span class="n">outpath</span><span class="o">=</span><span class="n">outpath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-cmaqready-example-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/647e3a2a3edd29385dd1fc8a1bbd984f/cmaqready_example.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">cmaqready_example.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/07d5e87b39e1350334e585c34054a6f8/cmaqready_example.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">cmaqready_example.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="raqms_example.html" class="btn btn-neutral float-left" title="RAQMS LBC for CMAQ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tcr_example.html" class="btn btn-neutral float-right" title="TCR LBC for CMAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GEOS-Chem Benchmark LBC for CMAQ &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/clipboard.min.js"></script>
+      <script src="../_static/copybutton.js"></script>
+      <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hemispheric CMAQ LBC for CMAQ" href="hcmaq_example.html" />
+    <link rel="prev" title="aqmbc Examples" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">aqmbc Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">GEOS-Chem Benchmark LBC for CMAQ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download-from-harvard">Download from Harvard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-chemical-translation">Define Chemical Translation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tranlate-files-and-make-time-independent">Tranlate Files and Make Time-independent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#figures-and-statistics">Figures and Statistics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plot-vertical-profiles">Plot Vertical Profiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plot-normalized-means">Plot Normalized Means</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hcmaq_example.html">Hemispheric CMAQ LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geoscf_example.html">GEOS-CF LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raqms_example.html">RAQMS LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmaqready_example.html">Preparing AQMBC Output for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tcr_example.html">TCR LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="waccm_example.html">WACCM LBC for CMAQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/aqmbc.html">aqmbc package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">aqmbc Examples</a></li>
+      <li class="breadcrumb-item active">GEOS-Chem Benchmark LBC for CMAQ</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/gcbc_example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-gcbc-example-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="geos-chem-benchmark-lbc-for-cmaq">
+<span id="sphx-glr-auto-examples-gcbc-example-py"></span><h1>GEOS-Chem Benchmark LBC for CMAQ<a class="headerlink" href="#geos-chem-benchmark-lbc-for-cmaq" title="Permalink to this heading"></a></h1>
+<p>This example shows how to use aqmbc with GEOS-Chem’s publicly available
+benchmark outputs.</p>
+<ul class="simple">
+<li><p>Dowload from Harvard (if not previously downloaded).</p></li>
+<li><p>Define translations.</p></li>
+<li><p>Extract, translate, and create time-independent files.</p></li>
+<li><p>Display figures and statistics.</p></li>
+</ul>
+<p>Time-independence allows files to be used in CMAQ with multiple dates in the
+same month, or as a climatology for other years.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aqmbc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tarfile</span>
+</pre></div>
+</div>
+<section id="download-from-harvard">
+<h2>Download from Harvard<a class="headerlink" href="#download-from-harvard" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inpaths</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;OutputDir/GEOSChem.SpeciesConc.20190401_0000z.nc4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OutputDir/GEOSChem.SpeciesConc.20190701_0000z.nc4&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">]):</span>
+    <span class="c1"># Download 7G tar file</span>
+    <span class="n">rurl</span> <span class="o">=</span> <span class="s1">&#39;http://ftp.as.harvard.edu/gcgrid/geos-chem/1yr_benchmarks/&#39;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rurl</span><span class="si">}</span><span class="s1">/14.0.0-rc.0/GCClassic/FullChem/OutputDir.tar.gz&#39;</span>
+    <span class="n">dest</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">dest</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">):</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using cached OutputDir.tar.gz&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Unzip only files that will be used.</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">memb</span> <span class="ow">in</span> <span class="n">tf</span><span class="o">.</span><span class="n">getmembers</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">memb</span><span class="o">.</span><span class="n">path</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">memb</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">memb</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using cached&#39;</span><span class="p">,</span> <span class="n">memb</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="define-chemical-translation">
+<h2>Define Chemical Translation<a class="headerlink" href="#define-chemical-translation" title="Permalink to this heading"></a></h2>
+<p>Using gc14_o3so4.expr, which only uses ozone and sulfate aerosols.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">aqmbc</span><span class="o">.</span><span class="n">exprlib</span><span class="o">.</span><span class="n">avail</span><span class="p">(</span><span class="s1">&#39;gc&#39;</span><span class="p">))</span>  <span class="c1"># Show all possible expressions</span>
+<span class="n">exprpaths</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">exprlib</span><span class="o">.</span><span class="n">exprpaths</span><span class="p">([</span>                      <span class="c1"># for a full run,</span>
+    <span class="s1">&#39;gcnc_airmolden.expr&#39;</span><span class="p">,</span>                                 <span class="c1"># keep this</span>
+    <span class="s1">&#39;gc14_o3so4.expr&#39;</span><span class="p">,</span>                                     <span class="c1"># Comment this</span>
+    <span class="c1"># &#39;gc14_to_cb6r5.expr&#39;, &#39;gc14_to_cb6mp.expr&#39;,          # Uncomment this</span>
+    <span class="c1"># &#39;gc14_soas_to_ae7.expr&#39;                              # uncomment this</span>
+<span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;gc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="tranlate-files-and-make-time-independent">
+<h2>Tranlate Files and Make Time-independent<a class="headerlink" href="#tranlate-files-and-make-time-independent" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gdnam</span> <span class="o">=</span> <span class="s1">&#39;12US1&#39;</span>
+<span class="n">gcdims</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="s1">&#39;gc&#39;</span><span class="p">]</span>
+<span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">gdnam</span><span class="si">}</span><span class="s1">_BCON.nc&#39;</span>
+<span class="n">metaf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">getmetaf</span><span class="p">(</span><span class="n">bctype</span><span class="o">=</span><span class="s1">&#39;bcon&#39;</span><span class="p">,</span> <span class="n">gdnam</span><span class="o">=</span><span class="n">gdnam</span><span class="p">,</span> <span class="n">vgnam</span><span class="o">=</span><span class="s1">&#39;EPA_35L&#39;</span><span class="p">)</span>
+
+<span class="c1"># For &quot;real&quot; VGLVLS use</span>
+<span class="c1"># METBDY3D_PATH = &#39;...&#39;</span>
+<span class="c1"># METCRO3D_PATH = &#39;...&#39;</span>
+<span class="c1"># metaf = pnc.pncopen(METBDY3D_PATH, format=&#39;ioapi&#39;).subset([&#39;PRES&#39;])</span>
+<span class="c1"># pnc.conventions.ioapi.add_cf_from_ioapi(metaf)</span>
+
+<span class="n">bcpaths</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">inpath</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">inpath</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.nc4&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;From </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">outf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">bc</span><span class="p">(</span>
+        <span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">exprpaths</span><span class="o">=</span><span class="n">exprpaths</span><span class="p">,</span>
+        <span class="n">dimkeys</span><span class="o">=</span><span class="n">gcdims</span><span class="p">,</span> <span class="n">format_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="s1">&#39;gcbench&#39;</span><span class="p">},</span> <span class="n">history</span><span class="o">=</span><span class="n">history</span><span class="p">,</span>
+        <span class="n">clobber</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeindependent</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">bcpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="figures-and-statistics">
+<h2>Figures and Statistics<a class="headerlink" href="#figures-and-statistics" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vprof</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">get_vertprof</span><span class="p">(</span><span class="n">bcpaths</span><span class="p">)</span>
+<span class="n">statdf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">getstats</span><span class="p">(</span><span class="n">bcpaths</span><span class="p">)</span>
+<span class="n">statdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;gcbc_summary.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="plot-vertical-profiles">
+<h3>Plot Vertical Profiles<a class="headerlink" href="#plot-vertical-profiles" title="Permalink to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">plot_2spc_vprof</span><span class="p">(</span><span class="n">vprof</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;GEOS-Chem v14 Boundary Conditions for CMAQ&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;gcbc_profiles.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-normalized-means">
+<h3>Plot Normalized Means<a class="headerlink" href="#plot-normalized-means" title="Permalink to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">plot_gaspm_bars</span><span class="p">(</span><span class="n">statdf</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;gcbc_bar.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-gcbc-example-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/7734908de4faa3bad3708c0d2371f923/gcbc_example.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">gcbc_example.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/7cd1c75b447051fb0de3aa18de9bc9b8/gcbc_example.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">gcbc_example.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="aqmbc Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hcmaq_example.html" class="btn btn-neutral float-right" title="Hemispheric CMAQ LBC for CMAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

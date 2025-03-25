@@ -1,0 +1,197 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aqmbc Config File &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" />
+
+  
+      <script src="_static/jquery.js"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+      <script src="_static/doctools.js"></script>
+      <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/clipboard.min.js"></script>
+      <script src="_static/copybutton.js"></script>
+      <script src="_static/design-tabs.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aqmbc package" href="api/aqmbc.html" />
+    <link rel="prev" title="aqmbc Modify Examples" href="modifyexamples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">aqmbc Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">aqmbc Config File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#step-1-create-run-directory">Step 1: Create Run Directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-2-edit">Step 2: Edit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-3-run">Step 3: Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alternative-configurations">Alternative Configurations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/aqmbc.html">aqmbc package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">aqmbc Config File</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/configexample.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aqmbc-config-file">
+<h1>aqmbc Config File<a class="headerlink" href="#aqmbc-config-file" title="Permalink to this heading"></a></h1>
+<p>aqmbc can also be run from a command line using a configuration file. This section shows how to use aqmbc with GEOS-Chem and a config file. There are several prerequisites for this example:</p>
+<ul class="simple">
+<li><p>aqmbc must be installed</p></li>
+<li><p>GEOS-Chem version 14.0.1 simulation with simple organic aerosols (SOAS).</p></li>
+<li><p>BoundaryConditions extension enabled in HISTORY.rc with:</p>
+<ul>
+<li><p><cite>‘SpeciesBC_?ADV?             ‘,</cite></p></li>
+<li><p><cite>‘Met_PMIDDRY’</cite></p></li>
+<li><p><cite>‘Met_T’</cite></p></li>
+</ul>
+</li>
+</ul>
+<section id="step-1-create-run-directory">
+<h2>Step 1: Create Run Directory<a class="headerlink" href="#step-1-create-run-directory" title="Permalink to this heading"></a></h2>
+<p>Create a run directory. <cite>aqmbc</cite> has a template option, which will export all its examples to a template run directory. You can then pick and choose which files to use. Below shows a template being created.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>aqmbc<span class="w"> </span>-t<span class="w"> </span>run
+</pre></div>
+</div>
+<p>After the folder was created, below is the directory structure where only the files used are highlighted.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tree<span class="w"> </span>--charset<span class="o">=</span>ASCII<span class="w"> </span>run
+run/
+<span class="p">|</span>--<span class="w"> </span>definitions
+<span class="p">|</span><span class="w">   </span><span class="p">|</span>--<span class="w"> </span>cf<span class="w">      </span><span class="c1"># GEOS-CF definitions not used here</span>
+<span class="p">|</span><span class="w">   </span><span class="p">|</span>--<span class="w"> </span>gc
+<span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span>...
+<span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span><span class="p">|</span>--<span class="w"> </span>gcnc_usstd_airmolden.expr
+<span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span><span class="p">|</span>--<span class="w"> </span>gc14_to_cb6r5.expr
+<span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span><span class="p">|</span>--<span class="w"> </span>gc14_to_cb6mp.expr
+<span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span><span class="sb">`</span>--<span class="w"> </span>gc14_soas_to_ae7.expr
+<span class="p">|</span><span class="w">   </span><span class="sb">`</span>--<span class="w"> </span>raqms<span class="w">   </span><span class="c1"># RAQMS definitions not used here</span>
+<span class="p">|</span>--<span class="w"> </span>gcncv14.cfg<span class="w"> </span><span class="c1"># GEOS-Chem v14 configuration</span>
+<span class="p">|</span>--<span class="w"> </span>hcmaq.cfg<span class="w">   </span><span class="c1"># Hemispheric-CMAQ Configuration file</span>
+<span class="p">|</span>--<span class="w"> </span>raqms.cfg<span class="w">   </span><span class="c1"># RAQMS model configuration file.</span>
+<span class="sb">`</span>--<span class="w"> </span>GRIDDESC<span class="w">    </span><span class="c1"># IOAPI grid description file</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-edit">
+<h2>Step 2: Edit<a class="headerlink" href="#step-2-edit" title="Permalink to this heading"></a></h2>
+<p>Edit the configuration files to suite your application. Common examples:</p>
+<ol class="arabic simple">
+<li><p>Edit gcncv14.cfg to update the paths to your GEOS-Chem BoundaryConditions.</p></li>
+<li><p>Edit gcncv14.cfg to use the domain of interest (12US1, 36US3, etc)</p></li>
+<li><p>Edit gcncv14.cfg to output more days</p></li>
+<li><p>Add a new domain to GRIDDESC for your CMAQ grid definition.</p></li>
+<li><p>Edit <cite>definitions/gc</cite> to match your application.</p></li>
+</ol>
+<p>If you used a different version of GEOS-Chem, there are two paths forward.</p>
+<ol class="arabic simple">
+<li><p>See if definitions for that version already exists.</p></li>
+<li><p>Make definitions for your version. (if you do, please open an issue <a class="reference external" href="http://github.com/barronh/aqmbc/issues">http://github.com/barronh/aqmbc/issues</a>; and submit them).</p></li>
+</ol>
+</section>
+<section id="step-3-run">
+<h2>Step 3: Run<a class="headerlink" href="#step-3-run" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>aqmbc<span class="w"> </span>gcncv14.cfg
+</pre></div>
+</div>
+</section>
+<section id="alternative-configurations">
+<h2>Alternative Configurations<a class="headerlink" href="#alternative-configurations" title="Permalink to this heading"></a></h2>
+<p>Similar example configurations are provided for Hemispheric-CMAQ (<cite>hcmaq.cfg</cite>) and RAQMS (<cite>raqms.cfg</cite>).</p>
+<ul class="simple">
+<li><p><cite>hcmaq.cfg</cite> is designed to work with 3D “CONC” files with all the species included from a larger domain.</p></li>
+<li><p><cite>raqms.cfg</cite> is designed to work with the files provided by Brad Pierce at the University of Wisconsin.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modifyexamples.html" class="btn btn-neutral float-left" title="aqmbc Modify Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/aqmbc.html" class="btn btn-neutral float-right" title="aqmbc package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

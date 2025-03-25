@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WACCM LBC for CMAQ &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/clipboard.min.js"></script>
+      <script src="../_static/copybutton.js"></script>
+      <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="aqmbc Modify Examples" href="../modifyexamples.html" />
+    <link rel="prev" title="TCR LBC for CMAQ" href="tcr_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">aqmbc Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gcbc_example.html">GEOS-Chem Benchmark LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hcmaq_example.html">Hemispheric CMAQ LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geoscf_example.html">GEOS-CF LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raqms_example.html">RAQMS LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmaqready_example.html">Preparing AQMBC Output for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tcr_example.html">TCR LBC for CMAQ</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">WACCM LBC for CMAQ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download-from-waccm-via-http">Download from waccm via HTTP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-translation-expressions">Define Translation Expressions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#translate-waccm-for-use-by-cmaq">Translate WACCM for use by CMAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#figures-and-statistics">Figures and Statistics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualize-vertical-profiles">Visualize Vertical Profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barplot-of-concentrations">Barplot of Concentrations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/aqmbc.html">aqmbc package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">aqmbc Examples</a></li>
+      <li class="breadcrumb-item active">WACCM LBC for CMAQ</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/waccm_example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-waccm-example-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="waccm-lbc-for-cmaq">
+<span id="sphx-glr-auto-examples-waccm-example-py"></span><h1>WACCM LBC for CMAQ<a class="headerlink" href="#waccm-lbc-for-cmaq" title="Permalink to this heading"></a></h1>
+<p>This example shows how to use aqmbc with WACCM’s publicly available forecasts.</p>
+<ul class="simple">
+<li><p>Download from waccm (only if not available in WACCM folder).</p></li>
+<li><p>Define translation.</p></li>
+<li><p>Extract and translate.</p></li>
+<li><p>Display figures and statistics.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">basename</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aqmbc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+
+<span class="n">gdnam</span> <span class="o">=</span> <span class="s1">&#39;12US1&#39;</span>
+</pre></div>
+</div>
+<section id="download-from-waccm-via-http">
+<h2>Download from waccm via HTTP<a class="headerlink" href="#download-from-waccm-via-http" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;2023-04-15&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-07-15&#39;</span><span class="p">]</span>
+
+<span class="n">aqmbc</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">waccm</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="define-translation-expressions">
+<h2>Define Translation Expressions<a class="headerlink" href="#define-translation-expressions" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># In Notebooks, display available expressions</span>
+<span class="n">aqmbc</span><span class="o">.</span><span class="n">exprlib</span><span class="o">.</span><span class="n">avail</span><span class="p">(</span><span class="s1">&#39;waccm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exprpaths</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">exprlib</span><span class="o">.</span><span class="n">exprpaths</span><span class="p">([</span>
+    <span class="s1">&#39;waccm_o3so4.expr&#39;</span>                     <span class="c1"># for full run, comment this</span>
+    <span class="c1"># &#39;waccm_met.expr&#39;, &#39;waccm_cb6.expr&#39;,  # for full run, uncomment this</span>
+    <span class="c1"># &#39;waccm_ae7.expr&#39;                     # for full run, uncomment this</span>
+<span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;waccm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="translate-waccm-for-use-by-cmaq">
+<h2>Translate WACCM for use by CMAQ<a class="headerlink" href="#translate-waccm-for-use-by-cmaq" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># For &quot;real&quot; VGLVLS use</span>
+<span class="c1"># METBDYD_PATH = &#39;...&#39;</span>
+<span class="c1"># metaf = pnc.pncopen(METBDY3D_PATH, format=&#39;ioapi&#39;)</span>
+<span class="n">metaf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">getmetaf</span><span class="p">(</span><span class="n">bctype</span><span class="o">=</span><span class="s1">&#39;bcon&#39;</span><span class="p">,</span> <span class="n">gdnam</span><span class="o">=</span><span class="n">gdnam</span><span class="p">,</span> <span class="n">vgnam</span><span class="o">=</span><span class="s1">&#39;EPA_35L&#39;</span><span class="p">)</span>
+<span class="n">inpaths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;WACCM/f.e22*.nc&#39;</span><span class="p">))</span>
+<span class="n">bcpaths</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">gdnam</span><span class="si">}</span><span class="s1">_BCON.nc&#39;</span>
+<span class="n">gcdims</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="s1">&#39;waccm&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">inpath</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">inpath</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;From </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">outf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">bc</span><span class="p">(</span>
+        <span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">exprpaths</span><span class="o">=</span><span class="n">exprpaths</span><span class="p">,</span>
+        <span class="n">dimkeys</span><span class="o">=</span><span class="n">gcdims</span><span class="p">,</span> <span class="n">format_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="s1">&#39;waccm&#39;</span><span class="p">},</span> <span class="n">history</span><span class="o">=</span><span class="n">history</span><span class="p">,</span>
+        <span class="n">clobber</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">bcpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="figures-and-statistics">
+<h2>Figures and Statistics<a class="headerlink" href="#figures-and-statistics" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vprof</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">get_vertprof</span><span class="p">(</span><span class="n">bcpaths</span><span class="p">)</span>
+<span class="n">statdf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">getstats</span><span class="p">(</span><span class="n">bcpaths</span><span class="p">)</span>
+<span class="n">statdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;waccm_summary.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visualize-vertical-profiles">
+<h2>Visualize Vertical Profiles<a class="headerlink" href="#visualize-vertical-profiles" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">plot_2spc_vprof</span><span class="p">(</span><span class="n">vprof</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;WACCM Boundary Conditions for CMAQ&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;waccm_profiles.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="barplot-of-concentrations">
+<h2>Barplot of Concentrations<a class="headerlink" href="#barplot-of-concentrations" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">plot_gaspm_bars</span><span class="p">(</span><span class="n">statdf</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;waccm_bar.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-waccm-example-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/bedc62ef1b6cabded1a845933a8d4d6b/waccm_example.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">waccm_example.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e7a1e9d106c758ba360ac1bed1fcfd28/waccm_example.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">waccm_example.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tcr_example.html" class="btn btn-neutral float-left" title="TCR LBC for CMAQ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../modifyexamples.html" class="btn btn-neutral float-right" title="aqmbc Modify Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

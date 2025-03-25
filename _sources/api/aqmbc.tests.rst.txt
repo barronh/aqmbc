@@ -1,0 +1,45 @@
+aqmbc.tests package
+===================
+
+Submodules
+----------
+
+aqmbc.tests.test\_bcon module
+-----------------------------
+
+.. automodule:: aqmbc.tests.test_bcon
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.tests.test\_cmaq module
+-----------------------------
+
+.. automodule:: aqmbc.tests.test_cmaq
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.tests.test\_exprlib module
+--------------------------------
+
+.. automodule:: aqmbc.tests.test_exprlib
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.tests.test\_options module
+--------------------------------
+
+.. automodule:: aqmbc.tests.test_options
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: aqmbc.tests
+   :members:
+   :undoc-members:
+   :show-inheritance:

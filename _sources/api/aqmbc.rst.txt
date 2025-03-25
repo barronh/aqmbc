@@ -1,0 +1,62 @@
+aqmbc package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   aqmbc.models
+   aqmbc.tests
+
+Submodules
+----------
+
+aqmbc.bcon module
+-----------------
+
+.. automodule:: aqmbc.bcon
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.cmaq module
+-----------------
+
+.. automodule:: aqmbc.cmaq
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.exprlib module
+--------------------
+
+.. automodule:: aqmbc.exprlib
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.options module
+--------------------
+
+.. automodule:: aqmbc.options
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.report module
+-------------------
+
+.. automodule:: aqmbc.report
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: aqmbc
+   :members:
+   :undoc-members:
+   :show-inheritance:

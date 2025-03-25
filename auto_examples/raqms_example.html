@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAQMS LBC for CMAQ &mdash; aqmbc 9.9.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/clipboard.min.js"></script>
+      <script src="../_static/copybutton.js"></script>
+      <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Preparing AQMBC Output for CMAQ" href="cmaqready_example.html" />
+    <link rel="prev" title="GEOS-CF LBC for CMAQ" href="geoscf_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            aqmbc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">aqmbc User’s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">aqmbc Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gcbc_example.html">GEOS-Chem Benchmark LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hcmaq_example.html">Hemispheric CMAQ LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geoscf_example.html">GEOS-CF LBC for CMAQ</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">RAQMS LBC for CMAQ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download-from-raqms-via-http">Download from RAQMS via HTTP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-translation-expressions">Define Translation Expressions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#translate-raqms-for-use-by-cmaq">Translate RAQMS for use by CMAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#figures-and-statistics">Figures and Statistics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualize-vertical-profiles">Visualize Vertical Profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barplot-of-concentrations">Barplot of Concentrations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cmaqready_example.html">Preparing AQMBC Output for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tcr_example.html">TCR LBC for CMAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="waccm_example.html">WACCM LBC for CMAQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modifyexamples.html">aqmbc Modify Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configexample.html">aqmbc Config File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/aqmbc.html">aqmbc package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">aqmbc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">aqmbc Examples</a></li>
+      <li class="breadcrumb-item active">RAQMS LBC for CMAQ</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/raqms_example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-raqms-example-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="raqms-lbc-for-cmaq">
+<span id="sphx-glr-auto-examples-raqms-example-py"></span><h1>RAQMS LBC for CMAQ<a class="headerlink" href="#raqms-lbc-for-cmaq" title="Permalink to this heading"></a></h1>
+<p>This example shows how to use aqmbc with RAQMS’s publicly available forecasts.</p>
+<ul class="simple">
+<li><p>Download from RAQMS (only if not available in RAQMS folder).</p></li>
+<li><p>Define translation.</p></li>
+<li><p>Extract and translate.</p></li>
+<li><p>Display figures and statistics.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">basename</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aqmbc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">gdnam</span> <span class="o">=</span> <span class="s1">&#39;12US1&#39;</span>
+</pre></div>
+</div>
+<section id="download-from-raqms-via-http">
+<h2>Download from RAQMS via HTTP<a class="headerlink" href="#download-from-raqms-via-http" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">todayat12z</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;now&#39;</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="s1">&#39;1d&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="s1">&#39;12h&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">todayat12z</span><span class="p">]</span>
+
+<span class="n">aqmbc</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">raqms</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="define-translation-expressions">
+<h2>Define Translation Expressions<a class="headerlink" href="#define-translation-expressions" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># In Notebooks, display available expressions</span>
+<span class="n">aqmbc</span><span class="o">.</span><span class="n">exprlib</span><span class="o">.</span><span class="n">avail</span><span class="p">(</span><span class="s1">&#39;raqms&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exprpaths</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">exprlib</span><span class="o">.</span><span class="n">exprpaths</span><span class="p">([</span>
+    <span class="s1">&#39;raqms_o3so4.expr&#39;</span>
+    <span class="c1"># &#39;raqms_to_cb6r4_ae6.expr&#39;  # for full run</span>
+<span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;raqms&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="translate-raqms-for-use-by-cmaq">
+<h2>Translate RAQMS for use by CMAQ<a class="headerlink" href="#translate-raqms-for-use-by-cmaq" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># For &quot;real&quot; VGLVLS use</span>
+<span class="c1"># METBDYD_PATH = &#39;...&#39;</span>
+<span class="c1"># metaf = pnc.pncopen(METBDY3D_PATH, format=&#39;ioapi&#39;)</span>
+<span class="n">metaf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">getmetaf</span><span class="p">(</span><span class="n">bctype</span><span class="o">=</span><span class="s1">&#39;bcon&#39;</span><span class="p">,</span> <span class="n">gdnam</span><span class="o">=</span><span class="n">gdnam</span><span class="p">,</span> <span class="n">vgnam</span><span class="o">=</span><span class="s1">&#39;EPA_35L&#39;</span><span class="p">)</span>
+<span class="n">inpaths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;RAQMS/uwhyb*.nc&#39;</span><span class="p">))</span>
+<span class="n">bcpaths</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">gdnam</span><span class="si">}</span><span class="s1">_BCON.nc&#39;</span>
+<span class="n">gcdims</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="s1">&#39;raqms&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">inpath</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">inpath</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;From </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">outf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">bc</span><span class="p">(</span>
+        <span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">metaf</span><span class="p">,</span> <span class="n">vmethod</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">exprpaths</span><span class="o">=</span><span class="n">exprpaths</span><span class="p">,</span>
+        <span class="n">dimkeys</span><span class="o">=</span><span class="n">gcdims</span><span class="p">,</span> <span class="n">format_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="s1">&#39;raqms&#39;</span><span class="p">},</span> <span class="n">history</span><span class="o">=</span><span class="n">history</span><span class="p">,</span>
+        <span class="n">clobber</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">bcpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="figures-and-statistics">
+<h2>Figures and Statistics<a class="headerlink" href="#figures-and-statistics" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vprof</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">get_vertprof</span><span class="p">(</span><span class="n">bcpaths</span><span class="p">)</span>
+<span class="n">statdf</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">getstats</span><span class="p">(</span><span class="n">bcpaths</span><span class="p">)</span>
+<span class="n">statdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;raqms_summary.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visualize-vertical-profiles">
+<h2>Visualize Vertical Profiles<a class="headerlink" href="#visualize-vertical-profiles" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">plot_2spc_vprof</span><span class="p">(</span><span class="n">vprof</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;RAQMS Boundary Conditions for CMAQ&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;raqms_profiles.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="barplot-of-concentrations">
+<h2>Barplot of Concentrations<a class="headerlink" href="#barplot-of-concentrations" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">aqmbc</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">plot_gaspm_bars</span><span class="p">(</span><span class="n">statdf</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;raqms_bar.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-raqms-example-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/7f604b74e8b6d2a407660988c630036d/raqms_example.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">raqms_example.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/caf45e6b2c042a8036d1dd633de3a48b/raqms_example.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">raqms_example.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geoscf_example.html" class="btn btn-neutral float-left" title="GEOS-CF LBC for CMAQ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmaqready_example.html" class="btn btn-neutral float-right" title="Preparing AQMBC Output for CMAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Barron H. Henderson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
