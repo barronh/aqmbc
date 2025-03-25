@@ -7,9 +7,9 @@ aqmbc can also be run from a command line using a configuration file. This secti
 * GEOS-Chem version 14.0.1 simulation with simple organic aerosols (SOAS).
 * BoundaryConditions extension enabled in HISTORY.rc with:
 
-  * 'SpeciesBC_?ADV?             ',
-  * 'Met_PMIDDRY'
-  * 'Met_T'
+  * `'SpeciesBC_?ADV?             ',`
+  * `'Met_PMIDDRY'`
+  * `'Met_T'`
 
 
 Step 1: Create Run Directory

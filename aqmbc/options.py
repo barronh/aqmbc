@@ -27,6 +27,8 @@ dims = {
 
 def getmetaf(bctype='bcon', gdnam='12US1', vgnam='EPA_35L', gdpath=None):
     """
+    Arguments
+    ---------
     bctype : str
         bcon (boundary) or icon (initial) boundary conditions.
     gdnam : str
@@ -36,6 +38,11 @@ def getmetaf(bctype='bcon', gdnam='12US1', vgnam='EPA_35L', gdpath=None):
     gdpath : str or None
         If none, looks for GRIDDESC environment, then looks for a local file,
         then uses the default.
+
+    Returns
+    -------
+    metaf : PseudoNetCDF.PseudoNetCDFFile
+        File with metadata associated with grid
     """
     from os import environ
     from os.path import dirname, join, exists

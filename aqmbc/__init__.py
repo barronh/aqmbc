@@ -1,4 +1,6 @@
-__all__ = ['bc', 'runcfg', 'exprlib', 'options', 'cmaq', 'report', 'models']
+__all__ = [
+    'bc', 'runcfg', 'bcon', 'exprlib', 'options', 'cmaq', 'report', 'models'
+]
 
 import os
 import io
@@ -8,10 +10,11 @@ import numpy as np
 import warnings
 import configparser
 from .bcon import bc
+from . import bcon
 from . import exprlib
 from . import options
-from . import report
 from . import cmaq
+from . import report
 from . import models
 
 
@@ -21,16 +24,11 @@ Code for making CMAQ-ready boundary condition files
 Contents
 ========
 
-bcon : module
-    module with functions for making boundary condition files
-cmaq : module
-    module for making files CMAQ ready
-report : module
-    module with convenience functions for reporting
-defnpath : str
-    Path to all definition files available in examples.
-runcfg : function
-    Function to run aqmbc from configuration files
+* bcon : module with functions for making boundary condition files
+* cmaq : module for making files CMAQ ready
+* report : module with convenience functions for reporting
+* defnpath : string path to all definition files available in examples.
+* runcfg : Function to run aqmbc from configuration files
 
 
 Examples
@@ -67,6 +65,7 @@ Version History
 
 * 0.4.2: Added geoschem benchmark quick reader and timeindependent options
          to the config approach.
+         Adding improved documentation.
 * 0.4.1: Update bc and cmaqready to apply a minimum value and allow inpaths
          to be provided by a template. The minimum value (minvalue) can be
          set in the common configuration section. Also, improved reporting
@@ -85,6 +84,19 @@ defnpath = os.path.join(os.path.dirname(__file__), 'examples', 'definitions')
 
 
 def loadcfg(cfgobjs, cfgtype='path'):
+    """
+    Arguments
+    ---------
+    cfgobjs : list
+        List of configuration objects
+    cfgtype : str
+        path, file, dict
+
+    Returns
+    -------
+    config : configparser.ConfigParser
+        Configuration loaded with defaults added.
+    """
     config = configparser.ConfigParser(
         default_section='common',
         interpolation=configparser.ExtendedInterpolation()
@@ -156,6 +168,10 @@ def runcfg(
         If True, return config after testing parsing.
     speedup : bool or None
         If True, use more memory but run faster. If None, heursitcally decide.
+
+    Returns
+    -------
+    None
     """
     import json
     warnings.simplefilter(warningfilter)

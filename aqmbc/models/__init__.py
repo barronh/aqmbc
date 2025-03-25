@@ -1,4 +1,4 @@
-__all__ = ['raqms', 'geoscf', 'waccm', 'tcr']
+__all__ = ['raqms', 'geoscf', 'geoschem', 'tcr', 'waccm']
 
 from . import raqms
 from . import geoscf

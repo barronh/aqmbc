@@ -16,9 +16,10 @@ def wndw(varfile, metaf, dimkeys, tslice, speedup=None, verbose=1):
 
     Returns
     -------
-    wndwf : file windows in lon/lat space
-    i: indices for wndwf at metaf
-    j: indices for wndwf at metaf
+    wndwf, iwndw, jwndw : tuple
+       wndwf is a file windowed in lon/lat space
+       iwndw are the indices for wndwf at metaf
+       jwndw are the indices for wndwf at metaf
     """
     lon = metaf.variables['longitude']
     lat = metaf.variables['latitude']
@@ -87,10 +88,19 @@ def ijslice(infile, metaf, i, j, dimkeys, verbose=1):
         input file
     metafile : netcdf-like
         file with longitude and latitude
+    i : array
+        i (lon or COL) coordinate
+    j : array
+        j (lat or ROW) coordinate
+    dimkeys : dict
+        Dictionary mapping coordinates to ROW/COL. When the input has lon/lat
+        coordinates, use dict(ROW='lat', COL='lon')
 
     Returns
     -------
-    bconf : file at metaf
+    bconf : PseudoNetCDF.PseudoNetCDFFile
+        Boundary or Initial Condition file matching horizontal coordinates of
+        metaf supplied as input
     """
     if verbose > 0:
         print('slice', flush=True)
@@ -114,10 +124,14 @@ def kinterp(infile, metaf, vmethod, verbose=1):
         file with longitude and latitude
     vmethod : str
         method for vertical inteprolation (conserve or linear)
+    verbose : int
+        Level of verbosity
 
     Returns
     -------
-    bconvf : file at new vertical levels
+    bconvf : PseudoNetCDF.PseudoNetCDFFile
+        Boundary or Initial Condition file matching vertical coordinates of
+        metaf supplied as input
     """
     # Extract output vertical if not already the same
     tgt_vglvls = getattr(infile, 'VGLVLS', np.array([0], 'f'))
@@ -156,10 +170,13 @@ def translate(infile, exprpaths, verbose=1):
         File input
     exprpaths : list
         paths to expr file
+    verbose : int
+        Level of verbosity
 
     Returns
     -------
-    outf : file output
+    outf : PseudoNetCDFFile
+        File output with speciation applied from exprpaths
     """
     # Translate species and/or units
     if len(exprpaths) == 0:

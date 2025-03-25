@@ -10,8 +10,8 @@ def get_vertprof(inbcon, varkeys=None, func='mean', verbose=0, outpath=None):
     inbcon : list or str
         If str, inbcon = sorted(glob.glob(inbcon))
         If list, items should be str or xarray.Dataset object.
-            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
-            If Datasets, infiles = inbcon
+        * If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+        * If Datasets, infiles = inbcon
     varkeys : list or None
         variable keys (if None, use all)
     func : str
@@ -51,8 +51,8 @@ def make_vertprof(inbcon, varkeys=None, func='mean', verbose=0):
     inbcon : list or str
         If str, inbcon = sorted(glob.glob(inbcon))
         If list, items should be str or xarray.Dataset object.
-            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
-            If Datasets, infiles = inbcon
+        * If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+        * If Datasets, infiles = inbcon
     varkeys : list or None
         variable keys (if None, use all)
     func : str
@@ -128,6 +128,7 @@ def plot_vprof(vmean, vmin=None, vmax=None, ax=None, **kwds):
         Optional axes to add lines to.
     kwds : mappable
         Properties for lines
+
     Returns
     -------
     ax : matplotlit.axes.Axes
@@ -162,8 +163,8 @@ def getstats(
     inbcon : list or str
         If str, inbcon = sorted(glob.glob(inbcon))
         If list, items should be str or xarray.Dataset object.
-            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
-            If Datasets, infiles = inbcon
+        * If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+        * If Datasets, infiles = inbcon
         If outpath is not None, inbcon must be a str or list of paths
     varkeys : list
         List of variable keys to process
@@ -214,8 +215,8 @@ def makestats(inbcon, varkeys=None, verbose=0, draft=False):
     inbcon : list or str
         If str, inbcon = sorted(glob.glob(inbcon))
         If list, items should be str or xarray.Dataset object.
-            If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
-            If Datasets, infiles = inbcon
+        * If str, infiles = [xr.open_dataset(inpath) for inpath in inbcon]
+        * If Datasets, infiles = inbcon
     varkeys : list
         List of variable keys to process
     verbose : int
@@ -498,7 +499,9 @@ def plot_2spc_vprof(vprof, vminprof=None, vmaxprof=None, v1k='O3', v2k=None):
         if vminprof is not None and vmaxprof is not None:
             vmin = vminprof[v1k][ti]
             vmax = vmaxprof[v1k][ti]
-            axx[0].fill_betweenx(y=v1.LAY, x1=vmin, x2=vmax, color=cmap(ti / nt), alpha=0.5)
+            axx[0].fill_betweenx(
+                y=v1.LAY, x1=vmin, x2=vmax, color=cmap(ti / nt), alpha=0.5
+            )
 
     axx[0].legend()
     cmap = plt.cm.nipy_spectral
@@ -513,8 +516,9 @@ def plot_2spc_vprof(vprof, vminprof=None, vmaxprof=None, v1k='O3', v2k=None):
         if vminprof is not None and vmaxprof is not None:
             vmin = vminprof[v2k][ti]
             vmax = vmaxprof[v2k][ti]
-            axx[1].fill_betweenx(y=v2.LAY, x1=vmin, x2=vmax, color=cmap(ti / nt), alpha=0.5)
-
+            axx[1].fill_betweenx(
+                y=v2.LAY, x1=vmin, x2=vmax, color=cmap(ti / nt), alpha=0.5
+            )
 
     axx[1].legend()
     axx[0].set(

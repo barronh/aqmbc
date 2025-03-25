@@ -24,8 +24,8 @@ import tarfile
 # ---------------------
 
 inpaths = [
-    'OutputDir/GEOSChem.SpeciesConc.20190401_0000z.nc4.orig',
-    'OutputDir/GEOSChem.SpeciesConc.20190701_0000z.nc4.orig',
+    'OutputDir/GEOSChem.SpeciesConc.20190401_0000z.nc4',
+    'OutputDir/GEOSChem.SpeciesConc.20190701_0000z.nc4',
 ]
 if any([not exists(p) for p in inpaths]):
     # Download 7G tar file
@@ -54,32 +54,16 @@ if any([not exists(p) for p in inpaths]):
 # Define Chemical Translation
 # ---------------------------
 #
-# Using gcbench14_o3so4, which only uses ozone and sulfate aerosols.
-# To expand, select from expressions available gc14 expressions and modify them:
-# 1. Typically used with BoundaryConditions (prefix SpeciesBC_), which requires
-#    updating for SpeciesConc (prefix SpeciesConc_).
-# 2. Output does not have pressure (surface or mid) or temperature variables.
-#    For simplicity, we use a US standard atmosphere as a surrogate.
+# Using gc14_o3so4.expr, which only uses ozone and sulfate aerosols.
 #
-print(aqmbc.exprlib.avail('gc'))
-exprpaths = aqmbc.exprlib.exprpaths([
-    #                                                      # for a full run,
-    'gcbench14_o3so4.expr'                                 # 1. comment this
-    # 'gcnc_usstd_airmolden.expr', 'gc14_to_cb6r5.expr',   # 2. uncomment this
-    # 'gc14_to_cb6mp.expr', 'gc14_soas_to_ae7.expr'        # 3. uncomment this
-], prefix='gc')
 
-#                                                          # 4. uncomment these
-# import os
-# os.makedirs('tempdef', exist_ok=True)
-# exprpaths = list(exprpaths)
-# for i, path in enumerate(exprpaths):
-#     with open(path, 'r') as inf:
-#         txt = inf.read()
-#     outpath = os.path.join('tempdef', basename(path))
-#     with open(outpath, 'w') as outf:
-#         outf.write(txt.replace('SpeciesBC_', 'SpeciesConc_'))
-#     exprpaths[i] = outpath
+print(aqmbc.exprlib.avail('gc'))  # Show all possible expressions
+exprpaths = aqmbc.exprlib.exprpaths([                      # for a full run,
+    'gcnc_airmolden.expr',                                 # keep this
+    'gc14_o3so4.expr',                                     # Comment this
+    # 'gc14_to_cb6r5.expr', 'gc14_to_cb6mp.expr',          # Uncomment this
+    # 'gc14_soas_to_ae7.expr'                              # uncomment this
+], prefix='gc')
 
 
 # %%
@@ -90,9 +74,12 @@ gdnam = '12US1'
 gcdims = aqmbc.options.dims['gc']
 suffix = f'_{gdnam}_BCON.nc'
 metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
+
 # For "real" VGLVLS use
-# METBDYD_PATH = '...'
-# metaf = pnc.pncopen(METCRO3D_PATH, format='ioapi')
+# METBDY3D_PATH = '...'
+# METCRO3D_PATH = '...'
+# metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi').subset(['PRES'])
+# pnc.conventions.ioapi.add_cf_from_ioapi(metaf)
 
 bcpaths = []
 for inpath in inpaths:
@@ -101,7 +88,7 @@ for inpath in inpaths:
     history = f'From {outpath}'
     outf = aqmbc.bc(
         inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
-        dimkeys=gcdims, format_kw={'format': 'gcnc'}, history=history,
+        dimkeys=gcdims, format_kw={'format': 'gcbench'}, history=history,
         clobber=True, verbose=0, timeindependent=True
     )
 
@@ -117,7 +104,7 @@ statdf.to_csv('gcbc_summary.csv')
 
 # %%
 # Plot Vertical Profiles
-# ~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~
 
 fig = aqmbc.report.plot_2spc_vprof(vprof)
 fig.suptitle('GEOS-Chem v14 Boundary Conditions for CMAQ')

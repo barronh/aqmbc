@@ -6,6 +6,8 @@ def download(dates, root=None):
     """
     Convenience function for downloading. If root url change
 
+    Arguments
+    ---------
     dates : list
         Dates to download
     root : str

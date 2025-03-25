@@ -1,0 +1,6 @@
+[run]
+source = aqmbc
+
+[report]
+exclude_lines =
+    pragma: no cover

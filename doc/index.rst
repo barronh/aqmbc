@@ -66,4 +66,3 @@ Quick Links
    modifyexamples
    configexample
    api/aqmbc
-   api/modules
