@@ -1,19 +1,4 @@
 # Source: GEOS-Chem v11,v12,v14 NetCDF
-print("Using approximate PRES from hyam, hybm and P0")
-print("Using TEMP from US Std Atmosphere interpolated to pressure")
-print("https://www.engineeringtoolbox.com/standard-atmosphere-d_604.html")
-refv = SpeciesBC_O3[:]
-PRES = refv[:] * 0 + np.expand_dims((hybm[:] * P0[...] + hyam[:]), axis=[0, 2, 3][:refv.ndim -1])
-PRES.units = "hPa"
-PRES.dimensions = refv.dimensions
-stdp = np.array([0.01, 0.05, 0.22, 0.8, 2.87, 11.97, 25.49, 55.29, 121.1, 265.0, 308.0, 356.5, 411.1, 472.2, 540.5, 616.6, 701.2, 795.0, 898.8, 1013.0, 1139.0])
-stdt = np.array([198.64, 219.58, 247.02, 270.65, 250.35, 226.51, 221.55, 216.65, 216.65, 223.25, 229.73, 236.21, 242.7, 249.19, 255.68, 262.17, 268.66, 275.15, 281.65, 288.15, 294.65])
-TEMP = PRES*0 + np.interp(PRES, stdp, stdt)
-TEMP.dimensions = refv.dimensions
-TEMP.setncatts(dict(units="K", long_name='Temperature'))
-AIRMOLDEN = PRES * 100 / 8.3144621 / TEMP
-AIRMOLDEN.units ="mole/m3"
-del stdp, stdt, refv
 O3 = (SpeciesBC_O3[:]) * 1e6
 O3.units = "ppmV"
 ASO4I = (0.01 * SpeciesBC_SO4[:] * 0.096) * AIRMOLDEN * 1e9

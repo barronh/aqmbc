@@ -1,8 +1,8 @@
-__all__ = ['geosbench']
+__all__ = ['gcbench']
 import PseudoNetCDF as pnc
 
 
-class geosbench(pnc.PseudoNetCDFFile):
+class gcbench(pnc.PseudoNetCDFFile):
     def __init__(self, *args, **kwds):
         """
         Thin wrapper around gcnc. Finds associated StateMet file by replacing
