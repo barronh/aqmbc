@@ -76,5 +76,5 @@ OLE = prpe * 1e6
 OLE.units = 'ppmV'
 ALDX = rcho * 1e6
 ALDX.units = 'ppmV'
-SO2 = so2 * 1e6# delp lay coordinate is top down, so it must be inverted
+SO2 = so2 * 1e6
 SO2.units = 'ppmV'
