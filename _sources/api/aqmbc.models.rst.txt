@@ -1,0 +1,61 @@
+aqmbc.models package
+====================
+
+Submodules
+----------
+
+aqmbc.models.geoscf module
+--------------------------
+
+.. automodule:: aqmbc.models.geoscf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.models.geoschem module
+----------------------------
+
+.. automodule:: aqmbc.models.geoschem
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.models.raqms module
+-------------------------
+
+.. automodule:: aqmbc.models.raqms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.models.tcr module
+-----------------------
+
+.. automodule:: aqmbc.models.tcr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.models.util module
+------------------------
+
+.. automodule:: aqmbc.models.util
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aqmbc.models.waccm module
+-------------------------
+
+.. automodule:: aqmbc.models.waccm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: aqmbc.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
