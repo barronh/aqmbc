@@ -1,0 +1,8 @@
+[
+    {"name": "PRES", "expression": "(ps - np.cumsum(delp[:, ::-1], axis=1)[:, ::-1] + delp / 2)", "units": "hPa"},
+    {"name": "DENS", "expression": "airdens * (1 - q) ", "units": "kg/m**3", "comment": "Dry air density has the water removed"},
+    {"name": "AIRMOLDENS", "expression": "DENS / 0.0289628", "units": "n/m**3"},
+    {"name": "O3", "expression": "o3 * 1e6", "units": "ppmV"},
+    {"name": "ASO4I", "expression": "(0.01 * so4[:] * 0.096) * airdens / 0.0289628 * 1e9", "units": "micrograms/m**3"},
+    {"name": "ASO4J", "expression": "(0.99 * so4[:] * 0.096) * airdens / 0.0289628 * 1e9", "units": "micrograms/m**3"}
+]

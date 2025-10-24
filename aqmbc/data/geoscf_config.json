@@ -1,0 +1,9 @@
+{
+    "source": "geoscf",
+    "intmpl": "/work/ROMO/bcon/GEOS-CF/EMBER/GEOSCF/36US3/%Y/%m/%d/geoscf_mcx_tavg_1hr_g1440x721_v36_%Y-%m-%dT%H30Z.nc",
+    "GDNAM": "36US3",
+    "VGNAM": "EMBER_35L",
+    "bcon_dates": {"start": "2025-03-31T2130", "end": "2025-04-02T0030", "freq": "3h"},
+    "icon_dates": ["2025-04-01T0030"],
+    "exprs": ["geoscf_met.json", "geoscf_cb6.json", "geoscf_ae7.json"]
+}

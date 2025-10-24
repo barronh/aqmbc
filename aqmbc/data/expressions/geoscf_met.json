@@ -1,0 +1,6 @@
+[
+    {"name": "PRES", "expression": "pmid", "units": "Pa"},
+    {"name": "ZH", "expression": "zl ", "units": "magl", "comment": "meters above"},
+    {"name": "DENS", "expression": "airdens * (1 - q) ", "units": "kg/m**3", "comment": "Dry air density has the water removed"},
+    {"name": "AIRMOLDENS", "expression": "DENS / 0.0289628", "units": "n/m**3"}
+]
