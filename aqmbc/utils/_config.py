@@ -55,7 +55,7 @@ def driver(cfg):
     gkwds = {k: v for k, v in opts.items() if k in gkwds}
     bdates = opts['bcon_dates']
     idates = opts['icon_dates']
-    source = getattr(bcon, opts['source'])
+    source = getattr(getattr(bcon, opts['source']), opts['source'])
     ckwds = ['intmpl', 'outtmpl', 'exprs']
     ckwds = {k: v for k, v in opts.items() if k in ckwds}
     bgf = getmetaf(**gkwds, FTYPE=2)

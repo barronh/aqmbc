@@ -1,4 +1,4 @@
-from aqmbcv2.utils import driver
+from aqmbc.utils import driver
 import argparse
 
 prsr = argparse.ArgumentParser()
