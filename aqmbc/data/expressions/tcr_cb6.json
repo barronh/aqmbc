@@ -1,0 +1,10 @@
+[
+    {"name": "O3", "expression": "o3[:] / 1e3", "units": "ppmV"},
+    {"name": "NO2", "expression": "no2[:] / 1e6", "units": "ppmV"},
+    {"name": "NO", "expression": "no[:] / 1e3", "units": "ppmV"},
+    {"name": "HNO3", "expression": "hno3[:] / 1e6", "units": "ppmV"},
+    {"name": "SO2", "expression": "so2[:] / 1e6", "units": "ppmV"},
+    {"name": "CO", "expression": "co[:] / 1e3", "units": "ppmV"},
+    {"name": "CH2O", "expression": "ch2o[:] / 1e3", "units": "ppmV"},
+    {"name": "PAN", "expression": "pan[:] / 1e3", "units": "ppmV"}
+]

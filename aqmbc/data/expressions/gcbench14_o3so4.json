@@ -1,0 +1,8 @@
+[
+    {"name": "PRES", "expression": "refv[:] * 0 + np.expand_dims((hybm[:] * P0[...] + hyam[:]), axis=[0, 2, 3][:refv.ndim -1])", "units": "hPa"},
+    {"name": "TEMP.dimensions", "expression": "refv.dimensions", "units": "K, long_name"},
+    {"name": "AIRMOLDEN", "expression": "PRES * 100 / 8.3144621 / TEMP", "units": "mole/m3"},
+    {"name": "O3", "expression": "(SpeciesConc_O3[:]) * 1e6", "units": "ppmV"},
+    {"name": "ASO4I", "expression": "(0.01 * SpeciesConc_SO4[:] * 0.096) * AIRMOLDEN * 1e9", "units": "micrograms/m**3"},
+    {"name": "ASO4J", "expression": "(0.99 * SpeciesConc_SO4[:] * 0.096) * AIRMOLDEN * 1e9", "units": "micrograms/m**3"}
+]

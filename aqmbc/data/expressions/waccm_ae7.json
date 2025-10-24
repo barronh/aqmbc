@@ -1,0 +1,13 @@
+[
+    {"name": "ASO4I", "expression": "(0.30208 * so4_a2) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "ASO4J", "expression": "(0.30208 * so4_a1) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "ASO4K", "expression": "(0.30208 * so4_a3) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "ANH4J", "expression": "(1.61111 * NH4) * DRYMOLDENS", "units": "micrograms/m**3"},
+    {"name": "AOCJ", "expression": "(0.13182 * pom_a1 + 0.13182 * pom_a4) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "AECJ", "expression": "(0.29 * bc_a1 + 0.29 * bc_a4) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "ASOIL", "expression": "(0.29 * dst_a1 + 0.29 * dst_a2) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "ACORS", "expression": "(0.29 * dst_a3) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "ANAJ", "expression": "(1.26087 * ncl_a1 + 1.26087 * ncl_a2) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "ACLJ", "expression": "(0.82857 * ncl_a1 + 0.82857 * ncl_a2) * DRYMASSDENS *  1e9", "units": "micrograms/m**3"},
+    {"name": "PM25", "expression": "PM25 * 1e9", "units": "micrograms/m**3"}
+]

@@ -1,0 +1,7 @@
+[
+    {"name": "CARBONTET", "expression": "(SpeciesConc_CCl4[:]) * 1e6", "units": "ppmV"},
+    {"name": "CHCL3", "expression": "(SpeciesConc_CHCl3[:]) * 1e6", "units": "ppmV"},
+    {"name": "CL2_ME", "expression": "(SpeciesConc_CH2Cl2[:]) * 1e6", "units": "ppmV"},
+    {"name": "METHCHLORIDE", "expression": "(SpeciesConc_CH3Cl[:]) * 1e6", "units": "ppmV"},
+    {"name": "CARBSULFIDE", "expression": "(SpeciesConc_OCS[:]) * 1e6", "units": "ppmV"}
+]

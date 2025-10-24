@@ -1,0 +1,8 @@
+[
+    {"name": "PRES", "expression": "pdash[:] * 100.", "units": "Pa"},
+    {"name": "TEMP", "expression": "ttheta[:] * (PRES[:] / 100000.)**(.286)", "units": "K"},
+    {"name": "AIRMOLDEN", "expression": "PRES[:] / 8.3144621 / TEMP", "units": "moles/m**3"},
+    {"name": "O3", "expression": "o3vmr[:] * 1e6", "units": "ppmV"},
+    {"name": "ASO4J", "expression": "0.99 * iso4aer[:] * 96. * 1e6 * AIRMOLDEN", "units": "micrograms/m**3"},
+    {"name": "ASO4I", "expression": "0.01 * iso4aer[:] * 96. * 1e6 * AIRMOLDEN", "units": "micrograms/m**3"}
+]

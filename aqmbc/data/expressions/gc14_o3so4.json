@@ -1,0 +1,5 @@
+[
+    {"name": "O3", "expression": "(SpeciesBC_O3[:]) * 1e6", "units": "ppmV"},
+    {"name": "ASO4I", "expression": "(0.01 * SpeciesBC_SO4[:] * 0.096) * AIRMOLDEN * 1e9", "units": "micrograms/m**3"},
+    {"name": "ASO4J", "expression": "(0.99 * SpeciesBC_SO4[:] * 0.096) * AIRMOLDEN * 1e9", "units": "micrograms/m**3"}
+]

@@ -1,0 +1,5 @@
+[
+    {"name": "ZH", "expression": "Z3", "units": "masl", "comment": "geopotential meters above sea level"},
+    {"name": "DRYMOLDENS", "expression": "M_dens / 6.0221367e23 * 1e6 * (1 - Q)", "units": "mol/m**3"},
+    {"name": "DRYMASSDENS", "expression": "DRYMOLDENS * 0.0289628", "units": "kg/m**3"}
+]
