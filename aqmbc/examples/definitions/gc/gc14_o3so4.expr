@@ -1,7 +1,0 @@
-# Source: GEOS-Chem v11,v12,v14 NetCDF
-O3 = (SpeciesBC_O3[:]) * 1e6
-O3.units = "ppmV"
-ASO4I = (0.01 * SpeciesBC_SO4[:] * 0.096) * AIRMOLDEN * 1e9
-ASO4I.units = "micrograms/m**3"
-ASO4J = (0.99 * SpeciesBC_SO4[:] * 0.096) * AIRMOLDEN * 1e9
-ASO4J.units = "micrograms/m**3"
