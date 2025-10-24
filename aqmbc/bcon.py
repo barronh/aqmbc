@@ -154,8 +154,10 @@ def kinterp(infile, metaf, vmethod, verbose=1):
     else:
         if verbose > 0:
             print('vint', flush=True)
-        bconvf = infile.interpSigma(vglvls=metaf.VGLVLS, vgtop=metaf.VGTOP,
-                                    verbose=verbose, interptype=vmethod)
+        bconvf = infile.interpSigma(
+            vglvls=metaf.VGLVLS, vgtop=metaf.VGTOP,
+            verbose=verbose, interptype=vmethod
+        )
         if not hasattr(bconvf, 'VGTYP'):
             bconvf.VGTYP = metaf.VGTYP
 
@@ -196,7 +198,7 @@ def bc(
     inpath, outpath, metaf,
     tslice=None, vmethod='conserve', exprpaths=None, clobber=False,
     dimkeys=None, format_kw=None, history='', speedup=None,
-    timeindependent=False, verbose=1, minvalue=None
+    timeindependent=False, verbose=1, minvalue=None, outformat=None
 ):
     """
     Arguments
@@ -208,13 +210,19 @@ def bc(
     metaf : netcdf-like
         Metadata file (CRO for ICON, BDY for BCON)
     tslice : slice
-        Optional time slice (e.g., slice(0) for ICON)
+        Optional time slice (e.g., slice(0, 1) for ICON)
     vmethod : str
         method to use for vertical interpolation (conserve or linear)
     exprpaths : list
         text files with species translations
     clobber : bool
         overwrite existing files
+    dimkeys : dict
+        Translation of CMAQ dimension names to source dimension names
+    format_kw : dict
+        Keywords fro data format
+    history : str
+        String to use as history of output
     speedup : bool
         slice file to load into memory. More mem, but faster
     timeindependent: bool
@@ -222,6 +230,8 @@ def bc(
         time-independent file.
     minvalue : scalar
         Passed to translate
+    outformat : str
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, or NETCDF3_64BIT_OFFSET
 
     Returns
     -------
@@ -239,10 +249,6 @@ def bc(
     import symtable
     if format_kw is None:
         format_kw = dict(format='ioapi')
-    if dimkeys is None:
-        dimkeys = {
-            'ROW': 'ROW', 'COL': 'COL', 'TSTEP': 'TSTEP', 'LAY': 'LAY'
-        }
     if not clobber and os.path.exists(outpath):
         print('Using cached', outpath, '...')
         return
@@ -251,6 +257,26 @@ def bc(
     if verbose > 0:
         print('open', flush=True)
     infile = pnc.pncopen(inpath, **format_kw)
+    if dimkeys is None:
+        dimnotfound = []
+        dimkeys = {}
+        dimchecks = {
+            'TSTEP': ['TSTEP', 'time'],
+            'ROW': ['ROW', 'lat', 'latitude'],
+            'COL': ['COL', 'lon', 'longitude'],
+            'LAY': ['LAY', 'lev', 'lay', 'level', 'layer'],
+        }
+        for dk, dopts in dimchecks.items():
+            for chk in dopts:
+                if chk in infile.dimensions:
+                    dimkeys[chk] = dk
+                    break
+            else:
+                dimnotfound.append(' or '.join(dopts) + f' needed for {dk}')
+
+        if len(dimnotfound) > 0:
+            msg = '; '.join(dimnotfound) + '; provide dimkeys keyword'
+            raise KeyError(msg)
 
     dropvars = list(infile.variables)
     if len(exprpaths) == 0:
@@ -338,12 +364,13 @@ def bc(
     setattr(outf, 'HISTORY', history)
     return saveioapi(
         wndwf, outf, outpath, metaf, dimkeys,
-        timeindependent=timeindependent, verbose=verbose
+        timeindependent=timeindependent, verbose=verbose, outformat=outformat
     )
 
 
 def saveioapi(
-    inf, outf, outpath, metaf, dimkeys, timeindependent=False, verbose=1
+    inf, outf, outpath, metaf, dimkeys, timeindependent=False, verbose=1,
+    outformat=None
 ):
     """
     Parameters
@@ -359,6 +386,8 @@ def saveioapi(
     timeindependent : bool
         If True and number of times is 1, the file will be stored as IOAPI
         time-independent
+    outformat : str
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, or NETCDF3_64BIT_OFFSET
 
     Results
     -------
@@ -449,6 +478,9 @@ def saveioapi(
 
     outf.SDATE = int(time[0].strftime('%Y%j'))
     outf.STIME = int(time[0].strftime('%H%M%S'))
+    if outf.TSTEP == 0:
+        outf['TFLAG'][:] = 0
+
     # Save to outpath
     if verbose > 0:
         print('save', flush=True)
@@ -457,13 +489,15 @@ def saveioapi(
         np.prod([len(outf.dimensions[dk]) for dk in outdims]) *
         outf.NVARS * 4 / 1024**3
     )
-    if gigs > 2:
-        outformat = 'NETCDF3_64BIT_OFFSET'
-    else:
-        outformat = 'NETCDF3_CLASSIC'
+    if outformat is None:
+        if gigs > 2:
+            outformat = 'NETCDF3_64BIT_OFFSET'
+        else:
+            outformat = 'NETCDF3_CLASSIC'
 
     wverbose = max(verbose - 1, 0)
-    out = outf.save(outpath, format=outformat, verbose=wverbose, outmode='w')
+    outf.dimensions['TSTEP'].setunlimited(True)
+    out = outf.save(outpath, format=outformat, verbose=wverbose, outmode='ws')
 
     if verbose > 0:
         print('done', flush=True)

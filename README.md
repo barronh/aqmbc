@@ -1,5 +1,9 @@
 # aqmbc
 
+[![Docs](https://github.com/barronh/aqmbc/actions/workflows/documentation.yml/badge.svg)](https://barronh.github.io/aqmbc/)
+[![Tests](https://github.com/barronh/aqmbc/actions/workflows/tests.yml/badge.svg)](https://github.com/barronh/aqmbc/actions/workflows/tests.yml)
+[![pypi](https://github.com/barronh/aqmbc/actions/workflows/ipython-publish.yml/badge.svg)](https://pypi.org/p/aqmbc)
+
 Air Quality Model Boundary Condition (aqmbc) Tools
 
 Air Quality Model Boundary Conditions is a tool to create time and space

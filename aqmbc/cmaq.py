@@ -36,7 +36,9 @@ def batch_timeindependent(inpaths, verbose=0):
         timeindependent(ncf)
 
 
-def cmaqready(date, inpaths, outpath=None, verbose=0, minvalue=1e-30):
+def cmaqready(
+    date, inpaths, outpath=None, verbose=0, minvalue=1e-30, filefreq='1d'
+):
     """
     Concatenate inpaths on time and then interpolate to 25h instantaneous
     times for CMAQ. Also trims FILEDESC and HISTORY if they are too long.
@@ -54,6 +56,9 @@ def cmaqready(date, inpaths, outpath=None, verbose=0, minvalue=1e-30):
         Level of verbosity
     minvalue : scalar
         Minimum value
+    filefreq : str
+        The frequencey (e.g., 1d) of input files on disk. For example,
+        you might have daily (1d) or 3-hourly (3h) files.
 
     Returns
     -------
@@ -72,11 +77,12 @@ def cmaqready(date, inpaths, outpath=None, verbose=0, minvalue=1e-30):
         return
 
     date = pd.to_datetime(date)
-    dd = pd.to_timedelta('1d')
+    dd = pd.to_timedelta(filefreq)
+    etime = date + pd.to_timedelta('1d')
     outtimes = pd.date_range(date, date + dd, freq='1h')
     if isinstance(inpaths, str):
         inpat = inpaths
-        indates = [date - dd, date, date + dd]
+        indates = pd.date_range(date - dd, etime, freq=dd)
         testinpaths = [d.strftime(inpat) for d in indates]
         inpaths = [p for p in testinpaths if os.path.exists(p)]
         missingpaths = sorted(set(testinpaths).difference(inpaths))
@@ -96,10 +102,10 @@ def cmaqready(date, inpaths, outpath=None, verbose=0, minvalue=1e-30):
             f'Input files start {intime.min():%Y-%m-%dT%H}Z after target'
             f' start {date:%Y-%m-%dT%H}; earliest date copied to fill.'
         )
-    if intime.max() < (date + dd):
+    if intime.max() < etime:
         warnings.warn(
             f'Input files end {intime.max():%Y-%m-%dT%H}Z before target'
-            f' end {date + dd:%Y-%m-%dT%H}; latest date copied to fill.'
+            f' end {etime:%Y-%m-%dT%H}; latest date copied to fill.'
         )
     tmpds.coords['TSTEP'] = intime
     nvars = tmpds.attrs['NVARS']
@@ -118,9 +124,12 @@ def cmaqready(date, inpaths, outpath=None, verbose=0, minvalue=1e-30):
     outds.attrs['STIME'] = np.int32(date.strftime('%H%M%S'))
     outds.attrs['TSTEP'] = np.int32(10000)
     fdesc = outds.attrs['FILEDESC']
-    hist = outds.attrs['HISTORY']
+    hist = outds.attrs['HISTORY'].strip()
     outds.attrs['FILEDESC'] = fdesc[:clim]
-    outds.attrs['HISTORY'] = hist[:clim]
+    outds.attrs['HISTORY'] = hist + (
+        'CMAQ ready interpolated from:'.ljust(79)
+        + ', '.join(inpaths)
+    )[:clim]
     if len(fdesc) > clim:
         outds.attrs['description'] = fdesc
     outds['TFLAG'] = tflag.astype('i')

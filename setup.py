@@ -11,6 +11,12 @@ with open("aqmbc/__init__.py", "r") as fh:
     else:
         __version__ = 'x.y.z'
 
+project_urls = {
+    'Documentation': "https://barronh.github.io/aqmbc",
+    'homepage': "https://github.com/barronh/aqmbc/",
+    'issue-tracker': "https://github.com/barronh/aqmbc/issues",
+    'source-code': "https://github.com/barronh/aqmbc",
+}
 setuptools.setup(
     name="aqmbc",
     version=__version__,

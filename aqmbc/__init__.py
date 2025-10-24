@@ -63,6 +63,8 @@ python -m aqmbc run.cfg
 Version History
 ===============
 
+* 0.5.0: Improved GEOS-CF vertical interpolation and added hybrid coordinate
+         awareness. This is not currently used by all source files.
 * 0.4.2: Added geoschem benchmark quick reader and timeindependent options
          to the config approach.
          Adding improved documentation.
@@ -78,7 +80,7 @@ Version History
          Needs better documentation on many objects.
 """
 
-__version__ = '0.4.2'
+__version__ = '0.5.0'
 
 defnpath = os.path.join(os.path.dirname(__file__), 'examples', 'definitions')
 
@@ -116,15 +118,16 @@ def loadcfg(cfgobjs, cfgtype='path'):
         },
         'REPORT': {
             'summaryspcs': '[]', 'vprofspcs': '[]', 'standardfigs': 'Y',
-            'summary': 'bcon_summary.csv', 'vprofmean': 'bcon_mean.nc4',
-            'vprofmin': 'bcon_min.nc4', 'vprofmax': 'bcon_max.nc4',
+            'summary': 'bcon_summary.csv', 'profilemean': 'bcon_mean.nc4',
+            'profilemin': 'bcon_min.nc4', 'profilemax': 'bcon_max.nc4',
             'debug': '0'
         },
         'BCON': {
             'freq': 'd', 'output': 'BCON_%Y-%m-%d.nc', 'timeindependent': False
         },
         'ICON': {
-            'output': 'ICON_%Y-%m-%d.nc', 'timeindependent': True
+            'output': 'ICON_%Y-%m-%d.nc', 'timeindependent': True,
+            'tslice': '-1'
         }
     }
 
@@ -213,6 +216,7 @@ def runcfg(
     if dryrun:
         return config
 
+    verbose = int(config.get('common', 'verbose'))
     bmetaf = pnc.pncopen(
         config.get('common', 'GRIDDESC'),
         format='griddesc', GDNAM=gdnam, FTYPE=2,
@@ -228,13 +232,15 @@ def runcfg(
             tslice=tslice, vmethod=interpopt,
             exprpaths=exprpaths, clobber=overwrite,
             dimkeys=dimkeys, format_kw=infmt, speedup=speedup,
-            minvalue=minvalue, timeindependent=bctimeindependent
+            minvalue=minvalue, timeindependent=bctimeindependent,
+            verbose=verbose
         )
         tmp = io.StringIO()
         config.write(tmp)
         tmp.seek(0, 0)
         opts['history'] = tmp.read()
-        print(opts['history'])
+        if verbose > 0:
+            print(opts['history'])
         bc(**opts)
 
     imetaf = pnc.pncopen(
@@ -243,7 +249,7 @@ def runcfg(
         VGLVLS=vglvls, VGTOP=vgtop
     )
     idates = pd.to_datetime(json.loads(config.get('ICON', 'dates')))
-    tslice = 0
+    tslice = eval(config.get('ICON', 'tslice'))
     for idate in idates:
         inpath = idate.strftime(intmpl)
         outpath = idate.strftime(ictmpl)
@@ -254,11 +260,13 @@ def runcfg(
             tslice=tslice, vmethod=interpopt,
             exprpaths=exprpaths, clobber=overwrite,
             dimkeys=dimkeys, format_kw=infmt, speedup=speedup,
-            timeindependent=ictimeindependent
+            timeindependent=ictimeindependent, verbose=verbose
         )
 
         tmp = io.StringIO()
         config.write(tmp)
         tmp.seek(0, 0)
         opts['history'] = tmp.read()
+        if verbose > 0:
+            print(opts['history'])
         bc(**opts)

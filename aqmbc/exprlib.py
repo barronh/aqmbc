@@ -76,9 +76,19 @@ def avail(prefix=None):
 
 
 gc12 = exprpaths(['gcnc_airmolden.expr', 'gc12_to_cb6r3.expr',
-                  'gc12_to_cb6mp.expr', 'gc12_to_ae7.expr'], prefix='gc')
+                 'gc12_to_cb6mp.expr', 'gc12_to_ae7.expr'], prefix='gc')
 gc12_soas = gc12[:-1] + exprpaths(['gc12_soas_to_ae7.expr'], 'gc')
 gc14 = exprpaths(['gcnc_airmolden.expr', 'gc14_to_cb6r5.expr',
-                  'gc14_to_cb6mp.expr', 'gc14_to_ae7.expr'], prefix='gc')
+                 'gc14_to_cb6mp.expr', 'gc14_to_ae7.expr'], prefix='gc')
 gc14_soas = gc14[:-1] + exprpaths(['gc14_soas_to_ae7.expr'], prefix='gc')
 raqms = exprpaths(['raqms_to_cb6r4_ae6.expr'], prefix='raqms')
+tcr = exprpaths(['tcr_cb6.expr', 'tcr_ae7.expr'], prefix='tcr')
+waccm = exprpaths(['waccm_met.expr', 'waccm_cb6.expr', 'waccm_ae7.expr'],
+                  prefix='waccm')
+
+default_exprs = dict(
+    cmaq=[], geoschem=gc14_soas,
+    geoschem12=gc12, geoschem12_soas=gc12_soas,
+    geoschem14=gc14_soas, geoschem14_soas=gc14_soas,
+    raqms=raqms, tcr=tcr, wacmm=waccm,
+)

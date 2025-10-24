@@ -5,8 +5,9 @@
 # xgc_tavg_1hr_g1440x721_v36
 # all from https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim/
 # author: Barron H. Henderson
-PRES = (ps - np.cumsum(delp[:, ::-1], axis=1)[:, ::-1] + delp / 2)
-PRES.units = 'hPa'
+# delp has already be linearly interpolated, so PRES cannot be reconstructed.
+PRES = pmid
+PRES.units = 'Pa'
 ZH = zl # meters above 
 ZH.units = 'magl'
 DENS = airdens * (1 - q) # Dry air density has the water removed
