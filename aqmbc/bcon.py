@@ -479,7 +479,7 @@ def saveioapi(
     outf.SDATE = int(time[0].strftime('%Y%j'))
     outf.STIME = int(time[0].strftime('%H%M%S'))
     if outf.TSTEP == 0:
-        outf['TFLAG'][:] = 0
+        outf.variables['TFLAG'][:] = 0
 
     # Save to outpath
     if verbose > 0:
