@@ -24,7 +24,7 @@ def loadconfig(cfg):
         opts = json.load(open(cfg, 'r'))
     else:
         opts = cfg
-    bdates = opts['bcon_dates']
+
     opts['bcon_dates'] = _dateparser(opts['bcon_dates'])
     opts['icon_dates'] = _dateparser(opts['icon_dates'])
     for k, v in _dflts.items():
@@ -62,5 +62,5 @@ def driver(cfg):
     cf = source(bgf, **ckwds)
     cf.process(bdates)
     igf = getmetaf(**gkwds, FTYPE=1)
-    cf = source(bgf, **ckwds)
+    cf = source(igf, **ckwds)
     cf.process(idates)

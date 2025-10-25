@@ -43,11 +43,18 @@ class icbc:
         self.outtmpl = outtmpl
         self._log = []
 
-    def log(self, msg, clear=False):
+    def log(self, msg, level='INFO', source='', clear=False):
+        vb = self.verbose
         if clear:
             self._log = []
-        self._log.append(msg)
-        
+        ilevel = {'INFO': 1, 'DEBUG': 2}.get(level, 0)
+        keep = {'STATUS': False, 'DEBUG': False}.get(level, True)
+        lmsg = f'{level}:{source}: {msg}'
+        if vb > ilevel:
+            print(lmsg)
+        if keep:
+            self._log.append(lmsg)
+
     def _opener(self, path):
         """
         Arguments
@@ -83,8 +90,7 @@ class icbc:
             if date >= f.time.min() and date <= f.time.max():
                 return
         path = self._activepath = date.strftime(self.intmpl)
-        if self.verbose > 0:
-            print(f'STATUS:: Opening {path}')
+        self.log(f'Opening {path}', level='STATUS', source='load_date')
         self._f = self._opener(self._activepath)
 
     def to_lonlat(self, lon, lat, method='nearest'):
@@ -102,10 +108,8 @@ class icbc:
         None
         """
         # overwrite to support projections
-        imsg = f'INFO:to_lonlat: Extracting n={lon.size} lon/lat pairs'
-        self.log(imsg)
-        if self.verbose > 0:
-            print(imsg)
+        imsg = f'Extracting n={lon.size} lon/lat pairs'
+        self.log(imsg, level='INFO', source='to_lonlat')
         self._f = self._f.sel(lon=lon, lat=lat, method=method)
 
     def to_pres(self, pres, pmidkey=None, **kwds):
@@ -132,10 +136,8 @@ class icbc:
         srcz = self._f[pmidkey]
         nzin = srcz.shape[1]
         nzout = pres.shape[1]
-        imsg = f'INFO:: Interp pres from nzin={nzin} to nzout={nzout}'
-        self.log(imsg)
-        if self.verbose > 0:
-            print(imsg)
+        imsg = f'Interp pres from nzin={nzin} to nzout={nzout}'
+        self.log(imsg, level='INFO', source='to_pres')
         self._f = zinterp(self._f, srcz, pres, **kwds)
 
     def to_hyb(self, hyam, hybm, pmidkey=None, psfckey=None, **kwds):
@@ -162,17 +164,14 @@ class icbc:
         -------
         None
         """
-        from .utils import zinterp
         if psfckey is None:
             psfckey = self._psfckey
         ps = self._f[psfckey]
         dims = list(ps.dims)
         dims.insert(1, hybm.dims[0])
         pres = (hybm * ps + hyam).transpose(*dims)
-        imsg = f'INFO:: Calculated pres from HYBRID hyam and hybm.'
-        self.log(imsg)
-        if self.verbose > 0:
-            print(imsg)
+        imsg = 'Calculated pres from HYBRID hyam and hybm.'
+        self.log(imsg, level='INFO', source='to_hyb')
         self.to_pres(pres, pmidkey=pmidkey, **kwds)
 
     def translate(self, exprs=None):
@@ -207,15 +206,13 @@ class icbc:
         glbs = dict(np=np)
         glbs.update({k: v for k, v in self._f.data_vars.items()})
         lcls = {}
-        imsg = f'INFO:: Evaluating n={len(exprs)} expressions'
-        self.log(imsg)
-        if self.verbose > 1:
-            print(imsg)
+        imsg = f'Evaluating n={len(exprs)} expressions'
+        self.log(imsg, level='INFO', source='translate')
         for expropt in exprs:
             key = expropt['name'].strip()
             estr = expropt['expression']
-            if self.verbose > 1:
-                print(f'STATUS:: Evaluating {key}={estr}')
+            dmsg = f'Evaluating {key}={estr}'
+            self.log(dmsg, level='STATUS', source='translate')
             attrs = {k: v for k, v in expropt.items()}
             attrs.setdefault('long_name', key)
             attrs.setdefault('var_desc', estr)
@@ -223,6 +220,7 @@ class icbc:
             lcls[key] = eval(estr, glbs, lcls).astype('f')
             lcls[key].attrs.update(attrs)
             outf[key] = lcls[key]
+
         return outf
 
     def process(
@@ -251,6 +249,7 @@ class icbc:
         """
         from os.path import exists
         import pandas as pd
+        cname = self.__class__.__name__
         dates = pd.to_datetime(dates)
         if fdate is None:
             fdate = dates[0]
@@ -259,9 +258,11 @@ class icbc:
         qf = self._metaf
         if zkwds is None:
             zkwds = {}
+        imsg = f'{cname} processing {dates}'
+        self.log(imsg, level='INFO', clear=True)
         for date in dates:
-            imsg = f'STATUS:: {date}'
-            self.log(imsg, clear=True)
+            imsg = f'{cname} processing {date}'
+            self.log(imsg, level='INFO')
             if self.verbose > 0:
                 print(imsg, end='...', flush=True)
             if exists(outpath) and not overwrite:
