@@ -10,6 +10,7 @@ This example shows how to use aqmbc with WACCM's publicly available forecasts.
 * Display figures and statistics."""
 
 import aqmbc
+import pandas as pd
 import xarray as xr
 
 # %%
@@ -29,7 +30,7 @@ import xarray as xr
 #   - More typical would be hourly or 3-hourly in chunks that cover a day
 GDNAM = '108US2'
 VGNAM = 'WRFHYBRID_35L'
-dates = ['2025-04-15', '2025-07-15']
+dates = pd.date_range('2025-04-15', periods=4, freq='6h')
 
 # %%
 # Download from NCAR
@@ -37,7 +38,7 @@ dates = ['2025-04-15', '2025-07-15']
 # - Example files have been downloaded.
 # - This section is shown for reference.
 
-aqmbc.models.waccm.download(dates)
+# aqmbc.models.waccm.download(dates)
 
 # %%
 # Define Configuration
@@ -68,10 +69,11 @@ vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
 vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
 axx[0].set(ylim=(1, 0), xscale='log')
 axx[1].set(ylim=(1, 0), xscale='log')
+fig.savefig('figs/wacmm_profiles.png')
 
 # %%
 # Report Range of Values
 # ----------------------
 
 statdf = aqmbc.report.rangereport(vprof)
-statdf
+statdf.to_csv('outputs/docs/wacmm_range.csv')

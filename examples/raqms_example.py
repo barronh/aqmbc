@@ -68,10 +68,11 @@ vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
 vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
 axx[0].set(ylim=(1, 0), xscale='log')
 axx[1].set(ylim=(1, 0), xscale='log')
+fig.savefig('figs/raqms_profiles.png')
 
 # %%
 # Report Range of Values
 # ----------------------
 
 statdf = aqmbc.report.rangereport(vprof)
-statdf
+statdf.to_csv('outputs/docs/raqms_range.csv')

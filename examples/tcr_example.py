@@ -39,7 +39,7 @@ dates = pd.date_range('2021-01-01', '2021-12-01', freq='1MS')
 # - Example files have been downloaded.
 # - This section is shown for reference.
 
-# aqmbc.models.tcr.download(dates, bbox=(-150, 10, -40, 65))
+# aqmbc.models.tcr.download(dates)
 inpat = 'inputs/TCR2/tropess.gesdisc.eosdis.nasa.gov/data/*/*/*2021.nc'
 paths = sorted(glob.glob(inpat))
 with open('inputs/TCR2/TCR2_MON_2021.txt', 'w') as tcrf:
@@ -74,10 +74,11 @@ vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
 vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
 axx[0].set(ylim=(1, 0), xscale='log')
 axx[1].set(ylim=(1, 0), xscale='log')
+fig.savefig('figs/tcr_profiles.png')
 
 # %%
 # Report Range of Values
 # ----------------------
 
 statdf = aqmbc.report.rangereport(vprof)
-statdf
+statdf.to_csv('outputs/docs/tcr_range.csv')

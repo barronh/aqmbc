@@ -34,12 +34,25 @@ VGNAM = 'WRFHYBRID_35L'
 dates = pd.date_range('2019-04-01T00', '2019-04-02T00', freq='1h')
 
 # %%
-# Download from UWisc
-# -------------------
-# - Download has been preprepared
-#
+# Download from RSIG
+# ------------------
+# - RSIG has 3D hemispheric data from equates for select species
+# - the aqmbc cmaq bcon processors passes thru species by default.
+# - so, here we just collect a few species for example.
 
-# aqmbc.models.raqms.download(dates)
+# import xarray as xr
+# import pyrsig
+# xr.set_options(keep_attrs=True)
+# api = pyrsig.RsigApi(bbox=(-160, 10, -50, 65), bdate='2019-04-01', edate='2019-04-02')
+# fs = [api.to_ioapi(f'cmaq.equates.hemi.conc.{k}') for k in ['O3', 'PMF_SO4']]
+# f = xr.merge(fs)
+# f['O3'] = f['O3'] * 1000
+# f['O3'].attrs.update(units='ppm')
+# f['ASO4J'] = f['PMF_SO4'] * 0.99
+# f['ASO4J'].attrs.update(long_name='ASO4J')
+# f['ASO4I'] = f['PMF_SO4'] * 0.01
+# f['ASO4I'].attrs.update(long_name='ASO4I')
+# pyrsig.cmaq.save_ioapi(f, "inputs/CMAQ/cmaq.equates.hemi.conc.2019-04-01.nc")
 
 # %%
 # Define Configuration
@@ -69,10 +82,11 @@ vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
 vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
 axx[0].set(ylim=(1, 0), xscale='log')
 axx[1].set(ylim=(1, 0), xscale='log')
+fig.savefig('figs/hcmaq_profiles.png')
 
 # %%
 # Report Range of Values
 # ----------------------
 
 statdf = aqmbc.report.rangereport(vprof)
-statdf
+statdf.to_csv('outputs/docs/hcmaq_range.csv')

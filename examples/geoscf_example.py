@@ -75,4 +75,4 @@ fig.savefig('figs/geoscf_profiles.png')
 # ----------------------
 
 statdf = aqmbc.report.rangereport(vprof)
-statdf
+statdf.to_csv('outputs/docs/geoscf_range.csv')
