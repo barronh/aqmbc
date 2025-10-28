@@ -1,9 +1,10 @@
-__all__ = ['loadconfig']
+__all__ = ['loadconfig', 'loadexpr']
 
 _dflts = {
     'vgpath': None,
     'gdpath': None,
     'outtmpl': None,
+    'exprs': None,
 }
 
 
@@ -16,21 +17,14 @@ def _dateparser(dates):
     return dates
 
 
-def loadconfig(cfg):
-    import json
+def loadexpr(exprs):
     from os.path import exists, join
     from ..data import exprsroot
-    if isinstance(cfg, str):
-        opts = json.load(open(cfg, 'r'))
-    else:
-        opts = cfg
-
-    opts['bcon_dates'] = _dateparser(opts['bcon_dates'])
-    opts['icon_dates'] = _dateparser(opts['icon_dates'])
-    for k, v in _dflts.items():
-        opts.setdefault(k, v)
+    import json
+    if exprs is None:
+        return exprs
     oexprs = []
-    for ev in opts['exprs']:
+    for ev in exprs:
         if isinstance(ev, str):
             fev = join(exprsroot, ev)
             if exists(ev):
@@ -42,25 +36,24 @@ def loadconfig(cfg):
             oexprs.extend(json.load(open(ev, 'r')))
         else:
             oexprs.append(ev)
-    opts['exprs'] = oexprs
+
+    return oexprs
+
+
+def loadconfig(cfg):
+    import json
+    if isinstance(cfg, str):
+        opts = json.load(open(cfg, 'r'))
+    else:
+        opts = cfg
+    if opts.get('exprs', None) is None:
+        from ..data.expressions import named_exprs
+        opts['exprs'] = named_exprs[opts['source']]
+    opts['bcon_dates'] = _dateparser(opts['bcon_dates'])
+    opts['icon_dates'] = _dateparser(opts['icon_dates'])
+    for k, v in _dflts.items():
+        opts.setdefault(k, v)
+
+    opts['exprs'] = loadexpr(opts['exprs'])
 
     return opts
-
-
-def driver(cfg):
-    from .. import bcon
-    from . import getmetaf
-    opts = loadconfig(cfg)
-    gkwds = ['GDNAM', 'gdpath', 'VGNAM', 'vgpath']
-    gkwds = {k: v for k, v in opts.items() if k in gkwds}
-    bdates = opts['bcon_dates']
-    idates = opts['icon_dates']
-    source = getattr(getattr(bcon, opts['source']), opts['source'])
-    ckwds = ['intmpl', 'outtmpl', 'exprs']
-    ckwds = {k: v for k, v in opts.items() if k in ckwds}
-    bgf = getmetaf(**gkwds, FTYPE=2)
-    cf = source(bgf, **ckwds)
-    cf.process(bdates)
-    igf = getmetaf(**gkwds, FTYPE=1)
-    cf = source(igf, **ckwds)
-    cf.process(idates)

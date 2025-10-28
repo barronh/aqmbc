@@ -9,73 +9,75 @@ files, which are available thru NASA Earthdata Search
 * Extract and translate.
 * Display figures and statistics."""
 
-import aqmbc
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import glob
+import pandas as pd
 import xarray as xr
-
-gdnam = '12US1'
-
-# %%
-# Define Translation Expressions
-# ------------------------------
-
-# In Notebooks, display available expressions
-aqmbc.exprlib.avail('tcr')
+import aqmbc
 
 # %%
+# Scope Definitions
+# -----------------
+# - GDNAM defines the horizontal CMAQ domain from the default GRIDDESC file.
+#   - the default GRIDDESC has some 12km US domains (12US2, 12US1), a 36km
+#     North American domain (36US3), a hemispheric polar stereographic grid
+#     (108NHEMI2), and a test domain for the US at 108km (108US2).
+#   - add gdpath='...' to use your own GRIDDESC file.
+# - VGNAM is used to define the vertical 
+#   - known VGNAM inclue WRFHYBRID_35L, WRFHYBRID_44L, EMBER_35L
+#   - add vgpath='...' to use your own CSV file to define A and B
+#     components of a vertical coordinate (P=A+B*ps [Pa])
+# - dates are the dates from which to derive BCON and ICON
+#   - This project uses two dates as an example.
+#   - More typical would be hourly or 3-hourly in chunks that cover a day
+GDNAM = '108US2'
+VGNAM = 'WRFHYBRID_35L'
+dates = pd.date_range('2021-01-01', '2021-12-01', freq='1MS')
 
-exprpaths = aqmbc.exprlib.exprpaths([
-    'tcr_o3so4.expr',                 # for a full run, comment this
-    # 'tcr_cb6.expr', 'tcr_ae7.expr'  # for a full run, uncomment this
-], prefix='tcr')
+# %%
+# Download from GMAO OpenDAP
+# --------------------------
+# - Example files have been downloaded.
+# - This section is shown for reference.
 
-# For "real" VGLVLS use
-# METBDYD_PATH = '...'
-# metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi')
-metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-inpath = sorted(glob.glob(
-    'TCR-2/tropess.gesdisc.eosdis.nasa.gov/data/TCR2_MON_*/*/*.nc'
-))
-suffix = f'_{gdnam}_BCON.nc'
-dims = aqmbc.options.dims['tcr']
-outpath = f'TROPESS_reanalysis_mon_2021_{gdnam}_BCON.nc'
-history = f'From {inpath}'
-outf = aqmbc.bc(
-    inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
-    dimkeys=dims, format_kw={'format': 'tcr'}, history=history,
-    clobber=True, verbose=0
-)
+# aqmbc.models.tcr.download(dates, bbox=(-150, 10, -40, 65))
+inpat = 'inputs/TCR2/tropess.gesdisc.eosdis.nasa.gov/data/*/*/*2021.nc'
+paths = sorted(glob.glob(inpat))
+with open('inputs/TCR2/TCR2_MON_2021.txt', 'w') as tcrf:
+    tcrf.write('\n'.join(paths))
+
+# %%
+# Define Configuration
+# --------------------
+
+config = {
+    "source": "tcr",
+    "intmpl": f"inputs/TCR2/TCR2_MON_%Y.txt",
+    "GDNAM": GDNAM, "VGNAM": VGNAM,  # Destination Horizontal and Vertical Grids
+    "bcon_dates": dates, "icon_dates": dates[:1],
+    "exprs": ["tcr_o3so4.json"], # comment this out to default to full cb6_ae7 definitions
+}
+outpaths = aqmbc.driver(config)
 
 # %%
 # Figures and Statistics
 # ----------------------
 
-tflag = (outf['TFLAG'][:, 0, :].astype('l') * np.array([1000000, 1])).sum(1)
-time = pd.to_datetime(tflag, format='%Y%j%H%M%S')
-vprof = xr.Dataset(
-    data_vars={
-        k: (v.dimensions, v[:], {pk: v.getncattr(pk) for pk in v.ncattrs()})
-        for k, v in outf.variables.items()
-    },
-    coords={'TSTEP': time, 'LAY': (outf.VGLVLS[:-1] + outf.VGLVLS[1:]) / 2}
-).mean('PERIM', keep_attrs=True)
-statdf = aqmbc.report.getstats([outpath])
-statdf.to_csv('tcr_summary.csv')
+vprof = aqmbc.report.profile_report(outpaths['bcon'])
 
 # %%
 # Visualize Vertical Profiles
 # ---------------------------
 
-fig = aqmbc.report.plot_2spc_vprof(vprof)
-fig.suptitle('TCR Boundary Conditions for CMAQ')
-fig.savefig('tcr_profiles.png')
+import matplotlib.pyplot as plt
+fig, axx = plt.subplots(1, 2, figsize=(12, 6))
+vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
+vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
+axx[0].set(ylim=(1, 0), xscale='log')
+axx[1].set(ylim=(1, 0), xscale='log')
 
 # %%
-# Barplot of Concentrations
-# -------------------------
+# Report Range of Values
+# ----------------------
 
-fig = aqmbc.report.plot_gaspm_bars(statdf)
-fig.savefig('tcr_bar.png')
+statdf = aqmbc.report.rangereport(vprof)
+statdf

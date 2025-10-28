@@ -6,113 +6,74 @@ This example shows how to use aqmbc with GEOS-Chem's publicly available
 benchmark outputs.
 
 * Dowload from Harvard (if not previously downloaded).
-* Define translations.
 * Extract, translate, and create time-independent files.
 * Display figures and statistics.
 
 Time-independence allows files to be used in CMAQ with multiple dates in the
 same month, or as a climatology for other years."""
 
-from os.path import basename, exists
 import aqmbc
-import matplotlib.pyplot as plt
-import requests
-import tarfile
+import xarray as xr
+
+# %%
+# Scope Definitions
+# -----------------
+# - GDNAM defines the horizontal CMAQ domain from the default GRIDDESC file.
+#   - the default GRIDDESC has some 12km US domains (12US2, 12US1), a 36km
+#     North American domain (36US3), a hemispheric polar stereographic grid
+#     (108NHEMI2), and a test domain for the US at 108km (108US2).
+#   - add gdpath='...' to use your own GRIDDESC file.
+# - VGNAM is used to define the vertical 
+#   - known VGNAM inclue WRFHYBRID_35L, WRFHYBRID_44L, EMBER_35L
+#   - add vgpath='...' to use your own CSV file to define A and B
+#     components of a vertical coordinate (P=A+B*ps [Pa])
+# - dates are the dates from which to derive BCON and ICON
+#   - This project uses two dates as an example.
+#   - More typical would be hourly or 3-hourly in chunks that cover a day
+GDNAM = '108US2'
+VGNAM = 'WRFHYBRID_35L'
+dates = ['2019-04-01T00:00', '2019-07-01T00:00']
 
 # %%
 # Download from Harvard
 # ---------------------
-
-inpaths = [
-    'OutputDir/GEOSChem.SpeciesConc.20190401_0000z.nc4',
-    'OutputDir/GEOSChem.SpeciesConc.20190701_0000z.nc4',
-]
-if any([not exists(p) for p in inpaths]):
-    # Download 7G tar file
-    rurl = 'http://ftp.as.harvard.edu/gcgrid/geos-chem/1yr_benchmarks/'
-    url = f'{rurl}/14.0.0-rc.0/GCClassic/FullChem/OutputDir.tar.gz'
-    dest = basename(url)
-    if not exists(dest):
-        with requests.get(url, stream=True) as r:
-            r.raise_for_status()
-            with open(dest, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=1024*1024):
-                    f.write(chunk)
-    else:
-        print('Using cached OutputDir.tar.gz')
-
-    # Unzip only files that will be used.
-    tf = tarfile.open(dest)
-    for memb in tf.getmembers():
-        if memb.path in inpaths:
-            if not exists(memb.path):
-                tf.extract(memb)
-            else:
-                print('Using cached', memb.path)
-
-# %%
-# Define Chemical Translation
-# ---------------------------
 #
-# Using gc14_o3so4.expr, which only uses ozone and sulfate aerosols.
+# In the example, the archive was downloaded and unzipped in inputs/OutputDir
 #
 
-print(aqmbc.exprlib.avail('gc'))  # Show all possible expressions
-exprpaths = aqmbc.exprlib.exprpaths([                      # for a full run,
-    'gcnc_airmolden.expr',                                 # keep this
-    'gc14_o3so4.expr',                                     # Comment this
-    # 'gc14_to_cb6r5.expr', 'gc14_to_cb6mp.expr',          # Uncomment this
-    # 'gc14_soas_to_ae7.expr'                              # uncomment this
-], prefix='gc')
-
-
 # %%
-# Tranlate Files and Make Time-independent
-# ----------------------------------------
+# Define Configuration
+# --------------------
 
-gdnam = '12US1'
-gcdims = aqmbc.options.dims['gc']
-suffix = f'_{gdnam}_BCON.nc'
-metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-
-# For "real" VGLVLS use
-# METBDY3D_PATH = '...'
-# METCRO3D_PATH = '...'
-# metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi').subset(['PRES'])
-# pnc.conventions.ioapi.add_cf_from_ioapi(metaf)
-
-bcpaths = []
-for inpath in inpaths:
-    print(inpath, flush=True)
-    outpath = basename(inpath).replace('.nc4', suffix)
-    history = f'From {outpath}'
-    outf = aqmbc.bc(
-        inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
-        dimkeys=gcdims, format_kw={'format': 'gcbench'}, history=history,
-        clobber=True, verbose=0, timeindependent=True
-    )
-
-    bcpaths.append(outpath)
+config = {
+    "source": "gcbench",
+    "intmpl": f'inputs/OutputDir/GEOSChem.SpeciesConc.%Y%m%d_0000z.nc4',
+    "GDNAM": GDNAM, "VGNAM": VGNAM,  # Destination Horizontal and Vertical Grids
+    "bcon_dates": dates, "icon_dates": dates[:1],
+    "exprs": ["gc14_o3so4.json"], # comment this out to default to full cb6_ae7 definitions
+}
+outpaths = aqmbc.driver(config)
 
 # %%
 # Figures and Statistics
 # ----------------------
 
-vprof = aqmbc.report.get_vertprof(bcpaths)
-statdf = aqmbc.report.getstats(bcpaths)
-statdf.to_csv('gcbc_summary.csv')
+vprof = aqmbc.report.profile_report(outpaths['bcon'])
 
 # %%
-# Plot Vertical Profiles
-# ~~~~~~~~~~~~~~~~~~~~~~
+# Visualize Vertical Profiles
+# ---------------------------
 
-fig = aqmbc.report.plot_2spc_vprof(vprof)
-fig.suptitle('GEOS-Chem v14 Boundary Conditions for CMAQ')
-fig.savefig('gcbc_profiles.png')
+import matplotlib.pyplot as plt
+fig, axx = plt.subplots(1, 2, figsize=(12, 6))
+vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
+vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
+axx[0].set(ylim=(1, 0), xscale='log')
+axx[1].set(ylim=(1, 0), xscale='log')
 
 # %%
-# Plot Normalized Means
-# ~~~~~~~~~~~~~~~~~~~~~
+# Report Range of Values
+# ----------------------
 
-fig = aqmbc.report.plot_gaspm_bars(statdf)
-fig.savefig('gcbc_bar.png')
+statdf = aqmbc.report.rangereport(vprof)
+statdf

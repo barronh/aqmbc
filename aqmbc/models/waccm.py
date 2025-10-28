@@ -1,7 +1,7 @@
 __all__ = ['download']
 
 
-def download(dates, root=None, fires='finn'):
+def download(dates, root=None, fires='finn', destdir='inputs/WACCM'):
     """
     Convenience function for downloading. If root url change
 
@@ -35,9 +35,9 @@ def download(dates, root=None, fires='finn'):
             + {'finn': '001', 'qfed': '002'}[fires]
             + '.cam.h3.%Y-%m-%d-00000.nc')
         url = date.strftime(f'{root}/{fname}')
-        dest = join('WACCM', basename(url))
+        dest = join(destdir, basename(url))
         if not exists(dest):
-            makedirs('WACCM', exist_ok=True)
+            makedirs(destdir, exist_ok=True)
             with requests.get(url, stream=True) as r:
                 total_size = int(r.headers.get("content-length", 0))
                 if total_size == 0:

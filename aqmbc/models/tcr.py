@@ -1,7 +1,7 @@
 __all__ = ['download']
 
 
-def download(dates, freq='mon', root=None):
+def download(dates, freq='mon', root=None, destroot='inputs/TCR2'):
     """
     Convenience function for downloading. If root url change
 
@@ -23,7 +23,7 @@ def download(dates, freq='mon', root=None):
     """
     import pandas as pd
     import requests
-    from os.path import basename, join, exists
+    from os.path import basename, join, exists, dirname
     from os import makedirs
 
     if root is None:
@@ -54,9 +54,9 @@ def download(dates, freq='mon', root=None):
         ]
         for varpath in varpaths:
             url = f'{root}/{varpath}'
-            dest = join('TCR', basename(url))
+            dest = join(destroot, basename(url))
             if not exists(dest):
-                makedirs('TCR', exist_ok=True)
+                makedirs(dirname(dest), exist_ok=True)
                 with requests.get(url, stream=True) as r:
                     ts = int(r.headers.get("content-length", 0))
                     if ts == 0:

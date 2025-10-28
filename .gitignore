@@ -26,14 +26,9 @@ var/
 wheels/
 temp/
 #examples/
-examples/GEOSCF
-examples/RAQMS
-examples/WACCM
-examples/TCR-2
-examples/tempdef
-examples/OutputDir
-examples/OutputDir.tar.gz
-examples/*.csv
+examples/inputs
+examples/outputs
+examples/figs
 *.egg-info/
 .installed.cfg
 *.egg

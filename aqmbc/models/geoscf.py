@@ -1,4 +1,4 @@
-__all__ = ['download_window']
+__all__ = ['download']
 
 
 def tryandtime(tmpf, label, verbose=1):
@@ -45,16 +45,13 @@ def tryandtime(tmpf, label, verbose=1):
     return dt
 
 
-def download_window(
-    gdnam, dates, sleep=60,
-    metvars=None, chmvars=None, xgcvars=None, gdpath=None, protocol='opendap'
+def download(
+    dates, sleep=60, metvars=None, chmvars=None, xgcvars=None, bbox=None,
+    protocol='opendap', destroot='inputs/GEOSCF'
 ):
     """
     Arguments
     ---------
-    gdnam : str
-        Grid name with definition in GRIDDESC at environ['GRIDDESC'],
-        ./GRIDDESC or in the GRIDDESC distributed with aqmbc
     dates : list
         Dates to process. Each will be saved separately on disk.
     sleep : int
@@ -66,8 +63,6 @@ def download_window(
         Optional list of chmvars to subset. See GEOS-CF fluid documentation.
     xgcvars : list
         Optional list of xgcvars to subset. See GEOS-CF fluid documentation.
-    gdpath : str
-        Path to GRIDDESC for custom location
     protocol : str
         opendap or https
 
@@ -78,41 +73,38 @@ def download_window(
     """
     protocol = protocol.lower()
     opts = dict(
-        gdnam=gdnam, dates=dates, sleep=sleep,
+        dates=dates, sleep=sleep,
         metvars=metvars, chmvars=chmvars, xgcvars=xgcvars,
-        gdpath=gdpath
+        bbox=bbox, destroot=destroot
     )
     if protocol == 'opendap':
-        out = download_window_opendap(**opts)
+        out = download_opendap(**opts)
     elif protocol == 'https':
-        out = download_window_https(**opts)
+        out = download_https(**opts)
     else:
         raise ValueError(f'protocol must be opendap or https; got {protocol}')
     return out
 
 
-def download_window_https(
-    gdnam, dates, sleep=10,
-    metvars=None, chmvars=None, xgcvars=None, gdpath=None,
-    keepglobal=False
+def download_https(
+    dates, sleep=10, metvars=None, chmvars=None, xgcvars=None, bbox=None,
+    keepglobal=False, destroot='inputs/GEOSCF'
 ):
     """
-    see download_window
+    see download
     """
     import pandas as pd
-    import numpy as np
     import xarray as xr
     import os
     import time
     from urllib.request import urlretrieve
-    from ..options import getmetaf
 
     dates = pd.to_datetime(dates)
-    metaf = getmetaf(bctype='bcon', gdnam=gdnam, gdpath=gdpath)
-    lonp = metaf.variables['longitude']
-    xlim = slice(*np.quantile(lonp, [0, 1]) + np.array([-1, 1]))
-    latp = metaf.variables['latitude']
-    ylim = slice(*np.quantile(latp, [0, 1]) + np.array([-1, 1]))
+    if bbox is None:
+        bbox = (-181, -90, 181, 90)
+
+    xlim = slice(*bbox[::2])
+    ylim = slice(*bbox[1::2])
     hroot = 'https://portal.nccs.nasa.gov/datashare/gmao/geos-cf/v1/das/'
     outpaths = []
     if metvars is None:
@@ -125,7 +117,7 @@ def download_window_https(
         xgcvars = list(xgcvars)
 
     for date in dates:
-        outdir = f'GEOSCF/{gdnam}/{date:%Y/%m/%d}'
+        outdir = f'{destroot}/{date:%Y/%m/%d}'
         pathsuf = f'{date:%Y-%m-%dT%H%M}Z.nc'
         outpath = f'{outdir}/geoscf_mcx_tavg_1hr_g1440x721_v36_{pathsuf}'
 
@@ -212,27 +204,25 @@ def download_window_https(
     return outpaths
 
 
-def download_window_opendap(
-    gdnam, dates, sleep=60,
-    metvars=None, chmvars=None, xgcvars=None, gdpath=None
+def download_opendap(
+    dates, sleep=60, metvars=None, chmvars=None, xgcvars=None, bbox=None,
+    destroot='inputs/GEOSCF'
 ):
     """
-    see download_window
+    see download
     """
     import pandas as pd
-    import numpy as np
     import xarray as xr
     import os
     import time
-    from ..options import getmetaf
 
     sleep = 60
     dates = pd.to_datetime(dates)
-    metaf = getmetaf(bctype='bcon', gdnam=gdnam, gdpath=gdpath)
-    lonp = metaf.variables['longitude']
-    xlim = slice(*np.quantile(lonp, [0, 1]) + np.array([-1, 1]))
-    latp = metaf.variables['latitude']
-    ylim = slice(*np.quantile(latp, [0, 1]) + np.array([-1, 1]))
+    if bbox is None:
+        bbox = (-181, -90, 181, 90)
+
+    xlim = slice(*bbox[::2])
+    ylim = slice(*bbox[1::2])
 
     rooturl = 'https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim'
     meturl = f'{rooturl}/met_tavg_1hr_g1440x721_v36'
@@ -260,7 +250,7 @@ def download_window_opendap(
     for t in dates:
         tv = mf.time.sel(time=t, method='nearest').values
         stime = pd.to_datetime(tv).round('1s').to_pydatetime()
-        outdir = f'GEOSCF/{gdnam}/{stime:%Y/%m/%d}'
+        outdir = f'{destroot}/{stime:%Y/%m/%d}'
         pathsuf = f'{stime:%Y-%m-%dT%H%M}Z.nc'
         outpath = f'{outdir}/geoscf_mcx_tavg_1hr_g1440x721_v36_{pathsuf}'
         if os.path.exists(outpath):

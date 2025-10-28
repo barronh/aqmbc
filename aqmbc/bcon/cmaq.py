@@ -20,13 +20,15 @@ class cmaq(icbc):
                 pfx = 'WRFTERRAIN_'
             else:
                 pfx = 'WRFHYBRID_'
-            hyb = gethybf(VGNAM=f'{pfx}_{nz}L')
+            hyb = gethybf(VGNAM=f'{pfx}{nz}L')
             p = 1e5 * hyb.hybm + hyb.hyam
             pdims = ('TSTEP', 'LAY', 'ROW', 'COL')
-            edims = {pk: qf.coords[pk] for pk in pdims if pdims != 'LAY'}
+            edims = {pk: qf.coords[pk] for pk in pdims if pk != 'LAY'}
             qf[self._pmidkey] = p.expand_dims(**edims).transpose(*pdims)
+            qf[self._pmidkey].attrs.update(units='Pa')
 
         qf[self._psfckey] = qf[self._pmidkey][:, 0] / hyb.hybi[0]
+        qf[self._psfckey].attrs.update(units='Pa')
         self._proj = pyproj.Proj(qf.crs_proj4)
         return qf
 
@@ -38,4 +40,4 @@ class cmaq(icbc):
         # overwrite to support projections
         if self.verbose > 0:
             print(f'INFO:: Extracting n={lon.size} lon/lat pairs')
-        self._f = self._f.sel(ROW=lat, COL=lon, lat=lat, method=method)
+        self._f = self._f.sel(ROW=lat, COL=lon, method=method)

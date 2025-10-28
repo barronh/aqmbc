@@ -1,4 +1,4 @@
-def getstdatm(hyam, hybm, p0=1e5, refv=None):
+def getstdatm(hyam, hybm, p0=1e5, refv=None, levkey=None):
     import xarray as xr
     from scipy.interpolate import interp1d
     import numpy as np
@@ -11,8 +11,12 @@ def getstdatm(hyam, hybm, p0=1e5, refv=None):
         223.25, 229.73, 236.21, 242.7, 249.19, 255.68, 262.17, 268.66, 275.15,
         281.65, 288.15, 294.65
     ])  # [K]
-    pmid = hyam + hybm * p0
-    temp = interp1d(stdp, stdt)(pmid)
+    if refv is not None:
+        levkey = refv.dims[1]
+    elif levkey is None:
+        levkey = 'LAY'
+    pmid = xr.DataArray(hyam + hybm * p0, dims=(levkey,))
+    temp = xr.DataArray(interp1d(stdp, stdt)(pmid), dims=(levkey,))
     if refv is not None:
         pmid = (refv * 0).fillna(0) + pmid
         temp = (refv * 0).fillna(0) + temp

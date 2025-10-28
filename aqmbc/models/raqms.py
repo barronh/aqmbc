@@ -1,7 +1,7 @@
 __all__ = ['download']
 
 
-def download(dates, root=None):
+def download(dates, root=None, destroot='inputs/RAQMS'):
     """
     Convenience function for downloading. If root url change
 
@@ -22,7 +22,7 @@ def download(dates, root=None):
     """
     import pandas as pd
     import requests
-    from os.path import basename, join, exists
+    from os.path import basename, join, exists, dirname
     from os import makedirs
 
     if root is None:
@@ -31,9 +31,9 @@ def download(dates, root=None):
     destpaths = []
     for date in pd.to_datetime(dates):
         url = date.strftime(f'{root}/uwhyb_%m_%d_%Y_%HZ.chem.assim.nc')
-        dest = join('RAQMS', basename(url))
+        dest = join(destroot, basename(url))
         if not exists(dest):
-            makedirs('RAQMS', exist_ok=True)
+            makedirs(dirname(dest), exist_ok=True)
             with requests.get(url, stream=True) as r:
                 total_size = int(r.headers.get("content-length", 0))
                 if total_size == 0:

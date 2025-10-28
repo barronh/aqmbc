@@ -10,85 +10,69 @@ This example shows how to use aqmbc with a synthetic Hemispheric CMAQ.
 
 """
 
-from os.path import basename
 import aqmbc
-import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
+import xarray as xr
 
 # %%
-# Create Fake Hemispheric CMAQ Files
-# ----------------------------------
-
-inpaths = [
-    'HCMAQFAKECONC.20190401_0000z.nc4',
-    'HCMAQFAKECONC.20190701_0000z.nc4',
-]
-tmpf = aqmbc.options.getmetaf(
-    bctype='icon', gdnam='5940NHEMI2', vgnam='EPA_44L'
-)
-keys = ['O3', 'ASO4I', 'ASO4J']
-for k in keys:
-    v = tmpf.createVariable(k, 'f', ('TSTEP', 'LAY', 'ROW', 'COL'))
-    v.setncatts(dict(long_name=k.ljust(16), var_desc=k.ljust(80)))
-
-tmpf.variables['ASO4I'].units = 'micrograms/m**3'.ljust(16)
-tmpf.variables['ASO4J'].units = 'micrograms/m**3'.ljust(16)
-tmpf.variables['O3'].units = 'ppmV'.ljust(16)
-tgtx = np.log(tmpf.VGLVLS[1:])
-o3vals = np.interp(tgtx, np.log([.01, .2, .3, 1]), [1, .1, .06, .04])
-so4vals = np.interp(tgtx, np.log([.01, .2, .6, .9, 1]), [.06, .06, 0.2, 1, 1])
-for i, (inpath, factor) in enumerate(zip(inpaths, [1, .9])):
-    tmpf.variables['O3'][:] = o3vals[None, :, None, None] * factor
-    tmpf.variables['ASO4I'][:] = so4vals[None, :, None, None] * 0.01 * factor
-    tmpf.variables['ASO4J'][:] = so4vals[None, :, None, None] * 0.99 * factor
-    tmpf.subset(keys).save(inpath, format='NETCDF3_CLASSIC', verbose=0).close()
+# Scope Definitions
+# -----------------
+# - GDNAM defines the horizontal CMAQ domain from the default GRIDDESC file.
+#   - the default GRIDDESC has some 12km US domains (12US2, 12US1), a 36km
+#     North American domain (36US3), a hemispheric polar stereographic grid
+#     (108NHEMI2), and a test domain for the US at 108km (108US2).
+#   - add gdpath='...' to use your own GRIDDESC file.
+# - VGNAM is used to define the vertical 
+#   - known VGNAM inclue WRFHYBRID_35L, WRFHYBRID_44L, EMBER_35L
+#   - add vgpath='...' to use your own CSV file to define A and B
+#     components of a vertical coordinate (P=A+B*ps [Pa])
+# - dates are the dates from which to derive BCON and ICON
+#   - This project uses two dates as an example.
+#   - More typical would be hourly or 3-hourly in chunks that cover a day
+GDNAM = '108US2'
+VGNAM = 'WRFHYBRID_35L'
+dates = pd.date_range('2019-04-01T00', '2019-04-02T00', freq='1h')
 
 # %%
-# Tranlate Files and Make Time-independent
-# ----------------------------------------
+# Download from UWisc
+# -------------------
+# - Download has been preprepared
+#
 
-gdnam = '12US1'
-suffix = f'_{gdnam}_BCON.nc'
-metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-# For "real" VGLVLS use
-# METBDYD_PATH = '...'
-# metaf = pnc.pncopen(METCRO3D_PATH, format='ioapi')
+# aqmbc.models.raqms.download(dates)
 
-bcpaths = []
-for inpath in inpaths:
-    print(inpath, flush=True)
-    outpath = basename(inpath).replace('.nc4', suffix)
-    history = f'From {outpath}'
-    outf = aqmbc.bc(
-        inpath, outpath, metaf, vmethod='linear',
-        exprpaths=[], format_kw={'format': 'ioapi'}, history=history,
-        clobber=True, verbose=0
-    )
-    if outf is not None:
-        # if not already archived
-        aqmbc.cmaq.timeindependent(outf)
+# %%
+# Define Configuration
+# --------------------
 
-    bcpaths.append(outpath)
+config = {
+    "source": "cmaq",
+    "intmpl": f"inputs/CMAQ/cmaq.equates.hemi.conc.%Y-%m-%d.nc",
+    "GDNAM": GDNAM, "VGNAM": VGNAM,  # Destination Horizontal and Vertical Grids
+    "bcon_dates": dates, "icon_dates": dates[:1],
+}
+outpaths = aqmbc.driver(config)
 
 # %%
 # Figures and Statistics
 # ----------------------
 
-vprof = aqmbc.report.get_vertprof(bcpaths)
-statdf = aqmbc.report.getstats(bcpaths)
-statdf.to_csv('hcmaq_summary.csv')
+vprof = aqmbc.report.profile_report(outpaths['bcon'])
 
 # %%
 # Visualize Vertical Profiles
 # ---------------------------
 
-fig = aqmbc.report.plot_2spc_vprof(vprof)
-fig.suptitle('Fake Hemispheric CMAQ Boundary Conditions for CMAQ')
-fig.savefig('hcmaq_profiles.png')
+import matplotlib.pyplot as plt
+fig, axx = plt.subplots(1, 2, figsize=(12, 6))
+vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
+vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
+axx[0].set(ylim=(1, 0), xscale='log')
+axx[1].set(ylim=(1, 0), xscale='log')
 
 # %%
-# Barplot of Concentrations
-# -------------------------
+# Report Range of Values
+# ----------------------
 
-fig = aqmbc.report.plot_gaspm_bars(statdf)
-fig.savefig('hcmaq_bar.png')
+statdf = aqmbc.report.rangereport(vprof)
+statdf

@@ -9,81 +9,69 @@ This example shows how to use aqmbc with RAQMS's publicly available forecasts.
 * Extract and translate.
 * Display figures and statistics."""
 
-from os.path import basename
 import aqmbc
-import glob
-import pandas as pd
-import matplotlib.pyplot as plt
-
-gdnam = '12US1'
+import xarray as xr
 
 # %%
-# Download from RAQMS via HTTP
-# ----------------------------
-
-todayat12z = (
-    pd.to_datetime('now', utc=True).floor('1d') + pd.to_timedelta('12h')
-)
-dates = [todayat12z]
-
-aqmbc.models.raqms.download(dates)
-
-# %%
-# Define Translation Expressions
-# ------------------------------
-
-# In Notebooks, display available expressions
-aqmbc.exprlib.avail('raqms')
-
-# %%
-
-exprpaths = aqmbc.exprlib.exprpaths([
-    'raqms_o3so4.expr'
-    # 'raqms_to_cb6r4_ae6.expr'  # for full run
-], prefix='raqms')
+# Scope Definitions
+# -----------------
+# - GDNAM defines the horizontal CMAQ domain from the default GRIDDESC file.
+#   - the default GRIDDESC has some 12km US domains (12US2, 12US1), a 36km
+#     North American domain (36US3), a hemispheric polar stereographic grid
+#     (108NHEMI2), and a test domain for the US at 108km (108US2).
+#   - add gdpath='...' to use your own GRIDDESC file.
+# - VGNAM is used to define the vertical 
+#   - known VGNAM inclue WRFHYBRID_35L, WRFHYBRID_44L, EMBER_35L
+#   - add vgpath='...' to use your own CSV file to define A and B
+#     components of a vertical coordinate (P=A+B*ps [Pa])
+# - dates are the dates from which to derive BCON and ICON
+#   - This project uses two dates as an example.
+#   - More typical would be hourly or 3-hourly in chunks that cover a day
+GDNAM = '108US2'
+VGNAM = 'WRFHYBRID_35L'
+dates = ['2024-03-05T1200', '2024-03-15T1200']
 
 # %%
-# Translate RAQMS for use by CMAQ
-# -------------------------------
+# Download from UWisc
+# -------------------
+# - Download has been preprepared
+#
 
-# For "real" VGLVLS use
-# METBDYD_PATH = '...'
-# metaf = pnc.pncopen(METBDY3D_PATH, format='ioapi')
-metaf = aqmbc.options.getmetaf(bctype='bcon', gdnam=gdnam, vgnam='EPA_35L')
-inpaths = sorted(glob.glob('RAQMS/uwhyb*.nc'))
-bcpaths = []
-suffix = f'_{gdnam}_BCON.nc'
-gcdims = aqmbc.options.dims['raqms']
-for inpath in inpaths:
-    print(inpath, flush=True)
-    outpath = basename(inpath).replace('.nc', suffix)
-    history = f'From {outpath}'
-    outf = aqmbc.bc(
-        inpath, outpath, metaf, vmethod='linear', exprpaths=exprpaths,
-        dimkeys=gcdims, format_kw={'format': 'raqms'}, history=history,
-        clobber=True, verbose=0
-    )
-    bcpaths.append(outpath)
+# aqmbc.models.raqms.download(dates)
+
+# %%
+# Define Configuration
+# --------------------
+
+config = {
+    "source": "raqms",
+    "intmpl": f"inputs/RAQMS/uwhyb_%m_%d_%Y_12Z.chem.assim.nc",
+    "GDNAM": GDNAM, "VGNAM": VGNAM,  # Destination Horizontal and Vertical Grids
+    "bcon_dates": dates, "icon_dates": dates[:1],
+    "exprs": ["raqms_o3so4.json"], # comment this out to default to full cb6_ae7 definitions
+}
+outpaths = aqmbc.driver(config)
 
 # %%
 # Figures and Statistics
 # ----------------------
 
-vprof = aqmbc.report.get_vertprof(bcpaths)
-statdf = aqmbc.report.getstats(bcpaths)
-statdf.to_csv('raqms_summary.csv')
+vprof = aqmbc.report.profile_report(outpaths['bcon'])
 
 # %%
 # Visualize Vertical Profiles
 # ---------------------------
 
-fig = aqmbc.report.plot_2spc_vprof(vprof)
-fig.suptitle('RAQMS Boundary Conditions for CMAQ')
-fig.savefig('raqms_profiles.png')
+import matplotlib.pyplot as plt
+fig, axx = plt.subplots(1, 2, figsize=(12, 6))
+vprof['O3'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[0])
+vprof['ASO4J'].sel(PERIM='all', STAT='median').plot.line(y='LAY', ax=axx[1])
+axx[0].set(ylim=(1, 0), xscale='log')
+axx[1].set(ylim=(1, 0), xscale='log')
 
 # %%
-# Barplot of Concentrations
-# -------------------------
+# Report Range of Values
+# ----------------------
 
-fig = aqmbc.report.plot_gaspm_bars(statdf)
-fig.savefig('raqms_bar.png')
+statdf = aqmbc.report.rangereport(vprof)
+statdf
