@@ -71,7 +71,7 @@ vprof = aqmbc.report.profile_report(outpaths['bcon'])
 # Report Range of Values
 # ----------------------
 
-statdf = aqmbc.report.rangereport(vprof)
+statdf = aqmbc.report.range_report(vprof)
 statdf.to_csv('outputs/docs/tcr_range.csv')
 
 # %%

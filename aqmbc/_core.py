@@ -264,9 +264,10 @@ class icbc:
         dates = pd.to_datetime(dates)
         if fdate is None:
             fdate = dates[0]
-        outpath = fdate.strftime(self.outtmpl)
-        if exists(outpath) and not overwrite:
-            return outpath
+        if self.outtmpl is not False:
+            outpath = fdate.strftime(self.outtmpl)
+            if exists(outpath) and not overwrite:
+                return outpath
         fs = []
         qf = self._metaf
         if zkwds is None:
@@ -294,9 +295,12 @@ class icbc:
         tmpf.attrs['FILEDESC'] = '; '.join(filedesc)
         tmpf.attrs['HISTORY'] = '; '.join(self._log)
         tmpf.attrs['description'] = '; '.join(self._log)
-        makedirs(realpath(dirname(outpath)), exist_ok=True)
-        to_ioapi(tmpf, outpath, verbose=self.verbose)
-        return outpath
+        if self.outtmpl is False:
+            return tmpf
+        else:
+            makedirs(realpath(dirname(outpath)), exist_ok=True)
+            to_ioapi(tmpf, outpath, verbose=self.verbose)
+            return outpath
 
 
 def to_ioapi(
@@ -441,10 +445,15 @@ def driver(cfg=None, **cfgkwds):
     source = getattr(getattr(bcon, opts['source']), opts['source'])
     ckwds = ['intmpl', 'outtmpl', 'exprs']
     ckwds = {k: v for k, v in opts.items() if k in ckwds}
-    igf = getmetaf(**gkwds, FTYPE=1)
-    bco = source(igf, **ckwds)
-    ipath = bco.process(idates)
-    bgf = getmetaf(**gkwds, FTYPE=2)
-    ico = source(bgf, **ckwds)
-    bpath = ico.process(bdates)
-    return {'icon': ipath, 'bcon': bpath}
+    out = {}
+    if idates is not None:
+        igf = getmetaf(**gkwds, FTYPE=1)
+        ico = source(igf, **ckwds)
+        ipath = ico.process(idates)
+        out['icon'] = ipath
+    if bdates is not None:
+        bgf = getmetaf(**gkwds, FTYPE=2)
+        bco = source(bgf, **ckwds)
+        bpath = bco.process(bdates)
+        out['bcon'] = bpath
+    return out

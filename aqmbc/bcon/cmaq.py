@@ -3,10 +3,33 @@ from .._core import icbc
 
 class cmaq(icbc):
     def __init__(self, *args, **kwds):
+        """
+        Arguments
+        ---------
+        metaf : xarray.Dataset
+        intmpl : str
+            Input file template using strftime format
+        exprs : list
+            List of dictionaries
+        outtmpl : str
+            Output file template using strftime format
+        verbose : int
+            Verbosity level
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Uses TSTEP as time dimension, PRES as layer-mid pressure, and PRSFC as
+        surface pressrue. If PRES is not provided, it will be derived assuming
+        WRFTERRAIN_{NLAYS}L or WRFHYBRID_{NLAYS}L hyam and hybm structure.
+        """
         super().__init__(*args, **kwds)
+        self._timekey = 'TSTEP'
         self._pmidkey = 'PRES'
         self._psfckey = 'PRSFC'
-        self._timekey = 'TSTEP'
 
     def _opener(self, path):
         import pyrsig

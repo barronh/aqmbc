@@ -1,30 +1,6 @@
-import pandas as pd
+__all__ = ['profile_report', 'range_report']
 
 _deffuncs = ['mean', 'median', 'std', 'min', 'max']
-
-
-def _describe(ds, funcs=None, verbose=0):
-    if funcs is None:
-        import numpy as np
-        from numpy import quantile as quant
-        funcs = {
-            'mean': np.mean, 'std': np.std, 'min': np.min, 'max': np.max,
-            'median': np.median,
-            '25%': lambda x: quant(x, .25), '75%': lambda x: quant(x, .75)
-        }
-    statrows = {}
-    for vk, v in ds.data_vars.items():
-        if np.issubdtype(v.dtype, np.number) and 'LAY' in v.sizes:
-            vals = v.values.ravel()
-            statrow = {'unit': v.attrs.get('units', 'unknown')}
-            for fstr, func in funcs.items():
-                statrow[fstr] = func(vals)
-            statrows[vk] = statrow
-            del vals
-
-    outdf = pd.DataFrame(statrows)
-    outdf.columns.name = 'variable'
-    return outdf.T
 
 
 def profile_report(
@@ -153,7 +129,7 @@ def profile_report(
     return outf
 
 
-def rangereport(vprof, PERIM='all', STAT=None):
+def range_report(vprof, PERIM='all', STAT=None):
     import pandas as pd
     if STAT is None:
         STAT = _deffuncs

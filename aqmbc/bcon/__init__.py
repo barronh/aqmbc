@@ -1,4 +1,7 @@
-__all__ = ['cmaq', 'geoschem', 'gcbench', 'geoscf', 'csvprofile', 'raqms', 'tcr', 'waccm']
+__all__ = [
+    'cmaq', 'geoschem', 'gcbench', 'geoscf', 'csvprofile', 'raqms', 'tcr',
+    'waccm'
+]
 
 from . import cmaq
 from . import geoscf

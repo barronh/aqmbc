@@ -7,10 +7,21 @@ def getllf(GDNAM, gdpath=None, FTYPE=2):
     if isinstance(FTYPE, str):
         FTYPE = {'bcon': 2, 'icon': 1}
     if gdpath is None:
-        from os.path import join
+        from os.path import join, exists
         from ..data import dataroot
-        gdpath = join(dataroot, 'GRIDDESC')
-    gf = pnc.pncopen(gdpath, format='griddesc', GDNAM=GDNAM, FTYPE=FTYPE)
+        gdpath1 = 'GRIDDESC'
+        gdpath2 = join(dataroot, 'GRIDDESC')
+        if exists(gdpath1):
+            gdpath = gdpath1
+        elif exists(gdpath2):
+            gdpath = gdpath2
+        else:
+            raise IOError(f'{gdpath1} or {gdpath2} must exist.')
+    try:
+        gf = pnc.pncopen(gdpath, format='griddesc', GDNAM=GDNAM, FTYPE=FTYPE)
+    except Exception as e:
+        raise IOError(f'Unable to read {GDNAM} from {gdpath}; {str(e)}')
+
     if FTYPE == 2:
         dims = ('PERIM',)
     else:
@@ -29,9 +40,16 @@ def gethybf(VGNAM, vgpath=None, vgdf=None):
     import pandas as pd
     if vgdf is None:
         if vgpath is None:
-            from os.path import join
+            from os.path import join, exists
             from ..data import vertgridroot
-            vgpath = join(vertgridroot, f'{VGNAM}.csv')
+            vgpath1 = f'{VGNAM}.csv'
+            vgpath2 = join(vertgridroot, f'{VGNAM}.csv')
+            if exists(vgpath1):
+                vgpath = vgpath1
+            elif exists(vgpath2):
+                vgpath = vgpath2
+            else:
+                raise IOError(f'{vgpath1} or {vgpath2} must exist')
         vgdf = pd.read_csv(vgpath)
         if 'edge_mid' in vgdf:
             vgdf = vgdf.query('edge_mid == "edge"')
