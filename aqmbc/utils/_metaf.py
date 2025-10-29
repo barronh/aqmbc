@@ -41,7 +41,7 @@ def getllf(GDNAM, gdpath=None, FTYPE=2):
             outf.coords['ROW'] = np.arange(nr) + 0.5
             outf.coords['COL'] = np.arange(nc) + 0.5
             row, col = xr.broadcast(outf.ROW, outf.COL)
-            lon, lat = proj(col, row)
+            lon, lat = proj(col, row, inverse=True)
             outf['lat'] = ('ROW', 'COL'), lat, dict(units='degrees_north')
             outf['lon'] = ('ROW', 'COL'), lon, dict(units='degrees_east')
         elif FTYPE == 2:
@@ -60,7 +60,7 @@ def getllf(GDNAM, gdpath=None, FTYPE=2):
             nperim = col.size
             assert nperim == ((nr + 1 + nc + 1) * 2)
             outf.coords['PERIM'] = np.arange(nperim)
-            lon, lat = proj(col, row)
+            lon, lat = proj(col, row, inverse=True)
             outf['lat'] = ('PERIM',), lat, dict(units='degrees_north')
             outf['lon'] = ('PERIM',), lon, dict(units='degrees_east')
         else:

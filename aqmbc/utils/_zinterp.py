@@ -52,7 +52,7 @@ def _getinterpweights(
     return weights
 
 
-def zinterp(srcf, srcz, destz, interptype='linear', verbose=0):
+def zinterp(srcf, srcz, destz, interptype='linear', pweight=True, verbose=0):
     """
     Arguments
     ---------
@@ -67,6 +67,8 @@ def zinterp(srcf, srcz, destz, interptype='linear', verbose=0):
     interptype : str
         Must be accepted by _getinterpweights, which uses scipy.interpolate
         interp1d
+    pweight : bool
+        If True, weight the w = w * p / sum(p * w)
     verbose : int
         Level of verbosity
 
@@ -97,7 +99,11 @@ def zinterp(srcf, srcz, destz, interptype='linear', verbose=0):
             extrapolate=False
         )
 
-    zweight = wgtv[:] * srcz.data[:, :, None, ...]
+    if pweight:
+        zweight = wgtv[:] * srcz.data[:, :, None, ...]
+    else:
+        zweight = wgtv[:]
+
     znorm = zweight.sum(1)
     exprkeys = [
         key for key, var in srcf.variables.items()

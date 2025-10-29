@@ -5,7 +5,7 @@ _lcctmpl = (
     + ' +no_defs'
 )
 _poltmpl = (
-    '+proj=stere +lat_0={lat_0} +lat_ts={P_ALP} +lon_0={P_GAM} +x_0={x_0}'
+    '+proj=stere +lat_0={lat_0} +lat_ts={P_BET} +lon_0={P_GAM} +x_0={x_0}'
     + ' +y_0={x_0} +R={earth_radius} +to_meter={XCELL} +no_defs'
 )
 
@@ -16,8 +16,8 @@ def attrs2proj(attrs, earth_radius=6370000.0):
         k: (v.item() if hasattr(v, 'item') else v)
         for k, v in attrs.items() if k != 'VGLVLS'
     })
-    pattrs['x_0'] = -pattrs['XCELL']
-    pattrs['y_0'] = -pattrs['YCELL']
+    pattrs['x_0'] = -pattrs['XORIG']
+    pattrs['y_0'] = -pattrs['YORIG']
     if attrs['GDTYP'] == 2:
         tmpl = _lcctmpl
     elif attrs['GDTYP'] == 6:
