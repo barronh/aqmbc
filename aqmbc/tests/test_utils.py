@@ -1,3 +1,6 @@
+# every tenth element of the raveled lat lon from an LCC (36US3) and a polar
+# stereographic domain latitude and longitude. Verified by comparison with
+# PseudoNetCDF griddesc
 _check10th = {
    ('36US3', 1): {
         "lat": [12.376, 18.295, 24.428, 29.325, 32.611, 33.35, 41.562, 48.321,
