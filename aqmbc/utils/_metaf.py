@@ -2,36 +2,72 @@ __all__ = ['gethybf', 'getllf', 'getmetaf']
 
 
 def getllf(GDNAM, gdpath=None, FTYPE=2):
+    import numpy as np
+    import pandas as pd
     import xarray as xr
-    import PseudoNetCDF as pnc
+    import pyproj
+    from ._cmaq import open_griddesc
     if isinstance(FTYPE, str):
         FTYPE = {'bcon': 2, 'icon': 1}
     if gdpath is None:
         from os.path import join, exists
         from ..data import dataroot
-        gdpath1 = 'GRIDDESC'
-        gdpath2 = join(dataroot, 'GRIDDESC')
+        gdpath1 = 'GRIDDESC.csv'
+        gdpath2 = join(dataroot, 'GRIDDESC.csv')
         if exists(gdpath1):
             gdpath = gdpath1
         elif exists(gdpath2):
             gdpath = gdpath2
         else:
             raise IOError(f'{gdpath1} or {gdpath2} must exist.')
+    dtypes = dict(
+        GDNAM=str, GDTYP=int, P_ALP=float, P_BET=float, P_GAM=float,
+        XCENT=float, YCENT=float, XORIG=float, YORIG=float,
+        XCELL=float, YCELL=float, NCOLS=int, NROWS=int, NTHIK=int,
+    )
+    gdf = pd.read_csv(gdpath, dtype=dtypes)
+    for attrs in gdf.to_dict('records'):
+        if attrs['GDNAM'] == GDNAM:
+            break
+    else:
+        raise KeyError(f'GDNAM {GDNAM} not found; {gdf["GDNAM"]}')
+    attrs['FTYPE'] = FTYPE
+    outf = open_griddesc(attrs)
+    proj = pyproj.Proj(outf.crs_proj4)
+    nr = outf.NROWS
+    nc = outf.NCOLS
     try:
-        gf = pnc.pncopen(gdpath, format='griddesc', GDNAM=GDNAM, FTYPE=FTYPE)
-    except Exception as e:
+        if FTYPE == 1:
+            outf.coords['ROW'] = np.arange(nr) + 0.5
+            outf.coords['COL'] = np.arange(nc) + 0.5
+            row, col = xr.broadcast(outf.ROW, outf.COL)
+            lon, lat = proj(col, row)
+            outf['lat'] = ('ROW', 'COL'), lat, dict(units='degrees_north')
+            outf['lon'] = ('ROW', 'COL'), lon, dict(units='degrees_east')
+        elif FTYPE == 2:
+            row = np.concatenate([
+                np.zeros(nc + 1, dtype='d') - 0.5,
+                np.arange(nr + 1, dtype='d') + 0.5,
+                np.zeros(nc + 1, dtype='d') + nr + 0.5,
+                np.arange(-1, nr, dtype='d') + 0.5,
+            ])
+            col = np.concatenate([
+                np.arange(nc + 1, dtype='d') + 0.5,
+                np.zeros(nr + 1, dtype='d') + nc + 0.5,
+                np.arange(-1, nc, dtype='d') + 0.5,
+                np.zeros(nr + 1) - 0.5
+            ])
+            nperim = col.size
+            assert nperim == ((nr + 1 + nc + 1) * 2)
+            outf.coords['PERIM'] = np.arange(nperim)
+            lon, lat = proj(col, row)
+            outf['lat'] = ('PERIM',), lat, dict(units='degrees_north')
+            outf['lon'] = ('PERIM',), lon, dict(units='degrees_east')
+        else:
+            raise KeyError(f'FTYPE must be 1 or 2; got {FTYPE}')
+    except IOError as e:
         raise IOError(f'Unable to read {GDNAM} from {gdpath}; {str(e)}')
 
-    if FTYPE == 2:
-        dims = ('PERIM',)
-    else:
-        dims = ('ROW', 'COL',)
-    lat = xr.DataArray(gf.variables['latitude'].array(), dims=dims)
-    lon = xr.DataArray(gf.variables['longitude'].array(), dims=dims)
-    outf = xr.Dataset()
-    outf['lat'] = lat
-    outf['lon'] = lon
-    outf.attrs.update({k: gf.getncattr(k) for k in gf.ncattrs()})
     return outf
 
 

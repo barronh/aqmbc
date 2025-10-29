@@ -19,7 +19,11 @@ def test_geoscf():
         try:
             outpaths = driver(config)
             check = len(outpaths) == 2
-        except Exception:
+            oute = None
+        except Exception as e:
             check = False
+            oute = e
         os.chdir(curdir)
+        if oute is not None:
+            raise oute
         assert check

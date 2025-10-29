@@ -25,9 +25,12 @@ def test_csvprofile():
         try:
             outpaths = driver(config)
             check = len(outpaths) == 2
-        except Exception:
-            check = False
+            oute = None
+        except Exception as e:
+            oute = e
         os.chdir(curdir)
+        if oute is not None:
+            raise oute
         assert check
 
 
@@ -61,9 +64,12 @@ def test_report():
             vprof = report.profile_report(outpaths['bcon'])
             statdf = report.range_report(vprof)
             check = (statdf.shape[0] > 1) & (statdf.shape[1] > 1)
-        except Exception:
-            check = False
+            oute = None
+        except Exception as e:
+            oute = e
         os.chdir(curdir)
+        if oute is not None:
+            raise oute
         assert check
 
 
@@ -102,7 +108,10 @@ def test_exprs():
         try:
             outpaths = driver(config)
             check = len(outpaths) == 2
-        except Exception:
-            check = False
+            oute = None
+        except Exception as e:
+            oute = e
         os.chdir(curdir)
+        if oute is not None:
+            raise oute
         assert check

@@ -32,11 +32,10 @@ class cmaq(icbc):
         self._psfckey = 'PRSFC'
 
     def _opener(self, path):
-        import pyrsig
         import pyproj
-        from ..utils import gethybf
+        from ..utils import gethybf, open_ioapi
 
-        qf = pyrsig.open_ioapi(path)
+        qf = open_ioapi(path)
         if self._pmidkey not in qf.data_vars:
             nz = qf.sizes['LAY']
             if qf.attrs['VGTYP'] == 7:
