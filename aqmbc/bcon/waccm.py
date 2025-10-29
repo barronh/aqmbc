@@ -9,8 +9,6 @@ class waccm(icbc):
 
     def _opener(self, path):
         import xarray as xr
-        import pandas as pd
-        import pdb; pdb.set_trace()
         latmin = float(self._metaf.lat.min() - 2)
         latmax = float(self._metaf.lat.max() + 2)
         lonmin = float(self._metaf.lon.min() - 2)

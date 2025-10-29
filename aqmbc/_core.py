@@ -349,7 +349,7 @@ def to_ioapi(
             wvals = bcf[vk].where(lambda x: x > minvalue)
             nna = wvals.isnull().sum()
             if verbose:
-                imsg = f'INFO:: {nna} values less than {minvalue} removed from {vk}'
+                imsg = f'INFO:: {nna} values < {minvalue} removed from {vk}'
                 print(imsg)
             outv = wvals.fillna(minvalue)
         else:
@@ -385,7 +385,6 @@ def to_ioapi(
         jtime = np.asarray(outdates.strftime('%H%M%S').astype('i'))
         tf[:, :, 0] = jdate[:, None]
         tf[:, :, 1] = jtime[:, None]
-
 
     outf.attrs.update(bcf.attrs)
     outf.attrs['TSTEP'] = tstep

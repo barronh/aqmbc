@@ -17,9 +17,10 @@ class tcr(icbc):
         -----
         import glob
         yyyy = '2021'
-        inpat = f'inputs/TCR-2/tropess.gesdisc.eosdis.nasa.gov/data/*/*/*{yyyy}.nc'
-        paths = sorted(glob.glob(inpat))
-        tpath = f'inputs/TCR-2/TCR2_MON_{yyyy}.txt'
+        paths = sorted(glob.glob(
+            f'inputs/TCR2/tropess.gesdisc.eosdis.nasa.gov/data/*/*/*{yyyy}.nc'
+        ))
+        tpath = f'inputs/TCR2/TCR2_MON_{yyyy}.txt'
         with open(tpath, 'w') as tcrf:
             tcrf.write('\n'.join(paths))
 

@@ -109,11 +109,11 @@ def profile_report(
         bf = xr.open_dataset(path, mode='rs')
         jdates = bf['TFLAG'][:, 0, :]
         jdates = (jdates * np.array([1000000, 1])).sum('DATE-TIME')
-        try:
-            tstep = [pd.to_datetime(jdates, format='%Y%j%H%M%S').mean()]
-        except:
+        if bf.attrs['TSTEP'] == 0:
+            # anticipating all zero values for time independent, so try again
             jdates = np.maximum(jdates, 1970001000000)
-            tstep = [pd.to_datetime(jdates, format='%Y%j%H%M%S').mean()]
+
+        tstep = [pd.to_datetime(jdates, format='%Y%j%H%M%S').mean()]
         bf = bf[varkeys]
         efs = []
         for ek, es in slices:
