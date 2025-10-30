@@ -46,24 +46,25 @@ def test_zinterp():
     import numpy as np
     import xarray as xr
     from ..utils import zinterp
-    srcf = xr.Dataset()
-    dpedges = np.arange(1e5, 0, -1e4)
-    dpmid = (dpedges[1:] + dpedges[:-1]) / 2
-    dpmid = xr.DataArray(dpmid[None, :], dims=('time', 'LAY'))
-    # with pressure weighting
+    # with pressure weighting -- higher pressure than otherwise. Intended to
+    # to account for intensive variables (mixing ratios) being more weighted
+    # toward higher pressures
     chkpmid = np.array([[
-        90000., 85882.35, 76000., 66153.85, 56363.64, 46666.67, 37142.86,
-        30000., 30000.
+        9e4, 85882.35, 76e3, 66153.85, 56363.64, 46666.67, 37142.86, 3e4, 3e4
     ]])
     # without pressure weighting
     chkmid = np.array([[
-        90000., 85000., 75000., 65000., 55000., 45000., 35000., 30000.,
-        30000.
+        90000., 85000., 75000., 65000., 55000., 45000., 35000., 30000., 30000.
     ]])
+    # Define destination coordinate
+    dpedges = np.arange(1e5, 0, -1e4)
+    dpmid = (dpedges[1:] + dpedges[:-1]) / 2
+    dpmid = xr.DataArray(dpmid[None, :], dims=('time', 'LAY'))
+    # Define source file with coordinate
+    srcf = xr.Dataset()
     spedges = np.arange(1e5, 0, -2e4)
     spmid = (spedges[1:] + spedges[:-1]) / 2
-    srcf['pmid'] = ('LAY',), spmid, dict(units='Pa')
-    srcf = srcf.expand_dims('time').transpose('time', 'LAY')
+    srcf['pmid'] = ('time', 'LAY',), spmid[None, :], dict(units='Pa')
     for pweight, chk in [(True, chkpmid), (False, chkmid)]:
         testf = zinterp(srcf, srcf['pmid'], dpmid, pweight=pweight)
         assert np.allclose(testf.pmid.round(2), chk)

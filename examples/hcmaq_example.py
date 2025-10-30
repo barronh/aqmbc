@@ -62,7 +62,7 @@ import aqmbc
 
 config = {
     "source": "cmaq",
-    "intmpl": "inputs/CMAQ/cmaq.equates.hemi.conc.%Y-%m-%d.nc",
+    "intmpl": "inputs/CMAQ/cmaq.equates.hemi_example.conc.%Y-%m-%d.nc",
     "GDNAM": GDNAM, "VGNAM": VGNAM,  # Destination Horizontal and Vertical Grids
     "bcon_dates": dates, "icon_dates": dates[:1],
 }

@@ -3,36 +3,13 @@ __all__ = ['gethybf', 'getllf', 'getmetaf']
 
 def getllf(GDNAM, gdpath=None, FTYPE=2):
     import numpy as np
-    import pandas as pd
     import xarray as xr
     import pyproj
     from ._cmaq import open_griddesc
     if isinstance(FTYPE, str):
         FTYPE = {'bcon': 2, 'icon': 1}
-    if gdpath is None:
-        from os.path import join, exists
-        from ..data import dataroot
-        gdpath1 = 'GRIDDESC.csv'
-        gdpath2 = join(dataroot, 'GRIDDESC.csv')
-        if exists(gdpath1):
-            gdpath = gdpath1
-        elif exists(gdpath2):
-            gdpath = gdpath2
-        else:
-            raise IOError(f'{gdpath1} or {gdpath2} must exist.')
-    dtypes = dict(
-        GDNAM=str, GDTYP=int, P_ALP=float, P_BET=float, P_GAM=float,
-        XCENT=float, YCENT=float, XORIG=float, YORIG=float,
-        XCELL=float, YCELL=float, NCOLS=int, NROWS=int, NTHIK=int,
-    )
-    gdf = pd.read_csv(gdpath, dtype=dtypes)
-    for attrs in gdf.to_dict('records'):
-        if attrs['GDNAM'] == GDNAM:
-            break
-    else:
-        raise KeyError(f'GDNAM {GDNAM} not found; {gdf["GDNAM"]}')
-    attrs['FTYPE'] = FTYPE
-    outf = open_griddesc(attrs)
+
+    outf = open_griddesc(GDNAM, gdpath=gdpath, FTYPE=FTYPE)
     proj = pyproj.Proj(outf.crs_proj4)
     nr = outf.NROWS
     nc = outf.NCOLS
@@ -85,7 +62,10 @@ def gethybf(VGNAM, vgpath=None, vgdf=None):
             elif exists(vgpath2):
                 vgpath = vgpath2
             else:
-                raise IOError(f'{vgpath1} or {vgpath2} must exist')
+                emsg = f'{vgpath1} or {vgpath2} must exist;'
+                emsg += ' Expecting CSV with columns vglvl,A,B where B [1]'
+                emsg += ' and A [Pa] are hybrid coordinates P=B*ps+A [Pa].'
+                raise IOError()
         vgdf = pd.read_csv(vgpath)
         if 'edge_mid' in vgdf:
             vgdf = vgdf.query('edge_mid == "edge"')

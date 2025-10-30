@@ -101,7 +101,7 @@ class icbc:
             self._rawf = self._opener(self._activepath)
         self._f = self._rawf.sel(**{self._timekey: [date]}, method='nearest')
 
-    def to_lonlat(self, lon, lat, method='nearest'):
+    def to_lonlat(self, lon, lat, method='nearest', extrapolate='warn'):
         """
         Extract locations from loaded input file.
 
@@ -118,6 +118,32 @@ class icbc:
         # overwrite to support projections
         imsg = f'Extracting n={lon.size} lon/lat pairs'
         self.log(imsg, level='INFO', source='to_lonlat')
+        if extrapolate in ('warn', 'error'):
+            west = float(self._f.lon.min())
+            east = float(self._f.lon.max())
+            south = float(self._f.lat.min())
+            north = float(self._f.lat.max())
+            outside = dict(
+                west=int(((lon - west) < 0).sum()),
+                east=int(((lon - east) > 0).sum()),
+                south=int(((lat - south) < 0).sum()),
+                north=int(((lat - north) > 0).sum()),
+            )
+            outside = {k: v for k, v in outside.items() if v > 0}
+            if len(outside) > 0:
+                latmin = float(lat.min())
+                latmax = float(lat.max())
+                lonmin = float(lon.min())
+                lonmax = float(lon.max())
+                wmsg = 'Some points out of bbox'
+                wmsg += f' ({west}, {south}, {east}, {north}); {outside};'
+                wmsg += ' Requested ranges'
+                wmsg += f'lat=({latmin}, {latmax}); lon=({lonmin}, {lonmax})'
+                if extrapolate == 'warn':
+                    self.log(wmsg, level='WARN', source='to_lonlat')
+                else:
+                    raise ValueError(wmsg)
+
         self._f = self._f.sel(lon=lon, lat=lat, method=method)
 
     def to_pres(self, pres, pmidkey=None, **kwds):
