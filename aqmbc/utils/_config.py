@@ -11,7 +11,10 @@ _dflts = {
 def _dateparser(dates):
     import pandas as pd
     if isinstance(dates, dict):
-        dates = pd.date_range(**dates)
+        dates = {
+            dk: pd.to_datetime(dv)
+            for dk, dv in dates.items()
+        }
     else:
         dates = pd.to_datetime(dates)
     return dates

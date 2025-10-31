@@ -182,7 +182,7 @@ def _addcoords(qf):
         time = pd.date_range(t0, periods=nt, freq=ds)
         qf.coords['TSTEP'] = time
     if 'VGLVLS' in attrs:
-        qf.coords['LEV'] = (qf.VGLVLS[1:] + qf.VGLVLS[:-1]) / 2
+        qf.coords['LAY'] = (qf.VGLVLS[1:] + qf.VGLVLS[:-1]) / 2
     nr = qf.sizes.get('ROW', attrs['NROWS'])
     nc = qf.sizes.get('COL', attrs['NCOLS'])
     if attrs['FTYPE'] == 1:

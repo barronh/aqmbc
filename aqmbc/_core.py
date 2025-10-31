@@ -40,7 +40,9 @@ class icbc:
                 bctxt = 'BCON'
             outtmpl = (
                 'outputs/'
-                + f'{bctxt}/{ctxt}_{gtxt}_{vtxt}_{bctxt}_%Y-%m-%dT%H%M%S.nc'
+                + f'{bctxt}/{ctxt}_{gtxt}_{vtxt}_{bctxt}_%Y-%m-%d'
+                + ('' if bctxt == 'BCON' else 'T%H%M%S')
+                + '.nc'
             )
         self.outtmpl = outtmpl
         self._log = []
@@ -290,6 +292,7 @@ class icbc:
         dates = pd.to_datetime(dates)
         if fdate is None:
             fdate = dates[0]
+        fdate = pd.to_datetime(fdate)
         if self.outtmpl is not False:
             outpath = fdate.strftime(self.outtmpl)
             if exists(outpath) and not overwrite:
@@ -299,7 +302,8 @@ class icbc:
         if zkwds is None:
             zkwds = {}
         datestr = ', '.join([d.strftime('%Y-%m-%dT%H%M%S') for d in dates])
-        imsg = f'aqmbc (v{version}) {cname} processing {datestr}'
+        fdatestr = fdate.strftime('%Y-%m-%dT%H%M%S')
+        imsg = f'aqmbc (v{version}) {cname} processing {fdatestr}'
         filedesc = [imsg]
         self.log(imsg, level='INFO', clear=True)
         for date in dates:
@@ -371,15 +375,19 @@ def to_ioapi(
             var_desc='TFLAG'.ljust(80)
         )
     )
+    history = bcf.attrs['HISTORY'].strip()
+    descr = bcf.attrs.get('description', history).strip()
     outf = xr.Dataset()
     outf['TFLAG'] = tf
     for vk in vks:
         vmin = bcf[vk].min()
         if vmin < minvalue:
             wvals = bcf[vk].where(lambda x: x > minvalue)
-            nna = wvals.isnull().sum()
-            if verbose:
-                imsg = f'INFO:: {nna} values < {minvalue} removed from {vk}'
+            nna = int(wvals.isnull().sum())
+            imsg = f'INFO:: {nna} values < {minvalue} removed from {vk}'
+            history += '; ' + imsg
+            descr += '; ' + imsg
+            if verbose > 0:
                 print(imsg)
             outv = wvals.fillna(minvalue)
         else:
@@ -422,8 +430,9 @@ def to_ioapi(
     outf.attrs['STIME'] = np.int32(tf[0, 0, 1])
     outf.attrs['VAR-LIST'] = vlist
     outf.attrs['NVARS'] = nv
-    outf.attrs['HISTORY'] = outf.attrs['HISTORY'].ljust(60*80)[:60*80]
+    outf.attrs['HISTORY'] = history.ljust(60*80)[:60*80]
     outf.attrs['FILEDESC'] = outf.attrs['FILEDESC'].ljust(60*80)[:60*80]
+    outf.attrs['description'] = descr
     idxs = list(outf.indexes)
     coords = list(outf.coords)
     outf = outf.drop_indexes(idxs).reset_coords(coords, drop=True)
@@ -475,11 +484,21 @@ def driver(cfg=None, **cfgkwds):
     if idates is not None:
         igf = getmetaf(**gkwds, FTYPE=1)
         ico = source(igf, **ckwds)
-        ipath = ico.process(idates)
-        out['icon'] = ipath
+        ipaths = []
+        for idate in idates:
+            ipath = ico.process([idate])
+            ipaths.append(ipath)
+        out['icon'] = ipaths
     if bdates is not None:
         bgf = getmetaf(**gkwds, FTYPE=2)
         bco = source(bgf, **ckwds)
-        bpath = bco.process(bdates)
-        out['bcon'] = bpath
+        bpaths = []
+        if isinstance(bdates, dict):
+            for fdate, bdates in sorted(bdates.items()):
+                bpath = bco.process(bdates, fdate=fdate)
+                bpaths.append(bpath)
+        else:
+            bpath = bco.process(bdates)
+            bpaths.append(bpath)
+        out['bcon'] = bpaths
     return out
