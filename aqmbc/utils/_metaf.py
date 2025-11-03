@@ -81,6 +81,7 @@ def gethybf(VGNAM, vgpath=None, vgdf=None):
     outf['hyai'] = hyai
     outf['hybm'] = hybm
     outf['hyam'] = hyam
+    outf.attrs['VGTYP'] = -9999
     return outf
 
 
@@ -96,4 +97,5 @@ def getmetaf(GDNAM, VGNAM, gdpath=None, vgpath=None, FTYPE=2, p0=1e5):
     gdf.attrs['VGTOP'] = np.asarray(pt, dtype='f')
     gdf.attrs['GDNAM'] = GDNAM.ljust(16)
     gdf.attrs['VGNAM'] = VGNAM.ljust(16)
+    gdf.attrs['VGTYP'] = vgf.attrs['VGTYP']
     return gdf

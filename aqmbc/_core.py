@@ -325,6 +325,8 @@ class icbc:
         tmpf.attrs['FILEDESC'] = '; '.join(filedesc)
         tmpf.attrs['HISTORY'] = '; '.join(self._log)
         tmpf.attrs['description'] = '; '.join(self._log)
+        tmpf.attrs['NLAYS'] = outf.sizes['LAY']
+        tmpf.attrs['VGTYP'] = qf.attrs['VGTYP']
         if self.outtmpl is False:
             return tmpf
         else:
@@ -428,6 +430,13 @@ def to_ioapi(
     outf.attrs['TSTEP'] = tstep
     outf.attrs['SDATE'] = np.int32(tf[0, 0, 0])
     outf.attrs['STIME'] = np.int32(tf[0, 0, 1])
+    now = pd.to_datetime('now', utc=True)
+    njd = np.int32(now.strftime('%Y%j'))
+    njt = np.int32(now.strftime('%H%M%S'))
+    outf.attrs.update(WDATE=njd, WTIME=njt, CDATE=njd, CTIME=njt)
+    outf.attrs['IOAPI_VERSION'] = 'N/A'.ljust(80)
+    outf.attrs['UPNAM'] = 'aqmbc {__version__}'.ljust(16)[:16]
+    outf.attrs['EXEC_ID'] = 'aqmbc {__version__}'.ljust(80)[:80]
     outf.attrs['VAR-LIST'] = vlist
     outf.attrs['NVARS'] = nv
     outf.attrs['HISTORY'] = history.ljust(60*80)[:60*80]
