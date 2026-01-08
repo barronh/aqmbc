@@ -3,16 +3,36 @@ from .._core import icbc
 
 class geoschem(icbc):
     def __init__(self, *args, bcprefix='SpeciesBC_', **kwds):
+        """
+        Arguments
+        ---------
+        metaf : xarray.Dataset
+        intmpl : str
+            Input file template using strftime format
+        exprs : list
+            List of dictionaries
+        outtmpl : str
+            Output file template using strftime format
+        verbose : int
+            Verbosity level
+        bcprefix : str
+            Prefix of collection with concentration data (e.g., SpeciesBC_,
+            SpeciesConc_, or something custom). Default SpeciesBC_.
+
+        Returns
+        -------
+        None
+        """
         super().__init__(*args, **kwds)
         self._pmidkey = 'pmid'
         self._psfckey = 'ps'
         self._bcprefix = bcprefix
 
-    def _opener(self, path):
+    def _opener(self, path, **kwds):
         import xarray as xr
         from ..utils import getstdatm
         from os.path import exists
-        tmpf = xr.open_dataset(path)
+        tmpf = xr.open_dataset(path, **kwds)
         bcprefix = self._bcprefix
         metpath = path.replace(bcprefix[:-1], 'StateMet')
         missp = 'Met_PMIDDRY' not in tmpf
@@ -38,6 +58,10 @@ class geoschem(icbc):
 
         tmpf['pmid'] = tmpf['Met_PMIDDRY'] * 100
         tmpf['pmid'].attrs.update(units='Pa')
-        tmpf['ps'] = tmpf['pmid'][:, 0] / tmpf.hybm[0]
+        if 'hybm' in tmpf:
+            sfc_hybm = tmpf.hybm[0]
+        else:
+            sfc_hybm = 0.992476
+        tmpf['ps'] = tmpf['pmid'][:, 0] / sfc_hybm
         # overwrite to add derived variables if necessary
         return tmpf.load()
