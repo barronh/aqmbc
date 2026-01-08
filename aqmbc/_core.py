@@ -487,7 +487,7 @@ def driver(cfg=None, **cfgkwds):
     bdates = opts['bcon_dates']
     idates = opts['icon_dates']
     source = getattr(getattr(bcon, opts['source']), opts['source'])
-    ckwds = ['intmpl', 'outtmpl', 'exprs']
+    ckwds = ['intmpl', 'outtmpl', 'exprs', 'bcprefix']
     ckwds = {k: v for k, v in opts.items() if k in ckwds}
     out = {}
     if idates is not None:
