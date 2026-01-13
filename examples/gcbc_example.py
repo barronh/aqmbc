@@ -5,7 +5,7 @@ GEOS-Chem Benchmark LBC for CMAQ
 This example shows how to use aqmbc with GEOS-Chem's publicly available
 benchmark outputs.
 
-* Dowload from Harvard (if not previously downloaded).
+* Download from Harvard (if not previously downloaded).
 * Extract, translate, and create time-independent files.
 * Display figures and statistics.
 
