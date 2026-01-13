@@ -3,7 +3,7 @@ import xarray as xr
 
 class icbc:
     def __init__(
-        self, metaf, intmpl, exprs=None, outtmpl=None, verbose=99
+        self, metaf, intmpl, exprs=None, outtmpl=None, verbose=1
     ):
         """
         Arguments
@@ -301,7 +301,6 @@ class icbc:
         qf = self._metaf
         if zkwds is None:
             zkwds = {}
-        datestr = ', '.join([d.strftime('%Y-%m-%dT%H%M%S') for d in dates])
         fdatestr = fdate.strftime('%Y-%m-%dT%H%M%S')
         imsg = f'aqmbc (v{version}) {cname} processing {fdatestr}'
         filedesc = [imsg]
@@ -384,9 +383,10 @@ def to_ioapi(
     for vk in vks:
         vmin = bcf[vk].min()
         if vmin < minvalue:
-            wvals = bcf[vk].where(lambda x: x > minvalue)
+            wvals = bcf[vk].where(lambda x: x >= minvalue)
             nna = int(wvals.isnull().sum())
             imsg = f'INFO:: {nna} values < {minvalue} removed from {vk}'
+            imsg += f' (min: {float(vmin):e})'
             history += '; ' + imsg
             descr += '; ' + imsg
             if verbose > 0:
@@ -487,7 +487,7 @@ def driver(cfg=None, **cfgkwds):
     bdates = opts['bcon_dates']
     idates = opts['icon_dates']
     source = getattr(getattr(bcon, opts['source']), opts['source'])
-    ckwds = ['intmpl', 'outtmpl', 'exprs', 'bcprefix']
+    ckwds = ['intmpl', 'outtmpl', 'exprs', 'bcprefix', 'verbose']
     ckwds = {k: v for k, v in opts.items() if k in ckwds}
     out = {}
     if idates is not None:
