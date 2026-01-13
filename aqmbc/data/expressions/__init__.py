@@ -55,4 +55,5 @@ for k, v in list(named_exprs.items()):
     named_exprs[k] = [join(exprsroot, p) for p in v]
 
 named_exprs['cmaq'] = None
+named_exprs['mpascmaq'] = None
 named_exprs['csvprofile'] = None

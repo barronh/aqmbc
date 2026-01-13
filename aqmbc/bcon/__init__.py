@@ -1,9 +1,12 @@
 __all__ = [
-    'cmaq', 'geoschem', 'gcbench', 'gchp', 'geoscf', 'csvprofile', 'raqms', 'tcr',
-    'waccm'
+    'csvprofile',
+    'cmaq', 'mpascmaq',
+    'geoschem', 'gcbench', 'gchp',
+    'geoscf', 'raqms', 'tcr', 'waccm'
 ]
 
 from . import cmaq
+from . import mpascmaq
 from . import geoscf
 from . import geoschem
 from . import gcbench
