@@ -356,6 +356,7 @@ def to_ioapi(
     -------
     None
     """
+    from . import __version__ as aqmbc_version
     import pandas as pd
     import numpy as np
     if vencoding is None:
@@ -435,8 +436,8 @@ def to_ioapi(
     njt = np.int32(now.strftime('%H%M%S'))
     outf.attrs.update(WDATE=njd, WTIME=njt, CDATE=njd, CTIME=njt)
     outf.attrs['IOAPI_VERSION'] = 'N/A'.ljust(80)
-    outf.attrs['UPNAM'] = 'aqmbc {__version__}'.ljust(16)[:16]
-    outf.attrs['EXEC_ID'] = 'aqmbc {__version__}'.ljust(80)[:80]
+    outf.attrs['UPNAM'] = f'aqmbc {aqmbc_version}'.ljust(16)[:16]
+    outf.attrs['EXEC_ID'] = f'aqmbc {aqmbc_version}'.ljust(80)[:80]
     outf.attrs['VAR-LIST'] = vlist
     outf.attrs['NVARS'] = nv
     outf.attrs['HISTORY'] = history.ljust(60*80)[:60*80]
