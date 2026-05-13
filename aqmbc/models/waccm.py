@@ -126,31 +126,59 @@ class waccm(pnc.PseudoNetCDFFile):
         """
         from PseudoNetCDF.coordutil import sigma2coeff
         import numpy as np
+        import PseudoNetCDF as pnc
 
         # time, lev, lat, lon or time, lev, PERIM
         psfc = self.variables['PS'][:][:, None, ...]
         slicer = psfc.ndim * [None]
         slicer[1] = slice(None)
         slicer = tuple(slicer)
-        p0 = self.variables['P0'][...]
-        hybm = self.variables['hybm'][:][slicer]
-        hyam = self.variables['hyam'][:][slicer]
-        hybi = self.variables['hybi'][:][slicer]
-        hyai = self.variables['hyai'][:][slicer]
+
+        # Safely handle P0 (compatible with 0-D scalars)
+        if 'P0' in self.variables:
+            p0 = float(np.atleast_1d(self.variables['P0'][...])[0])
+        else:
+            p0 = 100000.0
+
+        # Safely handle hybrid coefficients (strip erroneous dimensions)
+        def _get_1d(varname):
+            val = self.variables[varname][...]
+            return val[0] if getattr(val, 'ndim', 0) > 1 else val
+
+        hybm = _get_1d('hybm')[slicer]
+        hyam = _get_1d('hyam')[slicer]
+        hybi = _get_1d('hybi')[slicer]
+        hyai = _get_1d('hyai')[slicer]
+
         pmid = (psfc * hybm + p0 * hyam)
         pedges = (psfc * hybi + p0 * hyai)
+
         # ptop = pedges[:, 1:]
         # pbot = pedges[:, :-1]
         # delp = pbot - ptop
+
         newshape = list(pmid.shape)
         newshape.insert(2, len(vglvls) - 1)
         itershape = [newshape[0]] + newshape[3:]
-        sigma = (pedges - vgtop) / (psfc - vgtop)
+
+        # Protect against divide-by-zero or invalid sigma calculations.
+        with np.errstate(divide='ignore', invalid='ignore'):
+            sigma = (pedges - vgtop) / (psfc - vgtop)
+
+        sigma = np.nan_to_num(
+            sigma,
+            nan=0.0,
+            posinf=0.0,
+            neginf=0.0
+        )
+
         tmpv = np.zeros(newshape, dtype='f')
+
         for idx in np.ndindex(*itershape):
             srcidx = (idx[0], slice(None)) + tuple(idx[1:])
             destidx = (idx[0], slice(None), slice(None)) + tuple(idx[1:])
             fromvglvls = sigma[srcidx]
+
             # sigma2coeff expects vglvls to decrease (i.e., surface to top),
             # but WACCM is ordered top-to-surface. So, the vglvls are reversed
             # and the results are reversed as well.
@@ -160,25 +188,50 @@ class waccm(pnc.PseudoNetCDFFile):
 
         pweight = tmpv[:] * pmid[:, :, None, ...]
         pnorm = pweight.sum(1)
+
+        # Prevent divide-by-zero during weighted averaging.
+        pnorm = np.where(pnorm == 0, 1e-10, pnorm)
+
+        # Filter variables compatible with both ICON and BCON
         exprkeys = [
             key
             for key, var in self.variables.items()
-            if var.dimensions[:2] == ('time', 'lev')
+            if (
+                len(var.dimensions) >= 2
+                and var.dimensions[:2] == ('time', 'lev')
+            )
         ]
-        outvars = {}
-        for key in exprkeys:
-            outvars[key] = (
-                self.variables[key][:][:, :, None, ...] * pweight
-            ).sum(1) / pnorm
 
-        outf = pnc.PseudoNetCDFFile.from_ncvs(**outvars)
+        # Manually construct the output file to avoid broadcast errors from from_ncvs
+        outf = pnc.PseudoNetCDFFile()
 
         for pk in self.ncattrs():
             outf.setncattr(pk, self.getncattr(pk))
 
         for key, dim in self.dimensions.items():
-            if key not in outf.dimensions:
+            if key == 'lev':
+                outf.createDimension('lev', len(vglvls) - 1)
+            elif key == 'ilev':
+                outf.createDimension('ilev', len(vglvls))
+            elif key not in outf.dimensions:
                 outf.copyDimension(dim, key=key)
+
+        outvars = {}
+
+        for key in exprkeys:
+            outvars[key] = (
+                self.variables[key][:][:, :, None, ...] * pweight
+            ).sum(1) / pnorm
+
+            orig_dims = self.variables[key].dimensions
+
+            outvar = outf.createVariable(key, 'f', orig_dims)
+            outvar[...] = outvars[key]
+
+            ov = self.variables[key]
+            outvar.setncatts({
+                k: ov.getncattr(k) for k in ov.ncattrs()
+            })
 
         for key, var in self.variables.items():
             if (
@@ -186,13 +239,14 @@ class waccm(pnc.PseudoNetCDFFile):
                 and key not in self.dimensions
                 and key not in ('hyam', 'hybm', 'hyai', 'hybi')
             ):
+
+                # Filter out deprecated vertical layer variables
+                if 'lev' in var.dimensions or 'ilev' in var.dimensions:
+                    continue
+
                 outf.copyVariable(var, key=key)
 
-        for vk, ov in self.variables.items():
-            if vk in outf.variables:
-                outf.variables[vk].setncatts({
-                    k: ov.getncattr(k) for k in ov.ncattrs()
-                })
         outf.VGLVLS = vglvls
         outf.VGTOP = vgtop
+
         return outf
