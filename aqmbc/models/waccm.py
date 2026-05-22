@@ -202,7 +202,7 @@ class waccm(pnc.PseudoNetCDFFile):
             )
         ]
 
-        # Manually construct the output file to avoid broadcast errors from from_ncvs
+        # Manually construct the output file to avoid errors from from_ncvs
         outf = pnc.PseudoNetCDFFile()
 
         for pk in self.ncattrs():
