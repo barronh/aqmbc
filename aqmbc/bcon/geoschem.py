@@ -2,7 +2,7 @@ from .._core import icbc
 
 
 class geoschem(icbc):
-    def __init__(self, *args, bcprefix='SpeciesBC_', **kwds):
+    def __init__(self, *args, bcprefix=None, **kwds):
         """
         Arguments
         ---------
@@ -34,6 +34,18 @@ class geoschem(icbc):
         from os.path import exists
         tmpf = xr.open_dataset(path, **kwds)
         bcprefix = self._bcprefix
+        if bcprefix is None:
+            prefixes = {}
+            for vark in tmpf.data_vars:
+                if '_' in vark:
+                    prefix = vark[:vark.find('_') + 1]
+                    if not prefix.startswith('Met_'):
+                        prefixes.setdefault(prefix, 0)
+                        prefixes[prefix] += 1
+            prefixes = sorted([(cnt, pfx) for pfx, cnt in prefixes.items()])
+            bcprefix = prefixes[-1][1]
+            imsg = f'bcprefix={bcprefix}'
+            self.log(imsg, level='INFO', clear=True)
         metpath = path.replace(bcprefix[:-1], 'StateMet')
         missp = 'Met_PMIDDRY' not in tmpf
         misst = 'Met_T' not in tmpf

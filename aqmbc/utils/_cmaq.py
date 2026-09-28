@@ -1,4 +1,4 @@
-__all__ = ['open_ioapi', 'open_griddesc', 'attrs2proj4']
+__all__ = ['open_ioapi', 'open_griddesc', 'attrs2proj4', 'timeindependent']
 
 _lcctmpl = (
     '+proj=lcc +lat_1={P_ALP} +lat_2={P_BET} +lat_0={YCENT} +lon_0={P_GAM}'
@@ -262,3 +262,151 @@ def parse_griddesc(gdpath):
         grd[key].update(GDNAM=key, **myprj)
 
     return grd
+
+
+def timeindependent(ncf):
+    """
+    Edit SDATE, STIME, TSTEP and TFLAG values to 0. IOAPI reads this as time
+    independent.
+
+    Arguments
+    ---------
+    ncf : netcdf file
+        Must be editable
+
+    Returns
+    -------
+    None
+    """
+    tflag = ncf['TFLAG']
+    if tflag.shape[0] > 1:
+        raise ValueError('Files with 2+ times cannot be time-independent')
+    ncf['TFLAG'][:] = 0
+    ncf.SDATE = tflag[0, 0, 0]
+    ncf.STIME = tflag[0, 0, 0]
+    ncf.TSTEP = tflag[0, 0, 0]
+
+
+def cmaqready(
+    inpaths, times, verbose=0, minvalue=1e-30
+):
+    """
+    Concatenate inpaths on time and then interpolate to 25h instantaneous
+    times for CMAQ. Also trims FILEDESC and HISTORY if they are too long.
+
+    Arguments
+    ---------
+    inpaths : list or str
+        List of paths to use as the source, or
+        strftime template to find inputs using times
+    times : list-like
+        List-like of datetime objects for output. Note that typical CMAQ runs
+        for 24h from 00Z to 00Z and expects to find the first 00Z datetime in
+        the BCON file.
+    verbose : int
+        Level of verbosity
+    minvalue : scalar
+        Minimum value
+
+
+    Returns
+    -------
+    outpath : str or dataset
+        Output file or path.
+
+    Example
+    -------
+
+    import pandas as pd
+    from aqmbc.utils import cmaqready
+
+    intmpl = 'outputs/BCON/geoscf_36US3_WRFHYBRID_35L_%Y-%m-%dT%H%M%S.nc'
+    outpath = 'outputs/BCON/geoscf_36US3_WRFHYBRID_35L_%Y-%m-%d_00Z.nc'
+    indates = pd.date_range('2025-03-31T23:30', '2025-04-02T00:30', freq='3h')
+    inpaths = indates.strftime(intmpl)
+    times = pd.date_range('2025-04-01', periods=25, freq='1h')
+    outf = cmaqready(inpaths, times)
+    outf.to_netcdf(outpath)
+
+    """
+    import warnings
+    import pandas as pd
+    import xarray as xr
+    import numpy as np
+    import os
+
+    clim = 60 * 80
+    if isinstance(inpaths, str):
+        inpat = inpaths
+        testinpaths = sorted(set([d.strftime(inpat) for d in times]))
+        inpaths = [p for p in testinpaths if os.path.exists(p)]
+        missingpaths = sorted(set(testinpaths).difference(inpaths))
+        if len(missingpaths) > 0:
+            if verbose > 0:
+                print(f'Could not find {missingpaths}')
+        if len(inpaths) == 0:
+            raise IOError('Found no paths for specified dates')
+
+    infiles = [xr.open_dataset(p, decode_cf=False) for p in inpaths]
+    tmpds = xr.concat(infiles, dim='TSTEP')
+    yyyyjjj = tmpds['TFLAG'][:, 0, 0].values
+    hhmmss = tmpds['TFLAG'][:, 0, 1].values
+    intime = pd.to_datetime([
+        f'{yj}T{tj:06d}' for yj, tj in zip(yyyyjjj, hhmmss)
+    ], format='%Y%jT%H%M%S')
+    stime = times.min()
+    etime = times.max()
+    if intime.min() > stime:
+        warnings.warn(
+            f'Input files start {intime.min():%Y-%m-%dT%H}Z after target'
+            f' start {stime:%Y-%m-%dT%H}; earliest date copied to fill.'
+        )
+    if intime.max() < etime:
+        warnings.warn(
+            f'Input files end {intime.max():%Y-%m-%dT%H}Z before target'
+            f' end {etime:%Y-%m-%dT%H}; latest date copied to fill.'
+        )
+    tmpds.coords['TSTEP'] = intime
+    nvars = tmpds.attrs['NVARS']
+    tflagdata = np.array([
+        times.strftime('%Y%j').astype('i'),
+        times.strftime('%H%M%S').astype('i')
+    ]).T[:, None, :].repeat(nvars, 1)
+    tflag = xr.DataArray(
+        tflagdata, dims=('TSTEP', 'VAR', 'DATE-TIME'),
+        name='TFLAG', attrs=tmpds['TFLAG'].attrs
+    )
+    tmpds = tmpds.interp(TSTEP=times).reset_index(['TSTEP'], drop=True)
+    outds = tmpds[[]]
+    outds.attrs.update(tmpds.attrs)
+    outds.attrs['SDATE'] = np.int32(stime.strftime('%Y%j'))
+    outds.attrs['STIME'] = np.int32(stime.strftime('%H%M%S'))
+    outds.attrs['TSTEP'] = np.int32(10000)
+    fdesc = outds.attrs['FILEDESC']
+    hist = outds.attrs['HISTORY'].strip()
+    outds.attrs['FILEDESC'] = fdesc[:clim]
+    hist = (
+        'CMAQ ready interpolated from:'.ljust(79)
+        + ', '.join(inpaths)
+    )
+    outds.attrs['HISTORY'] = hist[:clim]
+    if len(fdesc) > clim:
+        outds.attrs['description'] = fdesc
+    outds['TFLAG'] = tflag.astype('i')
+    titimes = list(enumerate(times))
+    for key in tmpds.data_vars:
+        if key == 'TFLAG':
+            continue
+        # outds[key] = tmpds[key].astype('f')
+        tmpv = np.maximum(tmpds[key].astype('f'), minvalue)
+        for ti, t in titimes[::-1]:
+            if t < intime.min():
+                tmpv[ti] = tmpv[ti + 1]
+                warnings.warn(f'{t} back filled')
+        for ti, t in titimes:
+            if t > intime.max():
+                tmpv[ti] = tmpv[ti - 1]
+                warnings.warn(f'{t} forward filled')
+        outds[key] = tmpv
+    else:
+        return outds

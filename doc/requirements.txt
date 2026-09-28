@@ -9,9 +9,8 @@ netcdf4
 pycno
 scipy
 pyproj
-sphinx==7.0.1
-sphinx-rtd-theme
-sphinx-gallery<=0.13
+sphinx
+sphinx-gallery
 sphinx_design
 sphinx-copybutton
 pydata-sphinx-theme<0.9.0

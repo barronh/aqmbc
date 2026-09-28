@@ -88,7 +88,7 @@ def download(
 
 def download_https(
     dates, sleep=10, metvars=None, chmvars=None, xgcvars=None, bbox=None,
-    keepglobal=False, destroot='inputs/GEOSCF'
+    keepglobal=False, destroot='inputs/GEOSCF', version=None
 ):
     """
     see download
@@ -105,7 +105,19 @@ def download_https(
 
     xlim = slice(*bbox[::2])
     ylim = slice(*bbox[1::2])
-    hroot = 'https://portal.nccs.nasa.gov/datashare/gmao/geos-cf/v1/das/'
+    if version is None:
+      if min([d.year for d in dates]) > 2025:
+        version = 'v2'
+        modtag = 'GEOS.cf.ana'
+      else:
+        version = 'v1'
+        modtag = 'GEOS-CF.v01.rpl'
+        mettag = 'met_tavg_1hr_g1440x721_v36'
+        chmtag = 'chm_tavg_1hr_g1440x721_v36'
+        xgctag = 'xgc_tavg_1hr_g1440x721_v36'
+     
+    hroot = 'https://portal.nccs.nasa.gov/datashare/gmao/geos-cf'
+    hroot += f'/{version}/ana/'
     outpaths = []
     if metvars is None:
         metvars = ['zl', 'airdens', 'ps', 'delp', 'q', 't']
@@ -115,7 +127,6 @@ def download_https(
         chmvars = list(chmvars)
     if xgcvars is not None:
         xgcvars = list(xgcvars)
-
     for date in dates:
         outdir = f'{destroot}/{date:%Y/%m/%d}'
         pathsuf = f'{date:%Y-%m-%dT%H%M}Z.nc'
@@ -128,10 +139,10 @@ def download_https(
 
         print(f'Making: {outpath}', flush=True)
         os.makedirs(os.path.dirname(outpath), exist_ok=True)
-        prefix = f'{hroot}/{date:Y%Y/M%m/D%d}/GEOS-CF.v01.rpl'
-        meturl = f'{prefix}.met_tavg_1hr_g1440x721_v36.{date:%Y%m%d_%H%M}z.nc4'
-        chmurl = f'{prefix}.chm_tavg_1hr_g1440x721_v36.{date:%Y%m%d_%H%M}z.nc4'
-        xgcurl = f'{prefix}.xgc_tavg_1hr_g1440x721_v36.{date:%Y%m%d_%H%M}z.nc4'
+        prefix = f'{hroot}/{date:Y%Y/M%m/D%d}/{modtag}'
+        meturl = f'{prefix}.{mettag}.{date:%Y%m%d_%H%M}z.nc4'
+        chmurl = f'{prefix}.{chmtag}.{date:%Y%m%d_%H%M}z.nc4'
+        xgcurl = f'{prefix}.{xgctag}.{date:%Y%m%d_%H%M}z.nc4'
         metdest = meturl[8:]
         chmdest = chmurl[8:]
         xgcdest = xgcurl[8:]
@@ -206,7 +217,7 @@ def download_https(
 
 def download_opendap(
     dates, sleep=60, metvars=None, chmvars=None, xgcvars=None, bbox=None,
-    destroot='inputs/GEOSCF'
+    destroot='inputs/GEOSCF', version=None
 ):
     """
     see download
@@ -224,7 +235,17 @@ def download_opendap(
     xlim = slice(*bbox[::2])
     ylim = slice(*bbox[1::2])
 
-    rooturl = 'https://opendap.nccs.nasa.gov/dods/gmao/geos-cf/assim'
+    if version is None:
+      if min([d.year for d in dates]) > 2025:
+        version = 'v2'
+      else:
+        version = 'v1'
+    rooturl = 'https://opendap.nccs.nasa.gov/dods/gmao/geos-cf'
+    if version == 'v1':
+        rooturl += '/assim'
+    else:
+        rooturl += f'{version}/ana'
+
     meturl = f'{rooturl}/met_tavg_1hr_g1440x721_v36'
     chmurl = f'{rooturl}/chm_tavg_1hr_g1440x721_v36'
     xgcurl = f'{rooturl}/xgc_tavg_1hr_g1440x721_v36'

@@ -1,6 +1,78 @@
 import xarray as xr
 
 
+def _variable_status(code_string, global_vars=None):
+    """
+    Parses a string of Python code and returns undefined variables with line
+    numbers.
+
+    Arguments
+    ---------
+    code_string : str
+        Code to be run in exec mode and identify undefined variables and global
+        variables that are not used.
+    global_vars : dict
+        Dictionary of global variables
+
+    Returns
+    -------
+    status : dict
+        keys (undefined, unused) map to dictionaries of line numbers by key
+        that are undefined in expressions or unused from globals.
+    """
+    import ast
+
+    # Load a parse tree
+    try:
+        tree = ast.parse(code_string)
+    except SyntaxError as e:
+        print(f"Syntax Error in code: {e}")
+        return {}
+
+    defined_info = {}     # Maps variable definition to line number
+    referenced_vars = {}  # Maps variable reference name to line number
+    undefined_info = {}
+    global_info = {}
+    local_info = {}
+
+    # 1. Walk through the code to identify all defined and used variables
+    for node in ast.walk(tree):
+        # Track assignments (e.g., x = 5)
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    defined_info.setdefault(target.id, [])
+                    defined_info[target.id].append(node.lineno)
+
+        # Track standalone names (variables being read)
+        elif isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
+            referenced_vars.setdefault(node.id, [])
+            referenced_vars[node.id].append(node.lineno)
+
+    # 2. Find variables that are used but never defined
+    for var, lines in referenced_vars.items():
+        line = min(lines)
+        # if not defined, set the line no to one more than this line
+        defline = min(defined_info.get(var, [line + 1]))
+        if defline > line and var not in global_vars:
+            undefined_info.setdefault(var, [])
+            undefined_info[var].append(line)
+        elif var in global_vars:
+            global_info.setdefault(var, [])
+            global_info[var].append(line)
+        else:
+            local_info.setdefault(var, [])
+            local_info[var].append(line)
+
+    status = {
+        'undefined': undefined_info,
+        'defined': defined_info,
+        'global': global_info,
+        'local': local_info
+    }
+    return status
+
+
 class icbc:
     def __init__(
         self, metaf, intmpl, exprs=None, outtmpl=None, verbose=1
@@ -9,6 +81,8 @@ class icbc:
         Arguments
         ---------
         metaf : xarray.Dataset
+            CMAQ-like file that includes structure for output
+            (FTYPE=1 or FTYPE=2)
         intmpl : str
             Input file template using strftime format
         exprs : list
@@ -17,10 +91,6 @@ class icbc:
             Output file template using strftime format
         verbose : int
             Verbosity level
-
-        Returns
-        -------
-        None
         """
         self.intmpl = intmpl
         self._rawf = None
@@ -76,6 +146,11 @@ class icbc:
         # overwrite to add derived variables if necessary
         return tmpf
 
+    def file_dates(self, date):
+        self.load_date(date)
+        df = self._rawf[self._timekey].to_dataframe()
+        return df[self._timekey].to_numpy()
+
     def load_date(self, date):
         """
         Load a date to process
@@ -101,7 +176,15 @@ class icbc:
             path = self._activepath = date.strftime(self.intmpl)
             self.log(f'Opening {path}', level='STATUS', source='load_date')
             self._rawf = self._opener(self._activepath)
-        self._f = self._rawf.sel(**{self._timekey: [date]}, method='nearest')
+        msg = f'Selecting {self._timekey}={date} (nearest)'
+        self.log(msg, level='STATUS', source='load_date')
+        outf = self._rawf.sel(**{self._timekey: [date]}, method='nearest')
+        rn = self._rawf.sizes[self._timekey]
+        ln = outf.sizes[self._timekey]
+        msg = f'Raw file had {rn} times; loaded file has {ln}'
+        self.log(msg, level='STATUS', source='load_date')
+        self._f = outf
+        return outf
 
     def to_lonlat(self, lon, lat, method='nearest', extrapolate='warn'):
         """
@@ -117,14 +200,15 @@ class icbc:
         -------
         None
         """
+        inputf = self._f
         # overwrite to support projections
         imsg = f'Extracting n={lon.size} lon/lat pairs'
         self.log(imsg, level='INFO', source='to_lonlat')
         if extrapolate in ('warn', 'error'):
-            west = float(self._f.lon.min())
-            east = float(self._f.lon.max())
-            south = float(self._f.lat.min())
-            north = float(self._f.lat.max())
+            west = float(inputf.lon.min())
+            east = float(inputf.lon.max())
+            south = float(inputf.lat.min())
+            north = float(inputf.lat.max())
             outside = dict(
                 west=int(((lon - west) < 0).sum()),
                 east=int(((lon - east) > 0).sum()),
@@ -146,7 +230,9 @@ class icbc:
                 else:
                     raise ValueError(wmsg)
 
-        self._f = self._f.sel(lon=lon, lat=lat, method=method)
+        outf = inputf.sel(lon=lon, lat=lat, method=method)
+        self._f = outf
+        return outf
 
     def to_pres(self, pres, pmidkey=None, **kwds):
         """
@@ -167,14 +253,17 @@ class icbc:
         None
         """
         from .utils import zinterp
+        inputf = self._f
         if pmidkey is None:
             pmidkey = self._pmidkey
-        srcz = self._f[pmidkey]
+        srcz = inputf[pmidkey]
         nzin = srcz.shape[1]
         nzout = pres.shape[1]
         imsg = f'Interp pres from nzin={nzin} to nzout={nzout}'
         self.log(imsg, level='INFO', source='to_pres')
-        self._f = zinterp(self._f, srcz, pres, **kwds)
+        outf = zinterp(inputf, srcz, pres, **kwds)
+        self._f = outf
+        return outf
 
     def to_hyb(self, hyam, hybm, pmidkey=None, psfckey=None, **kwds):
         """
@@ -200,15 +289,16 @@ class icbc:
         -------
         None
         """
+        inputf = self._f
         if psfckey is None:
             psfckey = self._psfckey
-        ps = self._f[psfckey]
+        ps = inputf[psfckey]
         dims = list(ps.dims)
         dims.insert(1, hybm.dims[0])
         pres = (hybm * ps + hyam).transpose(*dims)
         imsg = 'Calculated pres from HYBRID hyam and hybm.'
         self.log(imsg, level='INFO', source='to_hyb')
-        self.to_pres(pres, pmidkey=pmidkey, **kwds)
+        return self.to_pres(pres, pmidkey=pmidkey, **kwds)
 
     def translate(self, exprs=None):
         """
@@ -226,37 +316,61 @@ class icbc:
             with variables according to exprs.
         """
         import numpy as np
-        outf = self._f[list(self._f.coords)]
+
+        inputf = self._f
+        outf = inputf[list(inputf.coords)]
         if exprs is not None:
             pass
-        if self._exprs is None:
+        elif self._exprs is not None:
+            exprs = self._exprs
+        else:
             exprs = []
-            for k, v in self._f.data_vars.items():
+            for k, v in inputf.data_vars.items():
                 if 'LAY' in v.dims:
                     attrs = {pk: pv for pk, pv in v.attrs.items()}
                     attrs['name'] = k
                     attrs['expression'] = k
                     exprs.append(attrs)
-        else:
-            exprs = self._exprs
+
         glbs = dict(np=np)
-        glbs.update({k: v for k, v in self._f.data_vars.items()})
+        glbs.update({k: v for k, v in inputf.data_vars.items()})
         lcls = {}
         imsg = f'Evaluating n={len(exprs)} expressions'
         self.log(imsg, level='INFO', source='translate')
-        for expropt in exprs:
-            key = expropt['name'].strip()
-            estr = expropt['expression']
-            dmsg = f'Evaluating {key}={estr}'
-            self.log(dmsg, level='STATUS', source='translate')
-            attrs = {k: v for k, v in expropt.items()}
-            attrs.setdefault('long_name', key)
-            attrs.setdefault('var_desc', estr)
-            attrs.setdefault('units', 'unknown')
-            lcls[key] = eval(estr, glbs, lcls).astype('f')
-            lcls[key].attrs.update(attrs)
-            outf[key] = lcls[key]
 
+        bigexpr = '\n'.join([
+            expropt['name'] + ' = ' + expropt['expression'] for expropt in exprs
+        ])
+        varstat = _variable_status(bigexpr, set(list(glbs)))
+        unusedvars = [
+            k for k in glbs if k not in varstat['global'] and k != 'np'
+        ]
+        if len(unusedvars) > 0:
+            imsg = f'available variables not used: {str(unusedvars)}'
+            self.log(imsg, level='info', source='translate')
+        for vk, lns in sorted(varstat['undefined'].items()):
+            for ln in lns:
+                estr = exprs[ln - 1]
+                imsg = f'{vk} used on line {ln} ({estr})'
+                self.log(imsg, level='ERROR', source='translate')
+        for expropt in exprs:
+            try:
+                key = expropt['name'].strip()
+                estr = expropt['expression']
+                dmsg = f'Evaluating {key}={estr}'
+                self.log(dmsg, level='STATUS', source='translate')
+                attrs = {k: v for k, v in expropt.items()}
+                attrs.setdefault('long_name', key)
+                attrs.setdefault('var_desc', estr)
+                attrs.setdefault('units', 'unknown')
+                lcls[key] = eval(estr, glbs, lcls).astype('f')
+                lcls[key].attrs.update(attrs)
+                outf[key] = lcls[key]
+            except Exception as e:
+                emsg = str(e)
+                self.log(emsg, level='ERROR', source='translate')
+
+        self._f = outf
         return outf
 
     def process(
@@ -268,10 +382,16 @@ class icbc:
         Arguments
         ---------
         dates : iterable
-            Iterable of date-like objects to create an icbc file.
+            dates to process for lateral boundary conditions.
+            dict - Each key is the output file date and values are input
+                   datetimes that can cross files.
+            list - Each item is both the input file date and output file date.
+                   All datetimes from the input file will be output.
+            All dates will be processed with pandas.to_datetime
+
         fdate : datetime-like
-            Used as the date for the file name. Defaults to the first element
-            of dates.
+            Used as the date for the output file name. Defaults to the first
+             element of dates.
         pres : xarray.DataArray
             Pressure used as the target for vertical interpolation.
         zkwds : dict
@@ -451,6 +571,13 @@ def to_ioapi(
 
 def driver(cfg=None, **cfgkwds):
     """
+    Configuration can be provided by a dictionary (cfg) or keywords. Either
+    way, the expected keys are the same.
+
+    Arguments
+    ---------
+    cfg : dict
+        Optional dictionary using the keywords below.
     GDNAM : str
         Name of horizontal grid (12US1, 36US3, 108NHEMI2)
     gdpath : str
@@ -469,11 +596,25 @@ def driver(cfg=None, **cfgkwds):
         If None, defaults to typical values for source.
         If list of strings, loads expressions from files.
         If list of dictionaries, each dictionary should have units, expression,
-        and name.
-    bcon_dates : iterable
-        Iterable of dates to process for lateral boundary conditions.
-    icon_dates : iterable
-        Iterable of dates to process for intial boundary conditions.
+        and name keys.
+        See loadexpr for more details.
+    bcon_dates : dict or list
+        dates to process for lateral boundary conditions.
+        dict - Each key is the output file date and values are input datetimes
+               that can cross files.
+        list - Each item is both the input file date and output file date.
+               All datetimes from the input file will be output.
+        All dates will be processed with pandas.to_datetime
+    icon_dates : list
+        List of dates to process for intial boundary conditions. Each item will
+        be used to identify the input file, select just that datetime, and
+        output a BCON file.
+        All dates will be processed with pandas.to_datetime
+
+    Returns
+    -------
+    out : dict
+        A dictionary of icon and bcon paths.
     """
     from copy import deepcopy
     if cfg is None:
@@ -508,7 +649,9 @@ def driver(cfg=None, **cfgkwds):
                 bpath = bco.process(bdates, fdate=fdate)
                 bpaths.append(bpath)
         else:
-            bpath = bco.process(bdates)
-            bpaths.append(bpath)
+            for bdate in bdates:
+                fbdates = bco.file_dates(bdate)
+                bpath = bco.process(fbdates)
+                bpaths.append(bpath)
         out['bcon'] = bpaths
     return out

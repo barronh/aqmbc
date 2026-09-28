@@ -7,6 +7,12 @@ named_exprs = {
     'geoscf': [
         'geoscf_met.json', 'geoscf_cb6.json', 'geoscf_ae7.json'
     ],
+    ('geoscfv2', 'cb6_ae7'): [
+        'geoscf_met.json', 'geoscfv2_cb6.json', 'geoscfv2_ae7.json'
+    ],
+    'geoscfv1': [
+        'geoscf_met.json', 'geoscf_cb6.json', 'geoscf_ae7.json'
+    ],
     ('geoscf', 'cb6_ae7'): [
         'geoscf_met.json', 'geoscf_cb6.json', 'geoscf_ae7.json'
     ],
@@ -15,10 +21,6 @@ named_exprs = {
     ],
     ('geoschem', 'test'): [
         'gcnc_airmolden.json', 'gc14_o3so4.json',
-    ],
-    'geoschem': [
-        'gcnc_airmolden.json', 'gc14_to_cb6r5.json', 'gc14_to_cb6mp.json',
-        'gc14_to_ae7.json'
     ],
     ('geoschem', 'cb6_ae7'): [
         'gcnc_airmolden.json', 'gc14_to_cb6r5.json', 'gc14_to_cb6mp.json',
@@ -36,13 +38,13 @@ named_exprs = {
         'gcnc_airmolden.json', 'gc14_to_cb6r5.json', 'gc14_to_cb6mp.json',
         'gc14_soas_to_ae7.json'
     ],
-    'raqms': ['raqms_to_cb6r4_ae6.json'],
+    ('raqms',): ['raqms_to_cb6r4_ae6.json'],
     ('raqms', 'cb6_ae6'): ['raqms_to_cb6r4_ae6.json'],
     ('raqms', 'test'): ['raqms_o3so4.json'],
-    'tcr': ['tcr_cb6.json', 'tcr_ae7.json'],
+    ('tcr',): ['tcr_cb6.json', 'tcr_ae7.json'],
     ('tcr', 'cb6_ae7'): ['tcr_cb6.json', 'tcr_ae7.json'],
     ('tcr', 'test'): ['tcr_o3so4.json'],
-    'waccm': [
+    ('waccm',): [
         'waccm_met.json', 'waccm_cb6.json', 'waccm_ae7.json'
     ],
     ('waccm', 'cb6_ae7'): [
@@ -54,6 +56,11 @@ named_exprs = {
 for k, v in list(named_exprs.items()):
     named_exprs[k] = [join(exprsroot, p) for p in v]
 
-named_exprs['cmaq'] = None
-named_exprs['mpascmaq'] = None
-named_exprs['csvprofile'] = None
+# Add defaults
+named_exprs[('geoschem',)] = named_exprs[('geoschem', 'cb6_ae7')]
+named_exprs[('gchp',)] = named_exprs[('geoschem',)]
+named_exprs[('geoscf',)] = named_exprs[('geoscf', 'cb6_ae7')]
+named_exprs[('geoscfv2',)] = named_exprs[('geoscfv2', 'cb6_ae7')]
+named_exprs[('cmaq',)] = None
+named_exprs[('mpascmaq',)] = None
+named_exprs[('csvprofile',)] = None

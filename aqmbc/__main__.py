@@ -1,7 +1,10 @@
-from aqmbc.utils import driver
+from aqmbc._core import driver
 import argparse
+import json
 
 prsr = argparse.ArgumentParser()
 prsr.add_argument('cfgpath')
 args = prsr.parse_args()
-driver(args.cfgpath)
+with open(args.cfgpath, 'r') as cfgf:
+    cfg = json.load(cfgf)
+driver(cfg)

@@ -29,6 +29,84 @@ _check10th = {
 }
 
 
+def test_loadexpr_dicts():
+    from ..utils import loadexpr
+    inp = [{'name': 'O3', 'expression': 'o3vmr[:] * 1e6', 'units': 'ppmV'}]
+    out = loadexpr(None)
+    assert out is None
+    out = loadexpr([])
+    assert len(out) == 0
+    out = loadexpr(inp)
+    assert len(out) == 1
+    for k in inp[0]:
+        assert inp[0][k] == out[0][k]
+    for excludek in ['name', 'expression', 'units']:
+        inpi = [{k: v for k, v in el.items() if k != excludek} for el in inp]
+        try:
+            out = loadexpr(inpi)
+            raise IOError(f'should have failed - {excludek} is required')
+        except Exception:
+            pass
+
+    for intk in ['name', 'expression', 'units']:
+        inpi = [{k: v for k, v in el.items()} for el in inp]
+        inpi[0][intk] = 1
+        try:
+            out = loadexpr(inpi)
+        except Exception:
+            continue
+        raise IOError(f'should have failed - {intk} should be str')
+
+
+def test_loadexpr_paths():
+    import os
+    from ..data.expressions import named_exprs
+    from ..utils import loadexpr
+    for name, paths in named_exprs.items():
+        if paths is not None:
+            out1 = loadexpr(paths)
+            assert len(out1) > 0
+            paths = [os.path.basename(p) for p in paths]
+            out2 = loadexpr(paths)
+            assert len(out1) == len(out2)
+
+
+def test_loadexpr_names():
+    from ..utils import loadexpr
+    for name in ['geoschem', ('geoschem',), ['geoschem'], [('geoschem',)]]:
+        out = loadexpr(name)
+        assert len(out) > 0
+    for name in ['geos-chem', ('geos-chem',)]:
+        try:
+            out = loadexpr(name)
+        except:
+            continue
+        raise IOError(f'{name} does not exist; should have failed')
+
+
+def test_loadconfig():
+    import numpy as np
+    from ..utils import loadconfig
+    dates = ['2025-12-31', '2026-01-01', '2026-01-01']
+
+    config = {
+        "source": "gchp",
+        "intmpl": '/work/ROMO/users/bhenders/temp/gchp/GEOSChem.BoundaryConditions.%Y%m%d_%H00z.nc4',
+        "GDNAM": '108US2', "VGNAM": 'WRFHYBRID_35L',
+        "bcon_dates": dates, "icon_dates": dates[:1],
+        "verbose": 99
+    }
+    cfg1 = loadconfig(config)
+    dates1 = cfg1['bcon_dates']
+    config2 = {k: v for k, v in config.items()}
+    config2['bcon_dates'] = {'2026-01-01': dates}
+    cfg2 = loadconfig(config2)
+    dates2 = cfg2['bcon_dates']['2026-01-01']
+    assert len(dates1) == len(dates2)
+    for d1, d2 in zip(dates1, dates2):
+        assert d1 == d2
+
+
 def test_getllf():
     import numpy as np
     from ..utils import getllf
