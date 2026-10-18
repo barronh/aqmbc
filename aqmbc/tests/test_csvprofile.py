@@ -7,13 +7,13 @@ def test_csvprofile():
         os.chdir(td)
         csvpath = 'csvprofile.csv'
         with open(csvpath, 'w') as csvf:
-            csvf.write('''ps(Pa),pmid(Pa),O3(ppmV),ASO4J(micrograms/m**3)
-1e5,8e4,0.04,0.8
-,6e4,0.05,0.2
-,4e4,0.06,0.1
-,2e4,0.08,0.04
-,1e4,.4,0.02
-,0.5e4,2,0.02
+            csvf.write('''time(UTC),ps(Pa),pmid(Pa),O3(ppmV),ASO4J(micrograms/m**3)
+1970-01-01 00:00:00,1e5,8e4,0.04,0.8
+1970-01-01 00:00:00,,6e4,0.05,0.2
+1970-01-01 00:00:00,,4e4,0.06,0.1
+1970-01-01 00:00:00,,2e4,0.08,0.04
+1970-01-01 00:00:00,,1e4,.4,0.02
+1970-01-01 00:00:00,,0.5e4,2,0.02
 ''')
         dates = ['2019-04-01T00']
         config = {
@@ -44,13 +44,13 @@ def test_report():
         os.chdir(td)
         csvpath = 'csvprofile.csv'
         with open(csvpath, 'w') as csvf:
-            csvf.write('''ps(Pa),pmid(Pa),O3(ppmV),ASO4J(micrograms/m**3)
-1e5,8e4,0.04,0.8
-,6e4,0.05,0.2
-,4e4,0.06,0.1
-,2e4,0.08,0.04
-,1e4,.4,0.02
-,0.5e4,2,0.02
+            csvf.write('''time(UTC),ps(Pa),pmid(Pa),O3(ppmV),ASO4J(micrograms/m**3)
+1970-01-01 00:00:00,1e5,8e4,0.04,0.8
+1970-01-01 00:00:00,,6e4,0.05,0.2
+1970-01-01 00:00:00,,4e4,0.06,0.1
+1970-01-01 00:00:00,,2e4,0.08,0.04
+1970-01-01 00:00:00,,1e4,.4,0.02
+1970-01-01 00:00:00,,0.5e4,2,0.02
 ''')
         dates = ['2019-04-01T00']
         config = {
@@ -82,13 +82,13 @@ def test_exprs():
         os.chdir(td)
         csvpath = 'csvprofile.csv'
         with open(csvpath, 'w') as csvf:
-            csvf.write('''ps(Pa),pmid(Pa),O3(ppbV),ASO4J(g/m**3)
-1e5,8e4,40,0.8e-6
-,6e4,50,0.2e-6
-,4e4,60,0.1e-6
-,2e4,80,0.04e-6
-,1e4,400,0.02e-6
-,0.5e4,2000,0.02e-6
+            csvf.write('''time(UTC),ps(Pa),pmid(Pa),O3(ppbV),ASO4J(g/m**3)
+1970-01-01 00:00:00,1e5,8e4,40,0.8e-6
+1970-01-01 00:00:00,,6e4,50,0.2e-6
+1970-01-01 00:00:00,,4e4,60,0.1e-6
+1970-01-01 00:00:00,,2e4,80,0.04e-6
+1970-01-01 00:00:00,,1e4,400,0.02e-6
+1970-01-01 00:00:00,,0.5e4,2000,0.02e-6
 ''')
         dates = ['2019-04-01T00']
         exprs = [

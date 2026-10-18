@@ -79,19 +79,19 @@ def test_loadexpr_names():
     for name in ['geos-chem', ('geos-chem',)]:
         try:
             out = loadexpr(name)
-        except:
+        except Exception:
             continue
         raise IOError(f'{name} does not exist; should have failed')
 
 
 def test_loadconfig():
-    import numpy as np
     from ..utils import loadconfig
     dates = ['2025-12-31', '2026-01-01', '2026-01-01']
 
+    intmpl = '/work/ROMO/users/bhenders/temp/gchp/'
+    intmpl += 'GEOSChem.BoundaryConditions.%Y%m%d_%H00z.nc4'
     config = {
-        "source": "gchp",
-        "intmpl": '/work/ROMO/users/bhenders/temp/gchp/GEOSChem.BoundaryConditions.%Y%m%d_%H00z.nc4',
+        "source": "gchp", "intmpl": intmpl,
         "GDNAM": '108US2', "VGNAM": 'WRFHYBRID_35L',
         "bcon_dates": dates, "icon_dates": dates[:1],
         "verbose": 99
@@ -149,3 +149,23 @@ def test_zinterp():
         isrcf = srcf.isel(LAY=slice(None, None, -1))
         itestf = zinterp(isrcf, isrcf['pmid'], dpmid, pweight=pweight)
         assert np.allclose(itestf.pmid.round(2), chk)
+
+
+def test_haversinenn():
+    import numpy as np
+    import xarray as xr
+    from ..utils import haversinenn
+    d = xr.Dataset()
+    d['lon'] = ('PERIM',), [-80., -30, -30, -30, -130, -80, -130, -130]
+    d['lat'] = ('PERIM',), [20., 20, 40, 60, 60, 60, 20, 40]
+    s = xr.Dataset()
+    s.coords['lon'] = np.arange(-182.5, 180, 5, dtype='d')
+    s.coords['lat'] = np.arange(-87, 90, 4, dtype='d')
+    s['testlat'], s['testlon'] = xr.broadcast(s.lat, s.lon)
+    s['test'] = np.sin(np.radians(s.lat)) + np.sin(np.radians(s.lon))
+    i = haversinenn(s, d)
+    latichk = np.array([27, 27, 32, 37, 37, 37, 27, 32])
+    lonichk = np.array([20, 31, 31, 31, 10, 20, 11, 10])
+    assert np.allclose(i.lat, latichk)
+    assert np.allclose(i.lon, lonichk)
+    # satd = s.isel(**i.coords)

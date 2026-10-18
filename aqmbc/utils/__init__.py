@@ -1,7 +1,8 @@
 __all__ = [
     'zinterp', 'vglvls2wrfab', 'getllf', 'gethybf', 'getmetaf',
     'loadconfig', 'loadexpr', 'getstdatm', 'open_ioapi',
-    'open_griddesc', 'to_ioapi', 'cmaqready', 'timeindependent'
+    'open_griddesc', 'to_ioapi', 'cmaqready', 'timeindependent',
+    'haversinenn'
 ]
 
 from ._zinterp import zinterp
@@ -9,5 +10,6 @@ from ._wrfhybrid import vglvls2wrfab
 from ._metaf import getllf, gethybf, getmetaf
 from ._config import loadconfig, loadexpr
 from ._stdatm import getstdatm
+from ._dist import haversinenn
 from ._cmaq import open_ioapi, open_griddesc, cmaqready, timeindependent
 from .._core import to_ioapi

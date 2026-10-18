@@ -106,16 +106,16 @@ def download_https(
     xlim = slice(*bbox[::2])
     ylim = slice(*bbox[1::2])
     if version is None:
-      if min([d.year for d in dates]) > 2025:
-        version = 'v2'
-        modtag = 'GEOS.cf.ana'
-      else:
-        version = 'v1'
-        modtag = 'GEOS-CF.v01.rpl'
-        mettag = 'met_tavg_1hr_g1440x721_v36'
-        chmtag = 'chm_tavg_1hr_g1440x721_v36'
-        xgctag = 'xgc_tavg_1hr_g1440x721_v36'
-     
+        if min([d.year for d in dates]) > 2025:
+            version = 'v2'
+            modtag = 'GEOS.cf.ana'
+        else:
+            version = 'v1'
+            modtag = 'GEOS-CF.v01.rpl'
+            mettag = 'met_tavg_1hr_g1440x721_v36'
+            chmtag = 'chm_tavg_1hr_g1440x721_v36'
+            xgctag = 'xgc_tavg_1hr_g1440x721_v36'
+
     hroot = 'https://portal.nccs.nasa.gov/datashare/gmao/geos-cf'
     hroot += f'/{version}/ana/'
     outpaths = []
@@ -236,10 +236,10 @@ def download_opendap(
     ylim = slice(*bbox[1::2])
 
     if version is None:
-      if min([d.year for d in dates]) > 2025:
-        version = 'v2'
-      else:
-        version = 'v1'
+        if min([d.year for d in dates]) > 2025:
+            version = 'v2'
+        else:
+            version = 'v1'
     rooturl = 'https://opendap.nccs.nasa.gov/dods/gmao/geos-cf'
     if version == 'v1':
         rooturl += '/assim'

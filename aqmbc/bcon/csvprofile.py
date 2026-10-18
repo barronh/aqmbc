@@ -37,13 +37,13 @@ class csvprofile(icbc):
         csvpath = 'inputs/csvprofile.csv'
         with open(csvpath, 'w') as csvf:
             csvf.write('''
-        ps(Pa),pmid(Pa),O3(ppmV),ASO4J(micrograms/m**3)
-        1e5,8e4,0.04,0.8
-        ,6e4,0.05,0.2
-        ,4e4,0.06,0.1
-        ,2e4,0.08,0.04
-        ,1e4,.4,0.02
-        ,0.5e4,2,0.02
+        time(UTC),ps(Pa),pmid(Pa),O3(ppmV),ASO4J(micrograms/m**3)
+        1970-01-01 00:00:00,1e5,8e4,0.04,0.8
+        1970-01-01 00:00:00,,6e4,0.05,0.2
+        1970-01-01 00:00:00,,4e4,0.06,0.1
+        1970-01-01 00:00:00,,2e4,0.08,0.04
+        1970-01-01 00:00:00,,1e4,.4,0.02
+        1970-01-01 00:00:00,,0.5e4,2,0.02
         ''')
 
         dates = ['2019-04-01T00']

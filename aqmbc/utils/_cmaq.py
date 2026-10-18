@@ -129,7 +129,7 @@ def open_griddesc(grid, gdpath=None, **attrs):
                 gdpath = gdpath2
             else:
                 raise IOError(f'{gdpath1} or {gdpath2} must exist.')
-            gdattrs = parse_griddesc(gdpath)[grid]
+        gdattrs = parse_griddesc(gdpath)[grid]
     elif isinstance(grid, dict):
         gdattrs = grid
     else:

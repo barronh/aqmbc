@@ -62,8 +62,9 @@ def loadexpr(exprs):
     exprs : str, tuple, list
         str or tuple - must name an option in data.expressions.named_exprs
         list of
-            tuples - keys to named_exprseach element used as a key to named_exprs
-            str    - each element used as a key to named_exprs
+            tuples - each tuple used as a key to named_exprs
+                     to a json describing a list of dictionaries.
+            str    - each str used as a key to named_exprs
                      to a json describing a list of dictionaries.
             dict - each element must have name, expression, and units keys
                    the expression must be defined by variables in the data
@@ -107,13 +108,13 @@ def loadexpr(exprs):
                 # 1-element tuple
                 msg = f'{ev} does not exist locally (./) or in {exprsroot}'
                 if (ev,) in named_exprs:
-                     tmpexprs = loadexpr(named_exprs[(ev,)])
+                    tmpexprs = loadexpr(named_exprs[(ev,)])
                 else:
-                     errors.append(msg)
+                    errors.append(msg)
             # use loadexpr with list of dicts to validate individual expr items
         elif isinstance(ev, tuple):
             if ev in named_exprs:
-                # load 
+                # load
                 tmpexprs = loadexpr(named_exprs[ev])
             else:
                 msg = f'{ev} not in named expressions ({list(named_exprs)})'
